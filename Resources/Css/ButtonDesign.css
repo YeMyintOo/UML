@@ -1,0 +1,9 @@
+.button {
+-fx-text-fill:rgb(0,0,139);
+-fx-font-size: 13px;
+-fx-background-color:rgb(176,196,222);
+
+}
+.button:cancel {
+-fx-text-fill: gray;
+}

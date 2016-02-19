@@ -1,5 +1,8 @@
 package Main;
 
+import java.io.File;
+
+import Boxes.Box_NFile;
 import Calculate.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -8,10 +11,14 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class Window extends Application {
+	protected Stage stage;
+	protected Scene scene;
+	protected BorderPane root;
 
 	protected MenuItem nProject; // New Project
 	protected MenuItem oProject; // Open Project
@@ -49,16 +56,18 @@ public class Window extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		stage = primaryStage;
 		screen = new ScreenDetail();
 		tabPane = new TabPane();
 
-		BorderPane root = new BorderPane();
+		root = new BorderPane();
 		MenuBar bar = new MenuBar();
 		Menu file = new Menu("File");
 		Menu edit = new Menu("Edit");
 		Menu view = new Menu("View");
 		Menu project = new Menu("Project");
 		Menu help = new Menu("Help");
+		
 
 		// File Menu
 		nProject = new MenuItem("New Project");
@@ -79,10 +88,11 @@ public class Window extends Application {
 		edit.getItems().addAll(copy, paste, cut, select, selectAll, delete);
 
 		// View Menu
-		ruler = new MenuItem("Ruler");
+		ruler = new MenuItem("GridLines");
 		zoomin = new MenuItem("Zoom In");
 		zoomout = new MenuItem("Zoom Out");
 		normal = new MenuItem("Normal");
+		view.getItems().addAll(ruler,zoomin,normal);
 
 		// Project Menu
 		mail = new MenuItem("Mail");
@@ -99,18 +109,35 @@ public class Window extends Application {
 		bar.getMenus().addAll(file, edit, view, project, help);
 		root.setTop(bar);
 		root.setCenter(tabPane);
-		Scene scene = new Scene(root, screen.getWidth(), screen.getHeight());
+		scene = new Scene(root, screen.getWidth(), screen.getHeight());
 
-		primaryStage.setScene(scene);
-		primaryStage.setFullScreen(true);
-		primaryStage.setTitle("UML Deisgn Tool");
-		primaryStage.centerOnScreen();
-		primaryStage.show();
+		stage.setScene(scene);
+		stage.setFullScreen(true);
+		stage.setTitle("UML Deisgn Tool");
+		stage.centerOnScreen();
+		stage.show();
 		
+		//Design
+		File f = new File("Resources/Css/MenuDesign.css");
+		scene.getStylesheets().clear();
+		scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+		
+
 		addWorkSpace("Circle");
 		addWorkSpace("Rectangle");
 		addWorkSpace("Polar");
 		addWorkSpace("Rotation");
+
+		nFile.setOnAction(e -> {
+			Box_NFile box = new Box_NFile(stage);
+			box.sizeToScene();
+			root.setDisable(true);
+			box.setAlwaysOnTop(true);
+			box.showAndWait(); //Wait until close This Dialog
+			root.setDisable(false);
+			
+
+		});
 	}
 
 	// Add Tab in TabPane (New WorkSpace)
@@ -121,7 +148,7 @@ public class Window extends Application {
 		tab.setContent(workspace);
 		tabPane.getTabs().add(tab);
 	}
-	
+
 	public static void main(String[] args) {
 		Application.launch(args);
 	}
