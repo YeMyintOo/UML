@@ -6,6 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -42,12 +44,13 @@ public class Window extends Application {
 	protected ScreenDetail screen;
 
 	// WorkSpace
+	protected TabPane tabPane; // Multiple WorkSpaces;
 	protected WorkSpace workspace;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		screen = new ScreenDetail();
-		workspace = new WorkSpace();
+		tabPane = new TabPane();
 
 		BorderPane root = new BorderPane();
 		MenuBar bar = new MenuBar();
@@ -95,7 +98,7 @@ public class Window extends Application {
 
 		bar.getMenus().addAll(file, edit, view, project, help);
 		root.setTop(bar);
-		root.setCenter(workspace);
+		root.setCenter(tabPane);
 		Scene scene = new Scene(root, screen.getWidth(), screen.getHeight());
 
 		primaryStage.setScene(scene);
@@ -103,9 +106,24 @@ public class Window extends Application {
 		primaryStage.setTitle("UML Deisgn Tool");
 		primaryStage.centerOnScreen();
 		primaryStage.show();
+		
+		addWorkSpace("Circle");
+		addWorkSpace("Rectangle");
+		addWorkSpace("Polar");
+		addWorkSpace("Rotation");
 	}
 
+	// Add Tab in TabPane (New WorkSpace)
+	public void addWorkSpace(String name) {
+		Tab tab = new Tab();
+		tab.setText(name);
+		workspace = new WorkSpace();
+		tab.setContent(workspace);
+		tabPane.getTabs().add(tab);
+	}
+	
 	public static void main(String[] args) {
 		Application.launch(args);
 	}
+
 }
