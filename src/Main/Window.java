@@ -67,7 +67,6 @@ public class Window extends Application {
 		Menu view = new Menu("View");
 		Menu project = new Menu("Project");
 		Menu help = new Menu("Help");
-		
 
 		// File Menu
 		nProject = new MenuItem("New Project");
@@ -92,7 +91,7 @@ public class Window extends Application {
 		zoomin = new MenuItem("Zoom In");
 		zoomout = new MenuItem("Zoom Out");
 		normal = new MenuItem("Normal");
-		view.getItems().addAll(ruler,zoomin,normal);
+		view.getItems().addAll(ruler, zoomin, zoomout, normal);
 
 		// Project Menu
 		mail = new MenuItem("Mail");
@@ -116,35 +115,29 @@ public class Window extends Application {
 		stage.setTitle("UML Deisgn Tool");
 		stage.centerOnScreen();
 		stage.show();
-		
-		//Design
+
+		// Design
 		File f = new File("Resources/Css/MenuDesign.css");
 		scene.getStylesheets().clear();
 		scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
-		
-
-		addWorkSpace("Circle");
-		addWorkSpace("Rectangle");
-		addWorkSpace("Polar");
-		addWorkSpace("Rotation");
 
 		nFile.setOnAction(e -> {
 			Box_NFile box = new Box_NFile(stage);
 			box.sizeToScene();
 			root.setDisable(true);
 			box.setAlwaysOnTop(true);
-			box.showAndWait(); //Wait until close This Dialog
+			box.showAndWait(); // Wait until close This Dialog
+			addWorkSpace(box.getFileName(),box.getType());
 			root.setDisable(false);
-			
 
 		});
 	}
 
 	// Add Tab in TabPane (New WorkSpace)
-	public void addWorkSpace(String name) {
+	public void addWorkSpace(String name,int type) {
 		Tab tab = new Tab();
 		tab.setText(name);
-		workspace = new WorkSpace();
+		workspace = new WorkSpace(type);
 		tab.setContent(workspace);
 		tabPane.getTabs().add(tab);
 	}

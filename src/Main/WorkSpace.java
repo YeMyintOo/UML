@@ -17,16 +17,18 @@ public class WorkSpace extends BorderPane {
 	private BorderPane tool; // Drawing Tool
 	private ColorPicker color; // Color Control
 	private CheckBox grid; // Grid lines
-	
 
-	public WorkSpace() {
+	private int type;
+
+	public WorkSpace(int type) {
+		this.type = type;
 		// Drawing Area
 		work = new BorderPane();
 		work.setStyle("-fx-background-color:white;" + "-fx-border-style: solid inside;" + "-fx-border-width: 2;"
 				+ "-fx-border-insets: 5;" + "-fx-border-radius: 5;" + "-fx-border-color: blue;");
 		sp = new ScrollPane();
 		work.setCenter(sp);
-		paint=new Paint();
+		paint = new Paint();
 		sp.setContent(paint);
 		// Tool Box
 
@@ -48,19 +50,120 @@ public class WorkSpace extends BorderPane {
 	}
 
 	public void RenderTool() {
-		HBox btnB = new HBox();
-		btnB.setAlignment(Pos.BOTTOM_CENTER);
-		ToggleButton b1 = new ToggleButton("circle");
-		ToggleButton b2 = new ToggleButton("rectangle");
-		ToggleButton b3 = new ToggleButton("ellipse");
-		ToggleButton b4 = new ToggleButton("Parabolar");
-		ToggleGroup group = new ToggleGroup();
+		switch (type) {
+		case 1:
+			tool.setCenter(UseCaseToolBox());
+			break;
+		case 2:
+			tool.setCenter(ObjectToolBox());
+			break;
+		case 3:
+			tool.setCenter(SequenceToolBox());
+			break;
+		case 4:
+			tool.setCenter(CollaborationToolBox());
+			break;
+		case 5:
+			tool.setCenter(ClassToolBox());
+			break;
+		case 6:
+			tool.setCenter(StateChartToolBox());
+			break;
+		case 7:
+			tool.setCenter(ActivityToolBox());
+			break;
+		case 8:
+			tool.setCenter(ComponentToolBox());
+			break;
+		case 9:
+			tool.setCenter(DeploymentToolBox());
+			break;
+		}
+	}
 
-		b1.setToggleGroup(group);
-		b2.setToggleGroup(group);
-		b3.setToggleGroup(group);
-		b4.setToggleGroup(group);
-		btnB.getChildren().addAll(b1, b2, b3, b4);
-		tool.setCenter(btnB);
+	public HBox UseCaseToolBox() {
+		HBox btnP = new HBox();
+		btnP.setAlignment(Pos.BOTTOM_CENTER);
+		ToggleButton actor = new ToggleButton("Actor");
+		ToggleButton action = new ToggleButton("Action");
+		ToggleButton rec = new ToggleButton("Rectangle");
+		ToggleButton line = new ToggleButton("Process");
+		ToggleButton extend = new ToggleButton("Extend");
+		ToggleButton include = new ToggleButton("Include");
+		ToggleButton type = new ToggleButton("Type Of");
+		ToggleGroup group = new ToggleGroup();
+		actor.setToggleGroup(group);
+		action.setToggleGroup(group);
+		rec.setToggleGroup(group);
+		line.setToggleGroup(group);
+		extend.setToggleGroup(group);
+		include.setToggleGroup(group);
+		type.setToggleGroup(group);
+		btnP.getChildren().addAll(actor, action, rec, line, extend, include, type);
+		return btnP;
+	}
+
+	public HBox ObjectToolBox() {
+		HBox btnP = new HBox();
+		btnP.setAlignment(Pos.BOTTOM_CENTER);
+		ToggleButton object = new ToggleButton("Object Tool");
+		btnP.getChildren().addAll(object);
+		return btnP;
+	}
+
+	public HBox SequenceToolBox() {
+		HBox btnP = new HBox();
+		btnP.setAlignment(Pos.BOTTOM_CENTER);
+		ToggleButton object = new ToggleButton("Sequence Tool");
+		btnP.getChildren().addAll(object);
+		return btnP;
+	}
+
+	public HBox CollaborationToolBox() {
+		HBox btnP = new HBox();
+		btnP.setAlignment(Pos.BOTTOM_CENTER);
+		ToggleButton object = new ToggleButton("Collaboration Tool");
+		btnP.getChildren().addAll(object);
+		return btnP;
+	}
+
+	public HBox ClassToolBox() {
+		HBox btnP = new HBox();
+		btnP.setAlignment(Pos.BOTTOM_CENTER);
+		ToggleButton object = new ToggleButton("Class Tool");
+		btnP.getChildren().addAll(object);
+		return btnP;
+	}
+
+	public HBox StateChartToolBox() {
+		HBox btnP = new HBox();
+		btnP.setAlignment(Pos.BOTTOM_CENTER);
+		ToggleButton object = new ToggleButton("StateChart Tool");
+		btnP.getChildren().addAll(object);
+		return btnP;
+	}
+
+	public HBox ActivityToolBox() {
+		HBox btnP = new HBox();
+		btnP.setAlignment(Pos.BOTTOM_CENTER);
+		ToggleButton object = new ToggleButton("Activity Tool");
+		btnP.getChildren().addAll(object);
+		return btnP;
+	}
+
+	public HBox ComponentToolBox() {
+		HBox btnP = new HBox();
+		btnP.setAlignment(Pos.BOTTOM_CENTER);
+		ToggleButton object = new ToggleButton("Component Tool");
+		btnP.getChildren().addAll(object);
+		return btnP;
+	}
+
+	public HBox DeploymentToolBox() {
+		HBox btnP = new HBox();
+		btnP.setAlignment(Pos.BOTTOM_CENTER);
+		ToggleButton object = new ToggleButton("Deployment Tool");
+		btnP.getChildren().addAll(object);
+		return btnP;
 	}
 }
