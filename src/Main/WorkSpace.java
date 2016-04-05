@@ -19,6 +19,7 @@ public class WorkSpace extends BorderPane {
 	private CheckBox grid; // Grid lines
 
 	private int type;
+	private CanvaBox canva;
 
 	public WorkSpace(int type) {
 		this.type = type;
@@ -26,10 +27,11 @@ public class WorkSpace extends BorderPane {
 		work = new BorderPane();
 		work.setStyle("-fx-background-color:white;" + "-fx-border-style: solid inside;" + "-fx-border-width: 2;"
 				+ "-fx-border-insets: 5;" + "-fx-border-radius: 5;" + "-fx-border-color: blue;");
-		sp = new ScrollPane();
-		work.setCenter(sp);
+		canva=new CanvaBox();
+		//sp = new ScrollPane(canva);
+		work.setCenter(canva);
 		paint = new Paint();
-		sp.setContent(paint);
+		//sp.setContent(paint);
 		// Tool Box
 
 		tool = new BorderPane();
