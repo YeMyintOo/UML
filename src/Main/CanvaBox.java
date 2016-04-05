@@ -1,15 +1,20 @@
 package Main;
 
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-
 import java.util.ArrayList;
 
-import Canvas.*;
+import Canvas.SLine;
+import Canvas.SPoint;
+import Database.ToolHandler;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 public class CanvaBox extends Pane {
-	SLine sline;
+	private ToolHandler toolHandler;
+	private Color color;
+
+	private SLine sline;
 	private ArrayList<SLine> lineHolder = new ArrayList<SLine>();
 
 	public CanvaBox() {
@@ -18,22 +23,25 @@ public class CanvaBox extends Pane {
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-				sline = new SLine();
+				toolHandler = new ToolHandler();
+				String colorS = toolHandler.getColor();
+				color = Color.web(colorS); // Dynamic color from ToolHander.xml
+				sline = new SLine(color);
 				sline.setStartX(e.getX());
 				sline.setStartY(e.getY());
 				sline.setEndX(e.getX());
 				sline.setEndY(e.getY());
-				getChildren().add(sline);
+
+				SPoint point = new SPoint(e.getX(), e.getY(), 3);
+				getChildren().addAll(sline, point);
 			}
 		});
 		// Mouse Drag Event
 		setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-			
 				sline.setEndX(e.getX());
 				sline.setEndY(e.getY());
-				
 
 			}
 		});
@@ -42,8 +50,10 @@ public class CanvaBox extends Pane {
 			@Override
 			public void handle(MouseEvent e) {
 				lineHolder.add(sline);
+				SPoint point = new SPoint(e.getX(), e.getY(), 3);
+				getChildren().addAll(point);
 				sline = null;
-				// Reload holder
+				// Reload Line holder
 				for (int i = 0; i < lineHolder.size(); i++) {
 					getChildren().add(lineHolder.get(i));
 				}

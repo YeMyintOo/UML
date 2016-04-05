@@ -1,5 +1,6 @@
 package Main;
 
+import Database.ToolHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
@@ -20,9 +21,11 @@ public class WorkSpace extends BorderPane {
 
 	private int type;
 	private CanvaBox canva;
-
+	private ToolHandler toolHandler; // To set and get Selected Tool;
+	
 	public WorkSpace(int type) {
 		this.type = type;
+		toolHandler=new ToolHandler();
 		// Drawing Area
 		work = new BorderPane();
 		work.setStyle("-fx-background-color:white;" + "-fx-border-style: solid inside;" + "-fx-border-width: 2;"
@@ -42,16 +45,30 @@ public class WorkSpace extends BorderPane {
 		grid = new CheckBox("Grid Lines");
 		tool.setLeft(grid);
 		tool.setRight(color);
-
-		RenderTool();
-
+		
+		
+		color.setOnAction(e->{
+			toolHandler.setColor(color.getValue().toString());
+		});
+		grid.setOnAction(e->{
+			if(grid.isSelected()){
+				toolHandler.setGrid("Show");
+			}else{
+				toolHandler.setGrid("Hide");
+			}
+		});
+		
+		RenderTool(); //Render Tool base on select
+		
+		
 		setCenter(work);
 		setBottom(tool);
-		// b1.setOnAction(e -> RenderTool());
+		
 
 	}
 
 	public void RenderTool() {
+		
 		switch (type) {
 		case 1:
 			tool.setCenter(UseCaseToolBox());
@@ -101,6 +118,12 @@ public class WorkSpace extends BorderPane {
 		extend.setToggleGroup(group);
 		include.setToggleGroup(group);
 		type.setToggleGroup(group);
+		
+		actor.setOnAction(e->{
+			toolHandler.setTool("Actor");
+		});
+		
+		
 		btnP.getChildren().addAll(actor, action, rec, line, extend, include, type);
 		return btnP;
 	}

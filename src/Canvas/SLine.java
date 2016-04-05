@@ -8,18 +8,18 @@ public class SLine extends Line {
 	private int starty;
 	private int endx;
 	private int endy;
-	private Color start;
-	private Color end;
+	
 
-	// Constructor
-	public SLine() {
+	// Constructor	
+	public SLine(Color color) {
 		super(0, 0, 0, 0);
+		setStroke(color);
 	}
+	
 
 	public SLine(int starx, int starty, int endx, int endy) {
 		super(starx, starty, endx, endy);
-		setStart(Color.RED);
-		setEnd(Color.RED);
+		
 	}
 
 	public int getStartx() {
@@ -54,20 +54,5 @@ public class SLine extends Line {
 		this.endy = endy;
 	}
 
-	public Color getStart() {
-		return start;
-	}
-
-	public void setStart(Color start) {
-		this.start = start;
-	}
-
-	public Color getEnd() {
-		return end;
-	}
-
-	public void setEnd(Color end) {
-		this.end = end;
-	}
-
+	
 }
