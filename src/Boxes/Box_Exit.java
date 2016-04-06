@@ -19,6 +19,7 @@ public class Box_Exit extends Stage {
 		super();
 		initModality(Modality.WINDOW_MODAL); //Prevent click parent stage
 		initOwner(owner);
+		setResizable(false);
 		setTitle("Sure?");
 		BorderPane pane = new BorderPane();
 

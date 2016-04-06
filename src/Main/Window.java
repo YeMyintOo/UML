@@ -3,11 +3,14 @@ package Main;
 import java.io.File;
 
 import Boxes.Box_Exit;
+import Boxes.Box_Feed;
+import Boxes.Box_Guide;
 import Boxes.Box_Mail;
 import Boxes.Box_NFile;
 import Boxes.Box_NPro;
-import Boxes.Box_OPro;
 import Boxes.Box_Print;
+import Boxes.Box_Version;
+import Boxes.Box_WS;
 import Calculate.ScreenDetail;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -63,7 +66,6 @@ public class Window extends Application {
 		stage = primaryStage;
 		screen = new ScreenDetail();
 		tabPane = new TabPane();
-
 		root = new BorderPane();
 		MenuBar bar = new MenuBar();
 		Menu file = new Menu("File");
@@ -125,26 +127,26 @@ public class Window extends Application {
 		scene.getStylesheets().clear();
 		scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
 
-		
-		//Actions///////////////////////////////////
-		nProject.setOnAction(e->{
-			Box_NPro box=new Box_NPro(stage);
+		// Actions///////////////////////////////////
+		nProject.setOnAction(e -> {
+			Box_NPro box = new Box_NPro(stage);
 			box.sizeToScene();
 			root.setDisable(true);
 			box.setAlwaysOnTop(true);
 			box.showAndWait(); // Wait until close This Dialog
+			// Check Return value character
+			if (box.getValue().equals("finish")) {
+				root.setCenter(new WorkSpaceList());
+			} else if (box.getValue().equals("close")) {
+
+			}
 			root.setDisable(false);
 		});
-		oProject.setOnAction(e->{
-			Box_OPro box=new Box_OPro(stage);
-			box.sizeToScene();
-			root.setDisable(true);
-			box.setAlwaysOnTop(true);
-			box.showAndWait(); // Wait until close This Dialog
-			root.setDisable(false);
+		oProject.setOnAction(e -> {
+			root.setCenter(new OpenProjectList());
 		});
-		cWorkSpace.setOnAction(e->{
-			Box_OPro box=new Box_OPro(stage);
+		cWorkSpace.setOnAction(e -> {
+			Box_WS box = new Box_WS(stage);
 			box.sizeToScene();
 			root.setDisable(true);
 			box.setAlwaysOnTop(true);
@@ -157,10 +159,15 @@ public class Window extends Application {
 			root.setDisable(true);
 			box.setAlwaysOnTop(true);
 			box.showAndWait(); // Wait until close This Dialog
-			addWorkSpace(box.getFileName(),box.getType());
+			// Check Return value character
+			if(box.getValue().equals("finish")){
+				addWorkSpace(box.getFileName(), box.getType());
+			}else if(box.getValue().equals("close")){
+				
+			}			
 			root.setDisable(false);
 		});
-		exit.setOnAction(e->{
+		exit.setOnAction(e -> {
 			Box_Exit box = new Box_Exit(stage);
 			box.sizeToScene();
 			root.setDisable(true);
@@ -168,8 +175,8 @@ public class Window extends Application {
 			box.showAndWait(); // Wait until close This Dialog
 			root.setDisable(false);
 		});
-		
-		mail.setOnAction(e->{
+
+		mail.setOnAction(e -> {
 			Box_Mail box = new Box_Mail(stage);
 			box.sizeToScene();
 			root.setDisable(true);
@@ -177,8 +184,31 @@ public class Window extends Application {
 			box.showAndWait(); // Wait until close This Dialog
 			root.setDisable(false);
 		});
-		print.setOnAction(e->{
+		print.setOnAction(e -> {
 			Box_Print box = new Box_Print(stage);
+			box.sizeToScene();
+			root.setDisable(true);
+			box.setAlwaysOnTop(true);
+			box.requestFocus();
+			box.showAndWait(); // Wait until close This Dialog
+			root.setDisable(false);
+		});
+		guide.setOnAction(e->{
+			Box_Guide box = new Box_Guide(stage);
+			box.sizeToScene();
+			box.show();
+		});
+		version.setOnAction(e->{
+			Box_Version box = new Box_Version(stage);
+			box.sizeToScene();
+			root.setDisable(true);
+			box.setAlwaysOnTop(true);
+			box.requestFocus();
+			box.showAndWait(); // Wait until close This Dialog
+			root.setDisable(false);
+		});
+		feedback.setOnAction(e->{
+			Box_Feed box=new Box_Feed(stage);
 			box.sizeToScene();
 			root.setDisable(true);
 			box.setAlwaysOnTop(true);
@@ -190,7 +220,7 @@ public class Window extends Application {
 	}
 
 	// Add Tab in TabPane (New WorkSpace)
-	public void addWorkSpace(String name,int type) {
+	public void addWorkSpace(String name, int type) {
 		Tab tab = new Tab();
 		tab.setText(name);
 		workspace = new WorkSpace(type);

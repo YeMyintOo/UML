@@ -35,9 +35,14 @@ public class Box_NFile extends Stage {
 	private Button okB;
 	private Button closeB;
 	private Button resetB;
+	
+	//Return value
+	private String value;
 
 	public Box_NFile(Stage owner) {
 		super();
+		setResizable(false);
+		value="default";
 		initModality(Modality.WINDOW_MODAL); //Prevent click parent stage
 		initOwner(owner);
 		setTitle("Choose New Diagram");
@@ -109,6 +114,7 @@ public class Box_NFile extends Stage {
 
 		closeB.setCancelButton(true);
 		closeB.setOnAction(e -> {
+			setValue("close");
 			close();
 		});
 
@@ -116,6 +122,7 @@ public class Box_NFile extends Stage {
 			if (!nameF.getText().equals("")) {
 				setFileName(nameF.getText());
 				setType(calculateType());
+				setValue("finish");
 				close();
 			}
 		});
@@ -166,5 +173,11 @@ public class Box_NFile extends Stage {
 	public void setType(int type) {
 		this.type = type;
 	}
-
+	
+	public void setValue(String value){
+		this.value=value;
+	}
+	public String getValue(){
+		return value;
+	}
 }

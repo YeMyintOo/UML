@@ -18,6 +18,7 @@ public class Box_WS extends Stage {
 
 	public Box_WS(Stage owner) {
 		super();
+		setResizable(false);
 		initModality(Modality.WINDOW_MODAL); //Prevent click parent stage
 		initOwner(owner);
 		setTitle("Change Workspace");

@@ -18,6 +18,7 @@ public class Box_OPro extends Stage{
 
 	public Box_OPro(Stage owner) {
 		super();
+		setResizable(false);
 		initModality(Modality.WINDOW_MODAL); //Prevent click parent stage
 		initOwner(owner);
 		setTitle("Open Project");

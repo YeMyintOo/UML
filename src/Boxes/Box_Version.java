@@ -9,27 +9,23 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class Box_Mail extends Stage{
+public class Box_Version extends Stage{
 	// WorkSpace Box
 
 	private Button okB;
-	private Button closeB;
-	private Button resetB;
-
-	public Box_Mail(Stage owner) {
+	
+	public Box_Version(Stage owner) {
 		super();
 		initModality(Modality.WINDOW_MODAL); //Prevent click parent stage
 		initOwner(owner);
 		setResizable(false);
-		setTitle("Send Mail");
+		setTitle("Software Information");
 		BorderPane pane = new BorderPane();
 
 		// Button Panel
 		HBox btn = new HBox();
-		okB = new Button("Finish");
-		closeB = new Button("Cancel");
-		resetB = new Button("Reset");
-		btn.getChildren().addAll(resetB, okB, closeB);
+		okB = new Button("Close");
+		btn.getChildren().addAll(okB);
 		btn.setSpacing(4);
 		btn.setStyle("-fx-padding:10 10 10 10;" + "-fx-background-color:rgb(220,220,220);" + "-fx-cursor: hand;");
 		btn.setAlignment(Pos.BASELINE_RIGHT);
@@ -39,6 +35,8 @@ public class Box_Mail extends Stage{
 		Scene scene = new Scene(pane, 400, 300, Color.WHITE);
 		setScene(scene);
 	}
+
+
 
 
 
