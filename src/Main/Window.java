@@ -2,8 +2,13 @@ package Main;
 
 import java.io.File;
 
+import Boxes.Box_Exit;
+import Boxes.Box_Mail;
 import Boxes.Box_NFile;
-import Calculate.*;
+import Boxes.Box_NPro;
+import Boxes.Box_OPro;
+import Boxes.Box_Print;
+import Calculate.ScreenDetail;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -11,7 +16,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -121,6 +125,32 @@ public class Window extends Application {
 		scene.getStylesheets().clear();
 		scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
 
+		
+		//Actions///////////////////////////////////
+		nProject.setOnAction(e->{
+			Box_NPro box=new Box_NPro(stage);
+			box.sizeToScene();
+			root.setDisable(true);
+			box.setAlwaysOnTop(true);
+			box.showAndWait(); // Wait until close This Dialog
+			root.setDisable(false);
+		});
+		oProject.setOnAction(e->{
+			Box_OPro box=new Box_OPro(stage);
+			box.sizeToScene();
+			root.setDisable(true);
+			box.setAlwaysOnTop(true);
+			box.showAndWait(); // Wait until close This Dialog
+			root.setDisable(false);
+		});
+		cWorkSpace.setOnAction(e->{
+			Box_OPro box=new Box_OPro(stage);
+			box.sizeToScene();
+			root.setDisable(true);
+			box.setAlwaysOnTop(true);
+			box.showAndWait(); // Wait until close This Dialog
+			root.setDisable(false);
+		});
 		nFile.setOnAction(e -> {
 			Box_NFile box = new Box_NFile(stage);
 			box.sizeToScene();
@@ -129,8 +159,34 @@ public class Window extends Application {
 			box.showAndWait(); // Wait until close This Dialog
 			addWorkSpace(box.getFileName(),box.getType());
 			root.setDisable(false);
-
 		});
+		exit.setOnAction(e->{
+			Box_Exit box = new Box_Exit(stage);
+			box.sizeToScene();
+			root.setDisable(true);
+			box.setAlwaysOnTop(true);
+			box.showAndWait(); // Wait until close This Dialog
+			root.setDisable(false);
+		});
+		
+		mail.setOnAction(e->{
+			Box_Mail box = new Box_Mail(stage);
+			box.sizeToScene();
+			root.setDisable(true);
+			box.setAlwaysOnTop(true);
+			box.showAndWait(); // Wait until close This Dialog
+			root.setDisable(false);
+		});
+		print.setOnAction(e->{
+			Box_Print box = new Box_Print(stage);
+			box.sizeToScene();
+			root.setDisable(true);
+			box.setAlwaysOnTop(true);
+			box.requestFocus();
+			box.showAndWait(); // Wait until close This Dialog
+			root.setDisable(false);
+		});
+		//////////////////////////////////////////
 	}
 
 	// Add Tab in TabPane (New WorkSpace)

@@ -12,9 +12,6 @@ import javafx.scene.control.ScrollPane;
 
 public class WorkSpace extends BorderPane {
 	private BorderPane work; // Drawing Area
-	private Paint paint; // Draw Diagrams;
-
-	private ScrollPane sp;
 	private BorderPane tool; // Drawing Tool
 	private ColorPicker color; // Color Control
 	private CheckBox grid; // Grid lines
@@ -31,10 +28,7 @@ public class WorkSpace extends BorderPane {
 		work.setStyle("-fx-background-color:white;" + "-fx-border-style: solid inside;" + "-fx-border-width: 2;"
 				+ "-fx-border-insets: 5;" + "-fx-border-radius: 5;" + "-fx-border-color: blue;");
 		canva=new CanvaBox();
-		//sp = new ScrollPane(canva);
 		work.setCenter(canva);
-		paint = new Paint();
-		//sp.setContent(paint);
 		// Tool Box
 
 		tool = new BorderPane();

@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class Box_NFile extends Stage {
@@ -37,6 +38,7 @@ public class Box_NFile extends Stage {
 
 	public Box_NFile(Stage owner) {
 		super();
+		initModality(Modality.WINDOW_MODAL); //Prevent click parent stage
 		initOwner(owner);
 		setTitle("Choose New Diagram");
 
