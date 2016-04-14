@@ -19,13 +19,26 @@ public class OpenProjectList extends BorderPane {
 	private Button selectB;
 	private Button defaultB;
 
+	// Start Button
+	private Button startB; // Start drawing
+
 	public OpenProjectList() {
 
+		// Action Bar
 		BorderPane tableP = new BorderPane();
 		table = new TableView<String>();
 		tableP.setStyle("-fx-padding:100 50 0 50;");
 		loadColumns(); // Call Calumns
 		tableP.setTop(table);
+
+		// Start Button
+		HBox sbox = new HBox();
+		sbox.setAlignment(Pos.BOTTOM_RIGHT);
+		startB = new Button("Start Drawing");
+		startB.setStyle("-fx-background-color: rgb(176,196,222);" + "-fx-text-fill: rgb(255,255,255);"
+				+ "  -fx-font-size: 20 pt;");
+		sbox.setStyle("-fx-padding:20 50 50 50;");
+		sbox.getChildren().add(startB);
 
 		HBox box = new HBox();
 		box.setSpacing(10);
@@ -38,6 +51,7 @@ public class OpenProjectList extends BorderPane {
 
 		setTop(tableP);
 		setCenter(box);
+		setBottom(sbox);
 		
 		browseB.setOnAction(e -> {
 
@@ -47,6 +61,14 @@ public class OpenProjectList extends BorderPane {
 		});
 		defaultB.setOnAction(e -> {
 
+		});
+		startB.setOnMouseEntered(e -> {
+			startB.setStyle("-fx-background-color: rgb(176,196,222);" + "-fx-text-fill: rgb(0,0,255);"
+					+ "-fx-font-size: 20 pt;");
+		});
+		startB.setOnMouseExited(e -> {
+			startB.setStyle("-fx-background-color: rgb(176,196,222);" + "-fx-text-fill: rgb(255,255,255);"
+					+ "  -fx-font-size: 20 pt;");
 		});
 
 	}
@@ -63,10 +85,12 @@ public class OpenProjectList extends BorderPane {
 		name.setMinWidth(400);
 		workspace.setMinWidth(500);
 		cdate.setMinWidth(400);
-		
-		//Add add
-		
-		
+
+		// Add add
+
 		table.getColumns().addAll(name, workspace, cdate);
+	}
+	public Button getStartB() {
+		return startB;
 	}
 }

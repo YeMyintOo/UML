@@ -61,7 +61,7 @@ public class Window extends Application {
 	// WorkSpace
 	protected TabPane tabPane; // Multiple WorkSpaces;
 	protected WorkSpace workspace;
-
+	
 	
 	//Dynamic Variables and loaded variables
 	private String workspaceVar;
@@ -71,6 +71,7 @@ public class Window extends Application {
 		stage = primaryStage;
 		screen = new ScreenDetail();
 		tabPane = new TabPane();
+		
 		root = new BorderPane();
 		MenuBar bar = new MenuBar();
 		Menu file = new Menu("File");
@@ -140,15 +141,24 @@ public class Window extends Application {
 			box.setAlwaysOnTop(true);
 			box.showAndWait(); // Wait until close This Dialog
 			// Check Return value character
+			OpenProjectList list = null;
 			if (box.getValue().equals("finish")) {
-				root.setCenter(new WorkSpaceList());
+				list=new OpenProjectList();
+				root.setCenter(list);
 			} else if (box.getValue().equals("close")) {
 
 			}
+			list.getStartB().setOnAction(ee -> {
+				nFile.fire();
+			});
 			root.setDisable(false);
 		});
 		oProject.setOnAction(e -> {
-			root.setCenter(new OpenProjectList());
+			OpenProjectList list = new OpenProjectList();
+			root.setCenter(list);
+			list.getStartB().setOnAction(ee -> {
+				nFile.fire();
+			});
 		});
 		cWorkSpace.setOnAction(e -> {
 			Box_WS box = new Box_WS(stage);
