@@ -8,6 +8,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.control.ScrollPane;
 
 public class WorkSpace extends BorderPane {
@@ -36,6 +37,10 @@ public class WorkSpace extends BorderPane {
 				+ "-fx-border-insets: 5;" + "-fx-border-radius: 5;" + "-fx-border-color: blue;");
 
 		color = new ColorPicker();
+		String colorS = toolHandler.getColor();
+		Color defaultColor = Color.web(colorS); // Dynamic color from ToolHander.xml
+		color.setValue(defaultColor);
+		
 		grid = new CheckBox("Grid Lines");
 		tool.setLeft(grid);
 		tool.setRight(color);
@@ -53,7 +58,6 @@ public class WorkSpace extends BorderPane {
 		});
 		
 		RenderTool(); //Render Tool base on select
-		
 		
 		setCenter(work);
 		setBottom(tool);

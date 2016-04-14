@@ -9,6 +9,7 @@ import Boxes.Box_Mail;
 import Boxes.Box_NFile;
 import Boxes.Box_NPro;
 import Boxes.Box_Print;
+import Boxes.Box_Save;
 import Boxes.Box_Version;
 import Boxes.Box_WS;
 import Calculate.ScreenDetail;
@@ -61,6 +62,10 @@ public class Window extends Application {
 	protected TabPane tabPane; // Multiple WorkSpaces;
 	protected WorkSpace workspace;
 
+	
+	//Dynamic Variables and loaded variables
+	private String workspaceVar;
+	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		stage = primaryStage;
@@ -129,7 +134,7 @@ public class Window extends Application {
 
 		// Actions///////////////////////////////////
 		nProject.setOnAction(e -> {
-			Box_NPro box = new Box_NPro(stage);
+			Box_NPro box = new Box_NPro(stage,workspaceVar);
 			box.sizeToScene();
 			root.setDisable(true);
 			box.setAlwaysOnTop(true);
@@ -151,6 +156,7 @@ public class Window extends Application {
 			root.setDisable(true);
 			box.setAlwaysOnTop(true);
 			box.showAndWait(); // Wait until close This Dialog
+			workspaceVar=box.getPath(); //Set workspace 
 			root.setDisable(false);
 		});
 		nFile.setOnAction(e -> {
@@ -161,6 +167,7 @@ public class Window extends Application {
 			box.showAndWait(); // Wait until close This Dialog
 			// Check Return value character
 			if(box.getValue().equals("finish")){
+				root.setCenter(tabPane); //Reassign
 				addWorkSpace(box.getFileName(), box.getType());
 			}else if(box.getValue().equals("close")){
 				
@@ -169,6 +176,15 @@ public class Window extends Application {
 		});
 		exit.setOnAction(e -> {
 			Box_Exit box = new Box_Exit(stage);
+			box.sizeToScene();
+			root.setDisable(true);
+			box.setAlwaysOnTop(true);
+			box.showAndWait(); // Wait until close This Dialog
+			root.setDisable(false);
+		});
+		
+		save.setOnAction(e->{
+			Box_Save box = new Box_Save(stage);
 			box.sizeToScene();
 			root.setDisable(true);
 			box.setAlwaysOnTop(true);

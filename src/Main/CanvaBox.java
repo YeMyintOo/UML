@@ -56,6 +56,7 @@ public class CanvaBox extends Pane {
 				// Reload Line holder
 				for (int i = 0; i < lineHolder.size(); i++) {
 					getChildren().addAll(lineHolder.get(i));
+					//getChildrenUnmodifiable().addAll(lineHolder.get(i));
 				}
 			}
 		});

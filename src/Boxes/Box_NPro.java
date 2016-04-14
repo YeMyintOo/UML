@@ -28,12 +28,12 @@ public class Box_NPro extends Stage {
 	// Return Value
 	private String value;
 
-	public Box_NPro(Stage owner) {
+	public Box_NPro(Stage owner, String workspacePath) {
 		super();
 		initModality(Modality.WINDOW_MODAL); // Prevent click parent stage
 		initOwner(owner);
 		setResizable(false);
-		value="default";
+		value = "default";
 		setTitle("New Project");
 		BorderPane pane = new BorderPane();
 
@@ -53,6 +53,8 @@ public class Box_NPro extends Stage {
 		wsL = new Label("Workspace");
 		wsL.setStyle("-fx-padding: 5 0 5 0;");
 		wsF = new TextField();
+		// Default workspace
+		wsF.setText(workspacePath);
 		wsB = new Button("Change");
 
 		wsP.addRow(0, wsL);

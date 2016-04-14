@@ -107,9 +107,9 @@ public class Box_NFile extends Stage {
 		pane.setBottom(btn);
 
 		Scene scene = new Scene(pane, 400, 400, Color.WHITE);
-		File f = new File("Resources/Css/ButtonDesign.css");
-		scene.getStylesheets().clear();
-		scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+		//File f = new File("Resources/Css/ButtonDesign.css");
+		//scene.getStylesheets().clear();
+		//scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
 		setScene(scene);
 
 		closeB.setCancelButton(true);

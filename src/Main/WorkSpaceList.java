@@ -12,6 +12,6 @@ public class WorkSpaceList extends BorderPane {
 
 	public WorkSpaceList(String wsname) {
 		// New Work Space and Add wsname to XML data
-
+		
 	}
 }

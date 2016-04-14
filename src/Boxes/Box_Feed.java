@@ -1,5 +1,7 @@
 package Boxes;
 
+import java.io.File;
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -7,10 +9,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -69,6 +74,8 @@ public class Box_Feed extends Stage {
 		HBox hbox = new HBox();
 		hbox.setSpacing(20);
 		hbox.setStyle("-fx-padding: 10");
+
+		
 		fb = new Circle(20);
 		gmail = new Circle(20);
 		linkin = new Circle(20);
@@ -82,7 +89,7 @@ public class Box_Feed extends Stage {
 
 		// Button Panel
 		HBox btn = new HBox();
-		okB = new Button("Finish");
+		okB = new Button("Send");
 		closeB = new Button("Cancel");
 		resetB = new Button("Reset");
 		btn.getChildren().addAll(resetB, okB, closeB);
