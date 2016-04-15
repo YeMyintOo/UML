@@ -1,15 +1,17 @@
 package Boxes;
 
+import java.io.File;
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -93,6 +95,11 @@ public class Box_NPro extends Stage {
 			setValue("finish");
 			close();
 		});
+		wsB.setOnAction(e -> {
+			
+		});
+
+		
 	}
 
 	public void setValue(String value) {

@@ -144,13 +144,13 @@ public class Window extends Application {
 			OpenProjectList list = null;
 			if (box.getValue().equals("finish")) {
 				list=new OpenProjectList();
+				list.getStartB().setOnAction(ee -> {
+					nFile.fire();
+				});
 				root.setCenter(list);
-			} else if (box.getValue().equals("close")) {
-
-			}
-			list.getStartB().setOnAction(ee -> {
-				nFile.fire();
-			});
+			} else {
+				
+			}					
 			root.setDisable(false);
 		});
 		oProject.setOnAction(e -> {
@@ -179,7 +179,7 @@ public class Window extends Application {
 			if(box.getValue().equals("finish")){
 				root.setCenter(tabPane); //Reassign
 				addWorkSpace(box.getFileName(), box.getType());
-			}else if(box.getValue().equals("close")){
+			}else {
 				
 			}			
 			root.setDisable(false);

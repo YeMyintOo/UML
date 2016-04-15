@@ -1,5 +1,7 @@
 package Boxes;
 
+import java.io.File;
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -9,6 +11,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -73,6 +76,13 @@ public class Box_WS extends Stage {
 		});
 		resetB.setOnAction(e -> {
 			pathF.setText("");
+		});
+		browseB.setOnAction(e -> {
+			FileChooser wsChooser = new FileChooser();
+			wsChooser.setTitle("Select New Workspace");
+			// Filter
+			wsChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Images", "*.Folder"));
+			wsChooser.showOpenDialog(this);
 		});
 	}
 
