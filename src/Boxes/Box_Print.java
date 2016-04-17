@@ -29,6 +29,7 @@ public class Box_Print extends Stage {
 	private Button closeB;
 	private Button resetB;
 
+	@SuppressWarnings("unchecked")
 	public Box_Print(Stage owner) {
 		super();
 		// setResizable(false);
@@ -57,9 +58,9 @@ public class Box_Print extends Stage {
 		// Add children to the root
 		depts.getChildren().addAll(isDept, claimsDept, underwritingDept);
 		///////////////////
-		ScrollPane sp = new ScrollPane();
-		sp.setContent(treeView);
-		treeP.setBottom(sp);
+		//ScrollPane sp = new ScrollPane();
+		//sp.setContent(treeView);
+		treeP.setBottom(treeView);
 
 		// Select Print Type
 		BorderPane typeP = new BorderPane();

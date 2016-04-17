@@ -111,6 +111,9 @@ public class Box_NPro extends Stage {
 						file.mkdirs(); // Make directory
 						System.out.println("Project Folder is created");
 						createProjectProperties(file.getAbsolutePath());
+						// Make default Project
+						systemHandler.setDefaultProject(file.getAbsolutePath());
+						System.out.println("Make Default Project");
 						setValue("finish");
 						close();
 					} else {
@@ -142,7 +145,7 @@ public class Box_NPro extends Stage {
 		System.out.println("Create Project Properties File");
 		// Hidden Properties File
 		// Window Only
-		String spacing="\"" +file.getAbsolutePath()+ "\"";
+		String spacing = "\"" + file.getAbsolutePath() + "\"";
 		Process p = Runtime.getRuntime().exec("cmd.exe /c attrib +h " + spacing);
 		p.waitFor();
 		System.out.println("Project Properties File is hidden");

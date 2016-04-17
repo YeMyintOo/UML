@@ -2,13 +2,20 @@ package Boxes;
 
 import java.io.File;
 
+import Database.SystemHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -35,16 +42,21 @@ public class Box_NFile extends Stage {
 	private Button okB;
 	private Button closeB;
 	private Button resetB;
-	
-	//Return value
+
+	// Return value
 	private String value;
+	private SystemHandler sysHandler;
 
 	public Box_NFile(Stage owner) {
 		super();
 		setResizable(false);
-		value="default";
-		initModality(Modality.WINDOW_MODAL); //Prevent click parent stage
+		value = "default";
+		initModality(Modality.WINDOW_MODAL); // Prevent click parent stage
 		initOwner(owner);
+		if(sysHandler==null){
+			sysHandler=new SystemHandler();
+		}
+		
 		setTitle("Choose New Diagram");
 
 		BorderPane pane = new BorderPane();
@@ -60,9 +72,10 @@ public class Box_NFile extends Stage {
 		isnamed = new Label();
 		p1.addRow(0, nameL, nameF, isnamed); // Add Components in Row 0
 		pathF = new TextField();
-		pathF.setTooltip(new Tooltip("Select a project / Path"));
+		pathF.setPrefWidth(200);
+		pathF.setText(sysHandler.getDefaultProject());
 		Label pathL = new Label("Path");
-		pathB = new Button("..");
+		pathB = new Button("Browse");
 		p1.addRow(1, pathL, pathF, pathB);
 
 		// Diagram Types
@@ -107,9 +120,6 @@ public class Box_NFile extends Stage {
 		pane.setBottom(btn);
 
 		Scene scene = new Scene(pane, 400, 400, Color.WHITE);
-		//File f = new File("Resources/Css/ButtonDesign.css");
-		//scene.getStylesheets().clear();
-		//scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
 		setScene(scene);
 
 		closeB.setCancelButton(true);
@@ -130,6 +140,14 @@ public class Box_NFile extends Stage {
 		resetB.setOnAction(e -> {
 			nameF.setText("");
 			r1.setSelected(true);
+		});
+
+		// Select Which Project under Which WorkSpace
+		pathB.setOnAction(e -> {
+			DirectoryChooser wsChooser = new DirectoryChooser();
+			wsChooser.setTitle("Select Project");
+			File selectedDirectory = wsChooser.showDialog(this);
+			pathF.setText(selectedDirectory.toString());
 		});
 
 	}
@@ -173,11 +191,13 @@ public class Box_NFile extends Stage {
 	public void setType(int type) {
 		this.type = type;
 	}
-	
-	public void setValue(String value){
-		this.value=value;
+
+	public void setValue(String value) {
+		this.value = value;
 	}
-	public String getValue(){
+
+	public String getValue() {
 		return value;
 	}
+
 }
