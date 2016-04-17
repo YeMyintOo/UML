@@ -2,6 +2,7 @@ package Boxes;
 
 import java.io.File;
 
+import Database.SystemHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,7 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -27,6 +28,7 @@ public class Box_WS extends Stage {
 
 	// Selected workspace
 	private String path;
+	private SystemHandler systemHandler;
 
 	public Box_WS(Stage owner) {
 		super();
@@ -78,11 +80,15 @@ public class Box_WS extends Stage {
 			pathF.setText("");
 		});
 		browseB.setOnAction(e -> {
-			FileChooser wsChooser = new FileChooser();
+			// FileChooser wsChooser = new FileChooser();
+			DirectoryChooser wsChooser = new DirectoryChooser();
 			wsChooser.setTitle("Select New Workspace");
-			// Filter
-			wsChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Images", "*.Folder"));
-			wsChooser.showOpenDialog(this);
+			File selectedDirectory = wsChooser.showDialog(this);
+			pathF.setText(selectedDirectory.toString());
+			if(systemHandler==null){
+				systemHandler=new SystemHandler();
+			}
+			systemHandler.setDefaultWorkspace(selectedDirectory.toString());
 		});
 	}
 

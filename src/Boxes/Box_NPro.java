@@ -1,7 +1,6 @@
 package Boxes;
 
-import java.io.File;
-
+import Database.SystemHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,7 +10,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -29,12 +27,17 @@ public class Box_NPro extends Stage {
 
 	// Return Value
 	private String value;
+	private SystemHandler systemHandler;
 
 	public Box_NPro(Stage owner, String workspacePath) {
 		super();
 		initModality(Modality.WINDOW_MODAL); // Prevent click parent stage
 		initOwner(owner);
 		setResizable(false);
+		if(systemHandler==null){
+			systemHandler=new SystemHandler();
+		}
+		
 		value = "default";
 		setTitle("New Project");
 		BorderPane pane = new BorderPane();
@@ -55,8 +58,9 @@ public class Box_NPro extends Stage {
 		wsL = new Label("Workspace");
 		wsL.setStyle("-fx-padding: 5 0 5 0;");
 		wsF = new TextField();
+		wsF.setPrefWidth(200);
 		// Default workspace
-		wsF.setText(workspacePath);
+		wsF.setText(systemHandler.getDefaultWorkspace());
 		wsB = new Button("Change");
 
 		wsP.addRow(0, wsL);
