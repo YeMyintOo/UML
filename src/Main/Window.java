@@ -1,6 +1,7 @@
 package Main;
 
 import java.io.File;
+import java.io.IOException;
 
 import Boxes.Box_Exit;
 import Boxes.Box_Feed;
@@ -61,17 +62,16 @@ public class Window extends Application {
 	// WorkSpace
 	protected TabPane tabPane; // Multiple WorkSpaces;
 	protected WorkSpace workspace;
-	
-	
-	//Dynamic Variables and loaded variables
+
+	// Dynamic Variables and loaded variables
 	private String workspaceVar;
-	
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		stage = primaryStage;
 		screen = new ScreenDetail();
 		tabPane = new TabPane();
-		
+
 		root = new BorderPane();
 		MenuBar bar = new MenuBar();
 		Menu file = new Menu("File");
@@ -135,7 +135,7 @@ public class Window extends Application {
 
 		// Actions///////////////////////////////////
 		nProject.setOnAction(e -> {
-			Box_NPro box = new Box_NPro(stage,workspaceVar);
+			Box_NPro box = new Box_NPro(stage, workspaceVar);
 			box.sizeToScene();
 			root.setDisable(true);
 			box.setAlwaysOnTop(true);
@@ -143,14 +143,14 @@ public class Window extends Application {
 			// Check Return value character
 			OpenProjectList list = null;
 			if (box.getValue().equals("finish")) {
-				list=new OpenProjectList();
+				list = new OpenProjectList();
 				list.getStartB().setOnAction(ee -> {
 					nFile.fire();
 				});
 				root.setCenter(list);
 			} else {
-				
-			}					
+
+			}
 			root.setDisable(false);
 		});
 		oProject.setOnAction(e -> {
@@ -166,7 +166,7 @@ public class Window extends Application {
 			root.setDisable(true);
 			box.setAlwaysOnTop(true);
 			box.showAndWait(); // Wait until close This Dialog
-			workspaceVar=box.getPath(); //Set workspace 
+			workspaceVar = box.getPath(); // Set workspace
 			root.setDisable(false);
 		});
 		nFile.setOnAction(e -> {
@@ -176,12 +176,12 @@ public class Window extends Application {
 			box.setAlwaysOnTop(true);
 			box.showAndWait(); // Wait until close This Dialog
 			// Check Return value character
-			if(box.getValue().equals("finish")){
-				root.setCenter(tabPane); //Reassign
-				addWorkSpace(box.getFileName(), box.getType());
-			}else {
-				
-			}			
+			if (box.getValue().equals("finish")) {
+				root.setCenter(tabPane); // Reassign
+				addWorkSpace(box.getFileName(), box.getType(), box.getPath());
+			} else {
+
+			}
 			root.setDisable(false);
 		});
 		exit.setOnAction(e -> {
@@ -192,8 +192,8 @@ public class Window extends Application {
 			box.showAndWait(); // Wait until close This Dialog
 			root.setDisable(false);
 		});
-		
-		save.setOnAction(e->{
+
+		save.setOnAction(e -> {
 			Box_Save box = new Box_Save(stage);
 			box.sizeToScene();
 			root.setDisable(true);
@@ -219,12 +219,12 @@ public class Window extends Application {
 			box.showAndWait(); // Wait until close This Dialog
 			root.setDisable(false);
 		});
-		guide.setOnAction(e->{
+		guide.setOnAction(e -> {
 			Box_Guide box = new Box_Guide(stage);
 			box.sizeToScene();
 			box.show();
 		});
-		version.setOnAction(e->{
+		version.setOnAction(e -> {
 			Box_Version box = new Box_Version(stage);
 			box.sizeToScene();
 			root.setDisable(true);
@@ -233,8 +233,8 @@ public class Window extends Application {
 			box.showAndWait(); // Wait until close This Dialog
 			root.setDisable(false);
 		});
-		feedback.setOnAction(e->{
-			Box_Feed box=new Box_Feed(stage);
+		feedback.setOnAction(e -> {
+			Box_Feed box = new Box_Feed(stage);
 			box.sizeToScene();
 			root.setDisable(true);
 			box.setAlwaysOnTop(true);
@@ -246,14 +246,22 @@ public class Window extends Application {
 	}
 
 	// Add Tab in TabPane (New WorkSpace)
-	public void addWorkSpace(String name, int type) {
-		Tab tab = new Tab();
-		tab.setText(name);
-		workspace = new WorkSpace(type);
-		tab.setContent(workspace);
-		tabPane.getTabs().add(tab);
-	}
+	public void addWorkSpace(String name, int type, String path) {
+		// Create File (Filename.xml)
+		File file = new File(path + "\\" + name + ".xml");
+		try {
+			file.createNewFile();
+			System.out.println("Created Project file");
+			Tab tab = new Tab();
+			tab.setText(name);
+			workspace = new WorkSpace(type);
+			tab.setContent(workspace);
+			tabPane.getTabs().add(tab);
+		} catch (Exception e) {
+		}
 
+	}
+	//Main Function
 	public static void main(String[] args) {
 		Application.launch(args);
 	}

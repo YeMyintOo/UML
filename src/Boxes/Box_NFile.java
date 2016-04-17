@@ -23,6 +23,7 @@ public class Box_NFile extends Stage {
 
 	private String fileName;
 	private int type;
+	private String path;
 
 	private TextField nameF;// Name for Diagram
 	private Label isnamed; // Already name?
@@ -53,10 +54,10 @@ public class Box_NFile extends Stage {
 		value = "default";
 		initModality(Modality.WINDOW_MODAL); // Prevent click parent stage
 		initOwner(owner);
-		if(sysHandler==null){
-			sysHandler=new SystemHandler();
+		if (sysHandler == null) {
+			sysHandler = new SystemHandler();
 		}
-		
+
 		setTitle("Choose New Diagram");
 
 		BorderPane pane = new BorderPane();
@@ -74,6 +75,7 @@ public class Box_NFile extends Stage {
 		pathF = new TextField();
 		pathF.setPrefWidth(200);
 		pathF.setText(sysHandler.getDefaultProject());
+		setPath(pathF.getText().trim());
 		Label pathL = new Label("Path");
 		pathB = new Button("Browse");
 		p1.addRow(1, pathL, pathF, pathB);
@@ -148,6 +150,7 @@ public class Box_NFile extends Stage {
 			wsChooser.setTitle("Select Project");
 			File selectedDirectory = wsChooser.showDialog(this);
 			pathF.setText(selectedDirectory.toString());
+			setPath(pathF.getText().trim());
 		});
 
 	}
@@ -190,6 +193,14 @@ public class Box_NFile extends Stage {
 
 	public void setType(int type) {
 		this.type = type;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 
 	public void setValue(String value) {
