@@ -5,6 +5,7 @@ public class OS {
 
 	public OS() {
 		OS = System.getProperty("os.name").toLowerCase();
+		
 	}
 
 	public static boolean isWindows() {
