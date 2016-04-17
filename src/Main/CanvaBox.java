@@ -26,6 +26,8 @@ public class CanvaBox extends Pane {
 				toolHandler = new ToolHandler();
 				String colorS = toolHandler.getColor();
 				color = Color.web(colorS); // Dynamic color from ToolHander.xml
+				//Check Tool From ToolHandler.xml
+				
 				sline = new SLine(color);
 				sline.setStartX(e.getX());
 				sline.setStartY(e.getY());

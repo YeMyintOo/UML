@@ -39,7 +39,7 @@ public class Window extends Application {
 	protected MenuItem paste;// Paste
 	protected MenuItem cut; // Cut
 	protected MenuItem select; // Select
-	protected MenuItem selectAll; // Select All
+	protected MenuItem selectAll; // Select Alls
 	protected MenuItem delete; // Delete
 
 	protected MenuItem ruler; // Ruler
