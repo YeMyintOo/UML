@@ -123,16 +123,16 @@ public class Window extends Application {
 		root.setCenter(tabPane);
 		scene = new Scene(root, screen.getWidth(), screen.getHeight());
 
+		// Design
+		File f = new File("Resources/Css/MenuDesign.css");
+		scene.getStylesheets().clear();
+		scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+
 		stage.setScene(scene);
 		stage.setFullScreen(true);
 		stage.setTitle("UML Deisgn Tool");
 		stage.centerOnScreen();
 		stage.show();
-
-		// Design
-		File f = new File("Resources/Css/MenuDesign.css");
-		scene.getStylesheets().clear();
-		scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
 
 		if (sysHandler == null) {
 			sysHandler = new SystemHandler();
@@ -153,6 +153,7 @@ public class Window extends Application {
 				list.getStartB().setOnAction(ee -> {
 					nFile.fire();
 				});
+
 				root.setCenter(list);
 			} else {
 

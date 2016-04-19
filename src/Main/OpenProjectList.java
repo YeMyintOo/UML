@@ -4,15 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.Date;
+
+import Database.SystemHandler;
 import Library.Project;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -26,19 +28,22 @@ public class OpenProjectList extends BorderPane {
 	private ObservableList<Project> data;
 
 	// Action Bar
-	private Button browseB;
 	private Button selectB;
 	private Button defaultB;
 
 	// Start Button
 	private Button startB; // Start drawing
-	private String workspacePath;
+	private String workspacePath; // Workspace Path
+	private String project;// Selected Project Path
+	private SystemHandler sysHandler;
 
 	public OpenProjectList(String workspacePath) {
 		this.workspacePath = workspacePath;
 		// Action Bar
 		BorderPane tableP = new BorderPane();
 		table = new TableView<>();
+
+		table.setPlaceholder(new Label("No Project exist in this Workspace"));
 		tableP.setStyle("-fx-padding:100 50 0 50;");
 		loadColumns(); // Call Calumns
 		tableP.setTop(table);
@@ -56,23 +61,24 @@ public class OpenProjectList extends BorderPane {
 		box.setSpacing(10);
 		box.setAlignment(Pos.TOP_RIGHT);
 		box.setStyle("-fx-padding:20 50 0 50;");
-		browseB = new Button("Browse");
 		selectB = new Button("Select");
 		defaultB = new Button("Default");
-		box.getChildren().addAll(browseB, selectB, defaultB);
+		box.getChildren().addAll(selectB, defaultB);
 
 		setTop(tableP);
 		setCenter(box);
 		setBottom(sbox);
 
-		browseB.setOnAction(e -> {
-
-		});
+		if (sysHandler == null) {
+			sysHandler = new SystemHandler();
+		}
 		selectB.setOnAction(e -> {
-
+			Project project = table.getSelectionModel().getSelectedItem();
+			sysHandler.setSelectProject(project.getWspace());
 		});
 		defaultB.setOnAction(e -> {
-
+			Project project = table.getSelectionModel().getSelectedItem();
+			sysHandler.setDefaultProject(project.getWspace());
 		});
 		startB.setOnMouseEntered(e -> {
 			startB.setStyle("-fx-background-color: rgb(176,196,222);" + "-fx-text-fill: rgb(0,0,255);"
@@ -92,8 +98,10 @@ public class OpenProjectList extends BorderPane {
 		name.setCellValueFactory(new PropertyValueFactory<>("name"));
 		TableColumn cdate = new TableColumn("Created Date");
 		cdate.setCellValueFactory(new PropertyValueFactory<>("cdate"));
-		//TableColumn mdate = new TableColumn("Modified Name");
-		//mdate.setCellValueFactory(new PropertyValueFactory<>("mdate"));
+		TableColumn wspace = new TableColumn("WorkSpace");
+		wspace.setCellValueFactory(new PropertyValueFactory<>("wspace"));
+		// TableColumn mdate = new TableColumn("Modified Name");
+		// mdate.setCellValueFactory(new PropertyValueFactory<>("mdate"));
 
 		System.out.println("Width" + table.getWidth());
 
@@ -103,9 +111,9 @@ public class OpenProjectList extends BorderPane {
 		// Add add
 		data = FXCollections.observableArrayList();
 		table.setItems(data);
-		//table.getColumns().addAll(name, cdate, mdate);
-		table.getColumns().addAll(name, cdate);
-		
+		// table.getColumns().addAll(name, cdate, mdate);
+		table.getColumns().addAll(name, cdate, wspace);
+
 		// Loop
 		File path = new File(workspacePath);
 		File[] directories = path.listFiles(File::isDirectory);
@@ -113,18 +121,26 @@ public class OpenProjectList extends BorderPane {
 			Path p = directories[i].toPath();
 			try {
 				BasicFileAttributes view = Files.getFileAttributeView(p, BasicFileAttributeView.class).readAttributes();
-				Date create=new Date(view.creationTime().toMillis());
-				Date modi=new Date(view.lastModifiedTime().toMillis());
-				data.add(new Project(directories[i].getName(),create.toString(),modi.toString()));
+				Date create = new Date(view.creationTime().toMillis());
+				Date modi = new Date(view.lastModifiedTime().toMillis());
+				data.add(new Project(directories[i].getName(), create.toString(), modi.toString(),
+						directories[i].toString()));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 
-				
 	}
 
 	public Button getStartB() {
 		return startB;
+	}
+
+	public String getProject() {
+		return project;
+	}
+
+	public void setProject(String project) {
+		this.project = project;
 	}
 }

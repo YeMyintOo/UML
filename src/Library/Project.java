@@ -3,14 +3,16 @@ package Library;
 import javafx.beans.property.SimpleStringProperty;
 
 public class Project {
-	private final SimpleStringProperty name;
-	private final SimpleStringProperty cdate;
-	private final SimpleStringProperty mdate;
+	private final SimpleStringProperty name; // Project Name
+	private final SimpleStringProperty cdate;// Created Date
+	private final SimpleStringProperty mdate; // Modified Date
+	private final SimpleStringProperty wspace; // Work Space
 
-	public Project(String name, String cdate, String mdate) {
+	public Project(String name, String cdate, String mdate, String wspace) {
 		this.name = new SimpleStringProperty(name);
 		this.cdate = new SimpleStringProperty(cdate);
 		this.mdate = new SimpleStringProperty(mdate);
+		this.wspace = new SimpleStringProperty(wspace);
 	}
 
 	public String getName() {
@@ -35,6 +37,14 @@ public class Project {
 
 	public void setMdate(String mdateS) {
 		mdate.set(mdateS);
+	}
+	
+	public String getWspace() {
+		return wspace.get();
+	}
+
+	public void setWspace(String wspaceS) {
+		wspace.set(wspaceS);
 	}
 
 }

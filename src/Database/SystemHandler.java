@@ -87,5 +87,32 @@ public class SystemHandler {
 		}
 		return pro;
 	}
+	
+	//Set Select Project
+	public void setSelectProject(String selectProject) {
+		try {
+			Node req = doc.getElementsByTagName("Select-project").item(0);
+			req.setTextContent(selectProject);
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource domSource = new DOMSource(doc);
+			StreamResult streamResult = new StreamResult(new File("System.xml"));
+			transformer.transform(domSource, streamResult);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
+	}
+	//Get Select Project
+	public String getSelectProject() {
+		String pro = null;
+		nList = doc.getElementsByTagName("Select-project");
+		for (int temp = 0; temp < nList.getLength(); temp++) {
+			Node nNode = nList.item(temp);
+			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+				pro = nNode.getTextContent();
+			}
+		}
+		return pro;
+	}
 }

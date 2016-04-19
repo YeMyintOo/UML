@@ -47,6 +47,7 @@ public class Box_NFile extends Stage {
 	// Return value
 	private String value;
 	private SystemHandler sysHandler;
+	
 
 	public Box_NFile(Stage owner) {
 		super();
@@ -54,9 +55,8 @@ public class Box_NFile extends Stage {
 		value = "default";
 		initModality(Modality.WINDOW_MODAL); // Prevent click parent stage
 		initOwner(owner);
-		if (sysHandler == null) {
-			sysHandler = new SystemHandler();
-		}
+		sysHandler = new SystemHandler();
+		
 
 		setTitle("Choose New Diagram");
 
@@ -74,7 +74,11 @@ public class Box_NFile extends Stage {
 		p1.addRow(0, nameL, nameF, isnamed); // Add Components in Row 0
 		pathF = new TextField();
 		pathF.setPrefWidth(200);
-		pathF.setText(sysHandler.getDefaultProject());
+		if(sysHandler.getSelectProject().equals("")){
+			pathF.setText(sysHandler.getDefaultProject());
+		}else{
+			pathF.setText(sysHandler.getSelectProject());
+		}
 		setPath(pathF.getText().trim());
 		Label pathL = new Label("Path");
 		pathB = new Button("Browse");
