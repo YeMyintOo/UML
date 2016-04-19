@@ -1,7 +1,6 @@
 package Main;
 
 import java.io.File;
-
 import Boxes.Box_Exit;
 import Boxes.Box_Feed;
 import Boxes.Box_Guide;
@@ -14,6 +13,7 @@ import Boxes.Box_Version;
 import Boxes.Box_WS;
 import Calculate.ScreenDetail;
 import Database.SystemHandler;
+import Library.BuildCanvaXML;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -257,7 +257,7 @@ public class Window extends Application {
 		// Create File (Filename.xml)
 		File file = new File(path + "\\" + name + ".xml");
 		try {
-			file.createNewFile();
+			new BuildCanvaXML(file); //Build XML file with Element Node
 			System.out.println("Created Project file");
 			Tab tab = new Tab();
 			tab.setText(name);

@@ -2,10 +2,9 @@ package Boxes;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
 
 import Database.SystemHandler;
+import Library.BuildPropertiesXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -141,7 +140,8 @@ public class Box_NPro extends Stage {
 
 	public void createProjectProperties(String path) throws IOException, InterruptedException {
 		File file = new File(path + "\\Properties.xml");
-		file.createNewFile();
+		//file.createNewFile();
+		new BuildPropertiesXML(file);		
 		System.out.println("Create Project Properties File");
 		// Hidden Properties File
 		// Window Only
