@@ -107,6 +107,7 @@ public class OpenProjectList extends BorderPane {
 
 		name.setMinWidth(400);
 		cdate.setMinWidth(400);
+		wspace.setMinWidth(400);
 
 		// Add add
 		data = FXCollections.observableArrayList();

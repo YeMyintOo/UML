@@ -258,10 +258,9 @@ public class Window extends Application {
 		File file = new File(path + "\\" + name + ".xml");
 		try {
 			new BuildCanvaXML(file); //Build XML file with Element Node
-			System.out.println("Created Project file");
 			Tab tab = new Tab();
 			tab.setText(name);
-			workspace = new WorkSpace(type);
+			workspace = new WorkSpace(type,file);
 			tab.setContent(workspace);
 			tabPane.getTabs().add(tab);
 		} catch (Exception e) {

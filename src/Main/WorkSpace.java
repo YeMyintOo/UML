@@ -1,5 +1,8 @@
 package Main;
 
+import java.io.File;
+
+import CanvaBoxs.*;
 import Database.ToolHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
@@ -18,18 +21,16 @@ public class WorkSpace extends BorderPane {
 	private CheckBox grid; // Grid lines
 
 	private int type;
-	private CanvaBox canva;
 	private ToolHandler toolHandler; // To set and get Selected Tool;
 
-	public WorkSpace(int type) {
+	public WorkSpace(int type,File file) {
 		this.type = type;
 		toolHandler = new ToolHandler();
 		// Drawing Area
 		work = new BorderPane();
 		work.setStyle("-fx-background-color:white;" + "-fx-border-style: solid inside;" + "-fx-border-width: 2;"
 				+ "-fx-border-insets: 5;" + "-fx-border-radius: 5;" + "-fx-border-color: blue;");
-		canva = new CanvaBox();
-		work.setCenter(canva);
+		
 		// Tool Box
 
 		tool = new BorderPane();
@@ -67,31 +68,40 @@ public class WorkSpace extends BorderPane {
 	public void RenderTool() {
 
 		switch (type) {
-		case 1:
+		case 1: //Use_Case
+			work.setCenter(new UseCaseCanvaBox()); 
 			tool.setCenter(UseCaseToolBox());
 			break;
-		case 2:
+		case 2://Object
+			work.setCenter(new ObjectCanvaBox());
 			tool.setCenter(ObjectToolBox());
 			break;
-		case 3:
+		case 3://Sequence
+			work.setCenter(new SequenceCanvaBox());
 			tool.setCenter(SequenceToolBox());
 			break;
-		case 4:
+		case 4://Collaboration
+			work.setCenter(new CollaborationCanvaBox());
 			tool.setCenter(CollaborationToolBox());
 			break;
-		case 5:
+		case 5://Class
+			work.setCenter(new ClassCanvaBox());
 			tool.setCenter(ClassToolBox());
 			break;
-		case 6:
+		case 6://State Chart
+			work.setCenter(new StatechartCanvaBox());
 			tool.setCenter(StateChartToolBox());
 			break;
-		case 7:
+		case 7://Activity
+			work.setCenter(new ActivityCanvaBox());
 			tool.setCenter(ActivityToolBox());
 			break;
-		case 8:
+		case 8://Component
+			work.setCenter(new ComponentCanvaBox());
 			tool.setCenter(ComponentToolBox());
 			break;
-		case 9:
+		case 9://Deployment
+			work.setCenter(new DeploymentCanvaBox());
 			tool.setCenter(DeploymentToolBox());
 			break;
 		}
