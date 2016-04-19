@@ -1,7 +1,6 @@
 package Main;
 
 import java.io.File;
-import java.io.IOException;
 
 import Boxes.Box_Exit;
 import Boxes.Box_Feed;
@@ -14,6 +13,7 @@ import Boxes.Box_Save;
 import Boxes.Box_Version;
 import Boxes.Box_WS;
 import Calculate.ScreenDetail;
+import Database.SystemHandler;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -65,6 +65,7 @@ public class Window extends Application {
 
 	// Dynamic Variables and loaded variables
 	private String workspaceVar;
+	private SystemHandler sysHandler;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -133,6 +134,11 @@ public class Window extends Application {
 		scene.getStylesheets().clear();
 		scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
 
+		if (sysHandler == null) {
+			sysHandler = new SystemHandler();
+		}
+		workspaceVar = sysHandler.getDefaultWorkspace();
+
 		// Actions///////////////////////////////////
 		nProject.setOnAction(e -> {
 			Box_NPro box = new Box_NPro(stage, workspaceVar);
@@ -143,7 +149,7 @@ public class Window extends Application {
 			// Check Return value character
 			OpenProjectList list = null;
 			if (box.getValue().equals("finish")) {
-				list = new OpenProjectList();
+				list = new OpenProjectList(workspaceVar);
 				list.getStartB().setOnAction(ee -> {
 					nFile.fire();
 				});
@@ -154,7 +160,7 @@ public class Window extends Application {
 			root.setDisable(false);
 		});
 		oProject.setOnAction(e -> {
-			OpenProjectList list = new OpenProjectList();
+			OpenProjectList list = new OpenProjectList(workspaceVar);
 			root.setCenter(list);
 			list.getStartB().setOnAction(ee -> {
 				nFile.fire();
@@ -261,7 +267,8 @@ public class Window extends Application {
 		}
 
 	}
-	//Main Function
+
+	// Main Function
 	public static void main(String[] args) {
 		Application.launch(args);
 	}

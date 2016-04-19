@@ -1,8 +1,18 @@
 package Main;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
+import Library.Project;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -12,7 +22,8 @@ import javafx.scene.layout.HBox;
 public class OpenProjectList extends BorderPane {
 	// For open Project Menu Action
 
-	private TableView<String> table;
+	private TableView<Project> table;
+	private ObservableList<Project> data;
 
 	// Action Bar
 	private Button browseB;
@@ -21,12 +32,13 @@ public class OpenProjectList extends BorderPane {
 
 	// Start Button
 	private Button startB; // Start drawing
+	private String workspacePath;
 
-	public OpenProjectList() {
-
+	public OpenProjectList(String workspacePath) {
+		this.workspacePath = workspacePath;
 		// Action Bar
 		BorderPane tableP = new BorderPane();
-		table = new TableView<String>();
+		table = new TableView<>();
 		tableP.setStyle("-fx-padding:100 50 0 50;");
 		loadColumns(); // Call Calumns
 		tableP.setTop(table);
@@ -52,7 +64,7 @@ public class OpenProjectList extends BorderPane {
 		setTop(tableP);
 		setCenter(box);
 		setBottom(sbox);
-		
+
 		browseB.setOnAction(e -> {
 
 		});
@@ -76,20 +88,42 @@ public class OpenProjectList extends BorderPane {
 	// Create Columns
 	@SuppressWarnings("unchecked")
 	public void loadColumns() {
-		TableColumn<String, ?> name = new TableColumn<String, Object>("Project Name");
-		TableColumn<String, ?> workspace = new TableColumn<String, Object>("Workspace");
-		TableColumn<String, ?> cdate = new TableColumn<String, Object>("Created Date"); // Created
-																						// date
+		TableColumn name = new TableColumn("Project Name");
+		name.setCellValueFactory(new PropertyValueFactory<>("name"));
+		TableColumn cdate = new TableColumn("Created Date");
+		cdate.setCellValueFactory(new PropertyValueFactory<>("cdate"));
+		//TableColumn mdate = new TableColumn("Modified Name");
+		//mdate.setCellValueFactory(new PropertyValueFactory<>("mdate"));
+
 		System.out.println("Width" + table.getWidth());
 
 		name.setMinWidth(400);
-		workspace.setMinWidth(500);
 		cdate.setMinWidth(400);
 
 		// Add add
+		data = FXCollections.observableArrayList();
+		table.setItems(data);
+		//table.getColumns().addAll(name, cdate, mdate);
+		table.getColumns().addAll(name, cdate);
+		
+		// Loop
+		File path = new File(workspacePath);
+		File[] directories = path.listFiles(File::isDirectory);
+		for (int i = 0; i < directories.length; i++) {
+			Path p = directories[i].toPath();
+			try {
+				BasicFileAttributes view = Files.getFileAttributeView(p, BasicFileAttributeView.class).readAttributes();
+				Date create=new Date(view.creationTime().toMillis());
+				Date modi=new Date(view.lastModifiedTime().toMillis());
+				data.add(new Project(directories[i].getName(),create.toString(),modi.toString()));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
-		table.getColumns().addAll(name, workspace, cdate);
+				
 	}
+
 	public Button getStartB() {
 		return startB;
 	}

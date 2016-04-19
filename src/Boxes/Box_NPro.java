@@ -140,7 +140,7 @@ public class Box_NPro extends Stage {
 	}
 
 	public void createProjectProperties(String path) throws IOException, InterruptedException {
-		File file = new File(path + "\\properties.xml");
+		File file = new File(path + "\\Properties.xml");
 		file.createNewFile();
 		System.out.println("Create Project Properties File");
 		// Hidden Properties File
