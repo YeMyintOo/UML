@@ -1,21 +1,27 @@
 package Canvas;
 
-import javafx.scene.shape.QuadCurve;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 
-public class SCurve extends QuadCurve {
+public class UC_ActoionLine extends Line{
 	private double startx;
 	private double starty;
 	private double endx;
 	private double endy;
-	private double anglex;
-	private double angley;
+	private Color  color;
 
-	public SCurve() {
-		this(0, 0, 0, 0, 0, 0);
+	public UC_ActoionLine() {
+		super(0, 0, 0, 0);
 	}
 
-	public SCurve(int startx, int starty, int anglex, int angley, int endx, int endy) {
-		super(startx, starty, anglex, angley, endx, endy);
+	public UC_ActoionLine(double startx,double starty,double endx,double endy) {
+		super(startx, starty,endx, endy);
+		setStartx(startx);
+		setStarty(starty);
+		setEndx(endx);
+		setEndy(endy);
+		setColor(Color.BLACK);
+		
 	}
 
 	public double getStartx() {
@@ -40,6 +46,7 @@ public class SCurve extends QuadCurve {
 
 	public void setEndx(double endx) {
 		this.endx = endx;
+		setEndX(endx);
 	}
 
 	public double getEndy() {
@@ -48,22 +55,15 @@ public class SCurve extends QuadCurve {
 
 	public void setEndy(double endy) {
 		this.endy = endy;
+		setEndY(endy);
 	}
 
-	public double getAnglex() {
-		return anglex;
+	public Color getColor() {
+		return color;
 	}
 
-	public void setAnglex(double anglex) {
-		this.anglex = anglex;
+	public void setColor(Color color) {
+		this.color = color;
+		setFill(color);
 	}
-
-	public double getAngley() {
-		return angley;
-	}
-
-	public void setAngley(double angley) {
-		this.angley = angley;
-	}
-
 }
