@@ -116,7 +116,6 @@ public class UseCaseCanvaBox extends Pane {
 				if (isIncludeLine) {
 					includeLine.setEndX(e.getX());
 					includeLine.setEndY(e.getY());
-
 					System.out.println(" Include Line is Dragged");
 				}
 			}
@@ -149,7 +148,7 @@ public class UseCaseCanvaBox extends Pane {
 		});
 
 	}
-
+	
 	public void LineArrowHead(Line line) {
 		double startx = line.getStartX();
 		double starty = line.getStartY();
@@ -187,37 +186,42 @@ public class UseCaseCanvaBox extends Pane {
 		double midx = (startx + endx) * 0.5;
 		double midy = (starty + endy) * 0.5;
 		double slope = (starty - endy) / (startx - endx);
-		
-	
-		
-		if(startx<endx && starty<endy){
+
+		if (startx < endx && starty < endy) {
 			System.out.println(" Figure 1");
-			Path p1 = new Path();
-			p1.getElements().add(new MoveTo(startx, starty));
-			double dif=endy-starty;
-			p1.getElements().add(new LineTo(startx,starty+dif));
-			getChildren().addAll(p1);
-			Path p2 = new Path();
-			
-		}else if(startx>endx && starty>endy){
+
+			getChildren().addAll(new Text(midx + 5, midy, "<<include>>"));
+
+		} else if (startx > endx && starty > endy) {
 			System.out.println(" Figure 2");
-		}else if(startx>endx && starty<endy){
+			getChildren().addAll(new Text(midx + 5, midy, "<<include>>"));
+
+		} else if (startx > endx && starty < endy) {
 			System.out.println(" Figure 3");
-		}else if(startx<endx && starty>endy){
+			getChildren().addAll(new Text(midx + 5, midy, "<<include>>"));
+
+		} else if (startx < endx && starty > endy) {
 			System.out.println(" Figure 4");
-		}else if(startx<endx && starty==endy){
+			getChildren().addAll(new Text(midx + 5, midy, "<<include>>"));
+
+		} else if (startx < endx && starty == endy) {
 			System.out.println(" Figure 5");
-		}else if(startx>endx && starty==endy){
+			getChildren().addAll(new Text(midx - 10, midy - 20, "<<include>>"));
+
+		} else if (startx > endx && starty == endy) {
 			System.out.println(" Figure 6");
-		}else if(startx==endx && starty<endy){
+			getChildren().addAll(new Text(midx - 10, midy - 20, "<<include>>"));
+
+		} else if (startx == endx && starty < endy) {
 			System.out.println(" Figure 7");
-		}else if(startx==endx && starty>endy){
+			getChildren().addAll(new Text(midx - 15, midy, "<<include>>"));
+
+		} else if (startx == endx && starty > endy) {
 			System.out.println(" Figure 8");
-		}else{
-			
+			getChildren().addAll(new Text(midx - 15, midy, "<<include>>"));
+		} else {
+
 		}
-		
-		//getChildren().addAll(new Text(midx, midy, "<<include>>"));
 
 	}
 
