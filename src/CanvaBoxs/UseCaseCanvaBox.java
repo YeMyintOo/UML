@@ -2,26 +2,53 @@ package CanvaBoxs;
 
 import java.util.ArrayList;
 
-import Canvas.UC_ActoionLine;
+import Canvas.UC_ActionLine;
+import Canvas.UC_Box;
+import Canvas.UC_IncludeLine;
+import Canvas.UC_ProcessCycle;
 import Database.ToolHandler;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 
 public class UseCaseCanvaBox extends Pane {
 	// Only Use Case Components Can Draw
 	private ToolHandler toolHandler;
 	private Color color;
 
-	private ArrayList<UC_ActoionLine> actionLines;
-	private UC_ActoionLine actionLine;
+	// Action
+	private ArrayList<UC_ActionLine> actionLines;
+	private UC_ActionLine actionLine;
 	private boolean isActionLine;
 
+	// Process
+	private ArrayList<UC_ProcessCycle> processCycles;
+	private UC_ProcessCycle processCycle;
+	private boolean isProcessCycle;
+
+	// Box
+	private ArrayList<UC_Box> boxs;
+	private UC_Box box;
+	private boolean isBox;
+
+	// IncludeLine
+	private ArrayList<UC_IncludeLine> includeLines;
+	private UC_IncludeLine includeLine;
+	private boolean isIncludeLine;
+
 	public UseCaseCanvaBox() {
-		actionLines = new ArrayList<UC_ActoionLine>();
+		actionLines = new ArrayList<UC_ActionLine>();
+		processCycles = new ArrayList<UC_ProcessCycle>();
+		boxs = new ArrayList<UC_Box>();
+		includeLines = new ArrayList<UC_IncludeLine>();
 		// InitState
-		isActionLine = false;
+		resetBooleans();
 
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
@@ -34,19 +61,35 @@ public class UseCaseCanvaBox extends Pane {
 				switch (tool) {
 				case "UseCase_Actor":
 					break;
+
 				case "UseCase_Action":
-					actionLine = new UC_ActoionLine(e.getX(), e.getY(), e.getX(), e.getY());
+					actionLine = new UC_ActionLine(e.getX(), e.getY(), e.getX(), e.getY());
 					isActionLine = true;
 					getChildren().add(actionLine);
 					break;
+
 				case "UseCase_Box":
+					box = new UC_Box(e.getX(), e.getY(), 100, 200);
+					isBox = true;
+					getChildren().add(box);
 					break;
+
 				case "UseCase_Process":
+					processCycle = new UC_ProcessCycle(e.getX(), e.getY(), 60, 30);
+					isProcessCycle = true;
+					getChildren().add(processCycle);
 					break;
+
 				case "UseCase_Extend":
 					break;
+
 				case "UseCase_Include":
+					includeLine = new UC_IncludeLine(e.getX(), e.getY(), e.getX(), e.getY());
+					isIncludeLine = true;
+					getChildren().add(includeLine);
+					System.out.println(" Include Line is Pressed");
 					break;
+
 				case "UseCase_Type":
 					break;
 				}
@@ -61,8 +104,23 @@ public class UseCaseCanvaBox extends Pane {
 					actionLine.setEndx(e.getX());
 					actionLine.setEndy(e.getY());
 				}
+				if (isProcessCycle) {
+					processCycle.setCenterx(e.getX());
+					processCycle.setCenterY(e.getY());
+				}
+				if (isBox) {
+					box.setX(e.getX());
+					box.setY(e.getY());
+				}
+				if (isIncludeLine) {
+					includeLine.setEndX(e.getX());
+					includeLine.setEndY(e.getY());
+					
+					System.out.println(" Include Line is Dragged");
+				}
 			}
 		});
+		
 
 		setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
@@ -71,10 +129,57 @@ public class UseCaseCanvaBox extends Pane {
 					actionLines.add(actionLine);
 					actionLine = null;
 				}
-
+				if (isProcessCycle) {
+					processCycles.add(processCycle);
+					processCycle = null;
+				}
+				if (isBox) {
+					boxs.add(box);
+					box = null;
+				}
+				if (isIncludeLine) {
+					LineArrowHead(includeLine);
+					includeLines.add(includeLine);
+					includeLine = null;
+				}
+				resetBooleans();
 			}
 		});
 
 	}
+	public void LineArrowHead(Line line){
+		double startx = line.getStartX();
+		double starty = line.getStartY();
+		double endx = line.getEndX();
+		double endy = line.getEndY();
+
+		// Arrow Head
+		double x, y, length;
+		Point2D end = new Point2D(endx, endy);
+		length = Math.sqrt((endx - startx) * (endx - startx) + (endy - starty) * (endy - starty));
+		x = (endx - startx) / length;
+		y = (endy - starty) / length;
+		Point2D base = new Point2D(endx - x * 10, endy - y * 10);
+		Point2D back_top = new Point2D(base.getX() - 10 * y, base.getY() + 10 * x);
+		Point2D back_bottom = new Point2D(base.getX() + 10 * y, base.getY() - 10 * x);
+		Path top = new Path();
+		top.getElements().add(new MoveTo(endx, endy));
+		top.getElements().add(new LineTo(back_top.getX(), back_top.getY()));
+		
+		Path bot = new Path();
+		bot.getElements().add(new MoveTo(endx, endy));
+		bot.getElements().add(new LineTo(back_bottom.getX(), back_bottom.getY()));
+		
+		getChildren().addAll(top,bot);
+	}
 	
+
+	// initial State
+	public void resetBooleans() {
+		isActionLine = false;
+		isProcessCycle = false;
+		isBox = false;
+		isIncludeLine = false;
+	}
+
 }

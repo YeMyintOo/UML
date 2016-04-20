@@ -1,27 +1,39 @@
 package Canvas;
 
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
-public class UC_ActoionLine extends Line{
+public class UC_IncludeLine extends Line {
 	private double startx;
 	private double starty;
 	private double endx;
 	private double endy;
-	private Color  color;
+	private Color color;
 
-	public UC_ActoionLine() {
-		super(0, 0, 0, 0);
+	public UC_IncludeLine() {
+		super(0, 0,0, 0);
+
 	}
 
-	public UC_ActoionLine(double startx,double starty,double endx,double endy) {
-		super(startx, starty,endx, endy);
+	public UC_IncludeLine(double startx, double starty, double endx, double endy) {
+		super(startx, starty, endx, endy);
 		setStartx(startx);
 		setStarty(starty);
 		setEndx(endx);
 		setEndy(endy);
 		setColor(Color.BLACK);
-		
+
+	}
+
+	public UC_IncludeLine(double startx, double starty, double endx, double endy, Color color) {
+		super(startx, starty, endx, endy);
+		setStartx(startx);
+		setStarty(starty);
+		setEndx(endx);
+		setEndy(endy);
+		setColor(color);
+
 	}
 
 	public double getStartx() {
@@ -66,4 +78,5 @@ public class UC_ActoionLine extends Line{
 		this.color = color;
 		setFill(color);
 	}
+
 }
