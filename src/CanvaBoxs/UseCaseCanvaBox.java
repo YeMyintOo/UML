@@ -16,6 +16,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.text.Text;
 
 public class UseCaseCanvaBox extends Pane {
 	// Only Use Case Components Can Draw
@@ -63,13 +64,13 @@ public class UseCaseCanvaBox extends Pane {
 					break;
 
 				case "UseCase_Action":
-					actionLine = new UC_ActionLine(e.getX(), e.getY(), e.getX(), e.getY());
+					actionLine = new UC_ActionLine(e.getX(), e.getY(), e.getX(), e.getY(), color);
 					isActionLine = true;
 					getChildren().add(actionLine);
 					break;
 
 				case "UseCase_Box":
-					box = new UC_Box(e.getX(), e.getY(), 100, 200);
+					box = new UC_Box(e.getX(), e.getY(), 100, 200, color, Color.BLACK);
 					isBox = true;
 					getChildren().add(box);
 					break;
@@ -84,7 +85,7 @@ public class UseCaseCanvaBox extends Pane {
 					break;
 
 				case "UseCase_Include":
-					includeLine = new UC_IncludeLine(e.getX(), e.getY(), e.getX(), e.getY());
+					includeLine = new UC_IncludeLine(e.getX(), e.getY(), e.getX(), e.getY(), color);
 					isIncludeLine = true;
 					getChildren().add(includeLine);
 					System.out.println(" Include Line is Pressed");
@@ -115,12 +116,11 @@ public class UseCaseCanvaBox extends Pane {
 				if (isIncludeLine) {
 					includeLine.setEndX(e.getX());
 					includeLine.setEndY(e.getY());
-					
+
 					System.out.println(" Include Line is Dragged");
 				}
 			}
 		});
-		
 
 		setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
@@ -139,6 +139,8 @@ public class UseCaseCanvaBox extends Pane {
 				}
 				if (isIncludeLine) {
 					LineArrowHead(includeLine);
+					Linelabel(includeLine);
+
 					includeLines.add(includeLine);
 					includeLine = null;
 				}
@@ -147,7 +149,8 @@ public class UseCaseCanvaBox extends Pane {
 		});
 
 	}
-	public void LineArrowHead(Line line){
+
+	public void LineArrowHead(Line line) {
 		double startx = line.getStartX();
 		double starty = line.getStartY();
 		double endx = line.getEndX();
@@ -163,16 +166,60 @@ public class UseCaseCanvaBox extends Pane {
 		Point2D back_top = new Point2D(base.getX() - 10 * y, base.getY() + 10 * x);
 		Point2D back_bottom = new Point2D(base.getX() + 10 * y, base.getY() - 10 * x);
 		Path top = new Path();
+		top.setStroke(color);
 		top.getElements().add(new MoveTo(endx, endy));
 		top.getElements().add(new LineTo(back_top.getX(), back_top.getY()));
-		
+
 		Path bot = new Path();
+		bot.setStroke(color);
 		bot.getElements().add(new MoveTo(endx, endy));
 		bot.getElements().add(new LineTo(back_bottom.getX(), back_bottom.getY()));
-		
-		getChildren().addAll(top,bot);
+
+		getChildren().addAll(top, bot);
 	}
+
+	public void Linelabel(Line line) {
+		double startx = line.getStartX();
+		double starty = line.getStartY();
+		double endx = line.getEndX();
+		double endy = line.getEndY();
+
+		double midx = (startx + endx) * 0.5;
+		double midy = (starty + endy) * 0.5;
+		double slope = (starty - endy) / (startx - endx);
+		
 	
+		
+		if(startx<endx && starty<endy){
+			System.out.println(" Figure 1");
+			Path p1 = new Path();
+			p1.getElements().add(new MoveTo(startx, starty));
+			double dif=endy-starty;
+			p1.getElements().add(new LineTo(startx,starty+dif));
+			getChildren().addAll(p1);
+			Path p2 = new Path();
+			
+		}else if(startx>endx && starty>endy){
+			System.out.println(" Figure 2");
+		}else if(startx>endx && starty<endy){
+			System.out.println(" Figure 3");
+		}else if(startx<endx && starty>endy){
+			System.out.println(" Figure 4");
+		}else if(startx<endx && starty==endy){
+			System.out.println(" Figure 5");
+		}else if(startx>endx && starty==endy){
+			System.out.println(" Figure 6");
+		}else if(startx==endx && starty<endy){
+			System.out.println(" Figure 7");
+		}else if(startx==endx && starty>endy){
+			System.out.println(" Figure 8");
+		}else{
+			
+		}
+		
+		//getChildren().addAll(new Text(midx, midy, "<<include>>"));
+
+	}
 
 	// initial State
 	public void resetBooleans() {

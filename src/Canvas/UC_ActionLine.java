@@ -73,6 +73,6 @@ public class UC_ActionLine extends Line{
 
 	public void setColor(Color color) {
 		this.color = color;
-		setFill(color);
+		setStroke(color);
 	}
 }
