@@ -12,6 +12,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import javafx.scene.control.ScrollPane;
 
 public class WorkSpace extends BorderPane {
@@ -23,14 +24,15 @@ public class WorkSpace extends BorderPane {
 	private int type;
 	private ToolHandler toolHandler; // To set and get Selected Tool;
 
-	public WorkSpace(int type,File file) {
+	public WorkSpace(int type, File file) {
+		
 		this.type = type;
 		toolHandler = new ToolHandler();
 		// Drawing Area
 		work = new BorderPane();
 		work.setStyle("-fx-background-color:white;" + "-fx-border-style: solid inside;" + "-fx-border-width: 2;"
 				+ "-fx-border-insets: 5;" + "-fx-border-radius: 5;" + "-fx-border-color: blue;");
-		
+
 		// Tool Box
 
 		tool = new BorderPane();
@@ -68,39 +70,39 @@ public class WorkSpace extends BorderPane {
 	public void RenderTool() {
 
 		switch (type) {
-		case 1: //Use_Case
-			work.setCenter(new UseCaseCanvaBox()); 
+		case 1: // Use_Case
+			work.setCenter(new UseCaseCanvaBox());
 			tool.setCenter(UseCaseToolBox());
 			break;
-		case 2://Object
+		case 2:// Object
 			work.setCenter(new ObjectCanvaBox());
 			tool.setCenter(ObjectToolBox());
 			break;
-		case 3://Sequence
+		case 3:// Sequence
 			work.setCenter(new SequenceCanvaBox());
 			tool.setCenter(SequenceToolBox());
 			break;
-		case 4://Collaboration
+		case 4:// Collaboration
 			work.setCenter(new CollaborationCanvaBox());
 			tool.setCenter(CollaborationToolBox());
 			break;
-		case 5://Class
+		case 5:// Class
 			work.setCenter(new ClassCanvaBox());
 			tool.setCenter(ClassToolBox());
 			break;
-		case 6://State Chart
+		case 6:// State Chart
 			work.setCenter(new StatechartCanvaBox());
 			tool.setCenter(StateChartToolBox());
 			break;
-		case 7://Activity
+		case 7:// Activity
 			work.setCenter(new ActivityCanvaBox());
 			tool.setCenter(ActivityToolBox());
 			break;
-		case 8://Component
+		case 8:// Component
 			work.setCenter(new ComponentCanvaBox());
 			tool.setCenter(ComponentToolBox());
 			break;
-		case 9://Deployment
+		case 9:// Deployment
 			work.setCenter(new DeploymentCanvaBox());
 			tool.setCenter(DeploymentToolBox());
 			break;

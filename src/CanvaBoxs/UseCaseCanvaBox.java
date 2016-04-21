@@ -12,6 +12,9 @@ import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Dialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -21,6 +24,8 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class UseCaseCanvaBox extends Pane {
 	// Only Use Case Components Can Draw
@@ -70,7 +75,7 @@ public class UseCaseCanvaBox extends Pane {
 		extendLines = new ArrayList<UC_ExtendLine>();
 		typeofLines = new ArrayList<UC_TypeOfLine>();
 		actors = new ArrayList<UC_Actor>();
-		
+
 		// InitState
 		resetBooleans();
 
@@ -83,10 +88,8 @@ public class UseCaseCanvaBox extends Pane {
 				String tool = toolHandler.getTool();
 				color = Color.web(colorS);
 				// Check New Or Edit
-				;
-				//
-				if (isNewOrEdit(e)) {
 
+				if (isNewOrEdit(e)) {
 					switch (tool) {
 					case "UseCase_Actor":
 						actor = new UC_Actor(e.getX(), e.getY(), 20);
@@ -129,8 +132,8 @@ public class UseCaseCanvaBox extends Pane {
 						isTypeofLine = true;
 						getChildren().add(typeofLine);
 						break;
-					}//End switch
-				}//isNew end
+					}// End switch
+				} // isNew end
 			}
 		});
 
@@ -216,29 +219,46 @@ public class UseCaseCanvaBox extends Pane {
 	}
 
 	public boolean isNewOrEdit(MouseEvent e) {
-		boolean isNew=true;
-		if (actors.size() > 0) { //Actor
+		boolean isNew = true;
+		if (actors.size() > 0) { // Actor
 			for (int i = 0; i < actors.size(); i++) {
 				Point2D point = new Point2D(e.getX(), e.getY());
 				if (actors.get(i).contains(point)) {
 					isNew = false;
+					//////////////
+					openActorEditBox();
+					//////////////
 					break;
 				}
 			}
-		}//end of Actor
-		
-		if (processCycles.size() > 0) { //Process Cycle
+		} // end of Actor
+
+		if (processCycles.size() > 0) { // Process Cycle
 			for (int i = 0; i < processCycles.size(); i++) {
 				Point2D point = new Point2D(e.getX(), e.getY());
 				if (processCycles.get(i).contains(point)) {
 					isNew = false;
+					int index=i;
+					//////////////
+					setOnMouseDragged(new EventHandler<MouseEvent>(){
+						@Override
+						public void handle(MouseEvent e) {
+							processCycles.get(index).setCenterX(e.getX());
+							processCycles.get(index).setCenterY(e.getY());
+						}
+					});
+					//////////////
 					break;
 				}
 			}
-		}//end of Process Cycle
-	
+		} // end of Process Cycle
+
 		return isNew;
 	}
+	public void openActorEditBox(){
+		
+	}
+	
 
 	public void drawBody(Circle actor) {
 		double centerx = actor.getCenterX();
