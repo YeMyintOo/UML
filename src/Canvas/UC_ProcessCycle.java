@@ -4,6 +4,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 
 public class UC_ProcessCycle extends Ellipse {
+
 	private double centerx;
 	private double centery;
 	private double radiusx;
@@ -17,8 +18,7 @@ public class UC_ProcessCycle extends Ellipse {
 
 	public UC_ProcessCycle(double centerX, double centerY, double radiusX, double radiusY) {
 		super(centerX, centerY, radiusX, radiusY);
-		setFill(Color.WHITE);
-		setStroke(Color.BLACK);
+
 	}
 
 	public UC_ProcessCycle(double centerX, double centerY, double radiusX, double radiusY, Color bgcolor,
@@ -70,6 +70,7 @@ public class UC_ProcessCycle extends Ellipse {
 
 	public void setBgcolor(Color bgcolor) {
 		this.bgcolor = bgcolor;
+		setFill(bgcolor);
 	}
 
 	public Color getScolor() {
@@ -78,5 +79,7 @@ public class UC_ProcessCycle extends Ellipse {
 
 	public void setScolor(Color scolor) {
 		this.scolor = scolor;
+		setStroke(scolor);
 	}
+
 }

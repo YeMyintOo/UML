@@ -1,5 +1,6 @@
 package CanvaBoxs;
 
+import java.util.ArrayList;
 import Database.ToolHandler;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -11,20 +12,23 @@ public class ObjectCanvaBox extends Pane {
 	private ToolHandler toolHandler;
 	private Color color;
 
+	
+
 	public ObjectCanvaBox() {
-		setStyle("-fx-background-color:green");
+	
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
 				toolHandler = new ToolHandler();
 				String colorS = toolHandler.getColor();
-				String tool = toolHandler.getTool();// Check Tool From
-													// ToolHandler.xml
-				color = Color.web(colorS); // Dynamic color from ToolHander.xml
-
+				String tool = toolHandler.getTool();
+				color = Color.web(colorS);
 				switch (tool) {
-
-				case "":
+				case "ObjectD_Object":
+				
+					break;
+				case "ObjectD_link":
+				
 					break;
 				}
 
@@ -34,14 +38,17 @@ public class ObjectCanvaBox extends Pane {
 		setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
+				
 			}
 		});
 
 		setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
+				
 			}
 		});
 
 	}
+
 }

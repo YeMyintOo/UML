@@ -70,67 +70,74 @@ public class UseCaseCanvaBox extends Pane {
 		extendLines = new ArrayList<UC_ExtendLine>();
 		typeofLines = new ArrayList<UC_TypeOfLine>();
 		actors = new ArrayList<UC_Actor>();
+		
 		// InitState
 		resetBooleans();
 
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
+				System.out.println("Mouse Pressed");
 				toolHandler = new ToolHandler();
 				String colorS = toolHandler.getColor();
 				String tool = toolHandler.getTool();
 				color = Color.web(colorS);
+				// Check New Or Edit
+				;
+				//
+				if (isNewOrEdit(e)) {
 
-				switch (tool) {
-				case "UseCase_Actor":
-					actor = new UC_Actor(e.getX(), e.getY(), 20);
-					isActor = true;
-					getChildren().add(actor);
-					break;
+					switch (tool) {
+					case "UseCase_Actor":
+						actor = new UC_Actor(e.getX(), e.getY(), 20);
+						isActor = true;
+						getChildren().add(actor);
+						break;
 
-				case "UseCase_Action":
-					actionLine = new UC_ActionLine(e.getX(), e.getY(), e.getX(), e.getY(), color);
-					isActionLine = true;
-					getChildren().add(actionLine);
-					break;
+					case "UseCase_Action":
+						actionLine = new UC_ActionLine(e.getX(), e.getY(), e.getX(), e.getY(), color);
+						isActionLine = true;
+						getChildren().add(actionLine);
+						break;
 
-				case "UseCase_Box":
-					box = new UC_Box(e.getX(), e.getY(), 100, 200, color, Color.BLACK);
-					isBox = true;
-					getChildren().add(box);
-					break;
+					case "UseCase_Box":
+						box = new UC_Box(e.getX(), e.getY(), 100, 200, color, Color.BLACK);
+						isBox = true;
+						getChildren().add(box);
+						break;
 
-				case "UseCase_Process":
-					processCycle = new UC_ProcessCycle(e.getX(), e.getY(), 60, 30);
-					isProcessCycle = true;
-					getChildren().add(processCycle);
-					break;
+					case "UseCase_Process":
+						processCycle = new UC_ProcessCycle(e.getX(), e.getY(), 60, 30, color, Color.BLACK);
+						isProcessCycle = true;
+						getChildren().add(processCycle);
+						break;
 
-				case "UseCase_Extend":
-					extendLine = new UC_ExtendLine(e.getX(), e.getY(), e.getX(), e.getY(), color);
-					isExtendLine = true;
-					getChildren().add(extendLine);
-					break;
+					case "UseCase_Extend":
+						extendLine = new UC_ExtendLine(e.getX(), e.getY(), e.getX(), e.getY(), color);
+						isExtendLine = true;
+						getChildren().add(extendLine);
+						break;
 
-				case "UseCase_Include":
-					includeLine = new UC_IncludeLine(e.getX(), e.getY(), e.getX(), e.getY(), color);
-					isIncludeLine = true;
-					getChildren().add(includeLine);
-					break;
+					case "UseCase_Include":
+						includeLine = new UC_IncludeLine(e.getX(), e.getY(), e.getX(), e.getY(), color);
+						isIncludeLine = true;
+						getChildren().add(includeLine);
+						break;
 
-				case "UseCase_Type":
-					typeofLine = new UC_TypeOfLine(e.getX(), e.getY(), e.getX(), e.getY(), color);
-					isTypeofLine = true;
-					getChildren().add(typeofLine);
-					break;
-				}
-				
+					case "UseCase_Type":
+						typeofLine = new UC_TypeOfLine(e.getX(), e.getY(), e.getX(), e.getY(), color);
+						isTypeofLine = true;
+						getChildren().add(typeofLine);
+						break;
+					}//End switch
+				}//isNew end
 			}
 		});
 
 		setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
+				System.out.println("Mouse Dragged");
 				if (isActionLine) {
 					actionLine.setEndx(e.getX());
 					actionLine.setEndy(e.getY());
@@ -165,6 +172,7 @@ public class UseCaseCanvaBox extends Pane {
 		setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
+				System.out.println("Mouse Released");
 				if (isActionLine) {
 					actionLines.add(actionLine);
 					actionLine = null;
@@ -206,32 +214,57 @@ public class UseCaseCanvaBox extends Pane {
 		});
 
 	}
-	public void drawBody(Circle actor){
-		double centerx=actor.getCenterX();
-		double centery=actor.getCenterY();
-		Path body=new Path();
-		body.getElements().add(new MoveTo(centerx, centery+20));
-		body.getElements().add(new LineTo(centerx, centery+40));
+
+	public boolean isNewOrEdit(MouseEvent e) {
+		boolean isNew=true;
+		if (actors.size() > 0) { //Actor
+			for (int i = 0; i < actors.size(); i++) {
+				Point2D point = new Point2D(e.getX(), e.getY());
+				if (actors.get(i).contains(point)) {
+					isNew = false;
+					break;
+				}
+			}
+		}//end of Actor
 		
-		Path leg=new Path();
-		leg.getElements().add(new MoveTo(centerx, centery+20));
-		leg.getElements().add(new LineTo(centerx+10, centery+20+10));
-		
-		Path leg2=new Path();
-		leg2.getElements().add(new MoveTo(centerx, centery+20));
-		leg2.getElements().add(new LineTo(centerx-10, centery+20+10));
-		
-		Path leg3=new Path();
-		leg3.getElements().add(new MoveTo(centerx, centery+40));
-		leg3.getElements().add(new LineTo(centerx+10, centery+40+10));
-		
-		Path leg4=new Path();
-		leg4.getElements().add(new MoveTo(centerx, centery+40));
-		leg4.getElements().add(new LineTo(centerx-10, centery+40+10));
-		
-		getChildren().addAll(body,leg,leg2,leg3,leg4);
-	}
+		if (processCycles.size() > 0) { //Process Cycle
+			for (int i = 0; i < processCycles.size(); i++) {
+				Point2D point = new Point2D(e.getX(), e.getY());
+				if (processCycles.get(i).contains(point)) {
+					isNew = false;
+					break;
+				}
+			}
+		}//end of Process Cycle
 	
+		return isNew;
+	}
+
+	public void drawBody(Circle actor) {
+		double centerx = actor.getCenterX();
+		double centery = actor.getCenterY();
+		Path body = new Path();
+		body.getElements().add(new MoveTo(centerx, centery + 20));
+		body.getElements().add(new LineTo(centerx, centery + 40));
+
+		Path leg = new Path();
+		leg.getElements().add(new MoveTo(centerx, centery + 20));
+		leg.getElements().add(new LineTo(centerx + 10, centery + 20 + 10));
+
+		Path leg2 = new Path();
+		leg2.getElements().add(new MoveTo(centerx, centery + 20));
+		leg2.getElements().add(new LineTo(centerx - 10, centery + 20 + 10));
+
+		Path leg3 = new Path();
+		leg3.getElements().add(new MoveTo(centerx, centery + 40));
+		leg3.getElements().add(new LineTo(centerx + 10, centery + 40 + 10));
+
+		Path leg4 = new Path();
+		leg4.getElements().add(new MoveTo(centerx, centery + 40));
+		leg4.getElements().add(new LineTo(centerx - 10, centery + 40 + 10));
+
+		getChildren().addAll(body, leg, leg2, leg3, leg4);
+	}
 
 	public void LineTriangleHead(Line line) {
 
@@ -351,6 +384,7 @@ public class UseCaseCanvaBox extends Pane {
 		isExtendLine = false;
 		isTypeofLine = false;
 		isActor = false;
+
 	}
 
 }
