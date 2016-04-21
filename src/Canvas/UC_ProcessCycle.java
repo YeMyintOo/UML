@@ -2,6 +2,7 @@ package Canvas;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
+import javafx.stage.StageStyle;
 
 public class UC_ProcessCycle extends Ellipse {
 
@@ -11,6 +12,11 @@ public class UC_ProcessCycle extends Ellipse {
 	private double radiusy;
 	private Color bgcolor; // Background Color;
 	private Color scolor; // Stroke Color;
+	
+	private double labelx; //Label x;
+	private double labely; //Label y;
+	private String label;
+	private Color lColor;
 
 	public UC_ProcessCycle() {
 		super(0, 0, 0, 0);
@@ -25,7 +31,12 @@ public class UC_ProcessCycle extends Ellipse {
 			Color scolor) {
 		super(centerX, centerY, radiusX, radiusY);
 		setBgcolor(bgcolor);
+		//setFill(Color.TRANSPARENT);
 		setScolor(scolor);
+		setLabel("");
+		setLabelx(radiusX/3);
+		setLabely(radiusY/2);
+		
 	}
 
 	public double getCenterx() {
@@ -80,6 +91,38 @@ public class UC_ProcessCycle extends Ellipse {
 	public void setScolor(Color scolor) {
 		this.scolor = scolor;
 		setStroke(scolor);
+	}
+
+	public double getLabelx() {
+		return labelx;
+	}
+
+	public void setLabelx(double labelx) {
+		this.labelx = labelx;
+	}
+
+	public double getLabely() {
+		return labely;
+	}
+
+	public void setLabely(double labely) {
+		this.labely = labely;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public Color getlColor() {
+		return lColor;
+	}
+
+	public void setlColor(Color lColor) {
+		this.lColor = lColor;
 	}
 
 }

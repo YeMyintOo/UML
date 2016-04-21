@@ -12,20 +12,17 @@ import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Dialog;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class UseCaseCanvaBox extends Pane {
 	// Only Use Case Components Can Draw
@@ -82,13 +79,14 @@ public class UseCaseCanvaBox extends Pane {
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
+
 				System.out.println("Mouse Pressed");
 				toolHandler = new ToolHandler();
 				String colorS = toolHandler.getColor();
 				String tool = toolHandler.getTool();
 				color = Color.web(colorS);
 				// Check New Or Edit
-
+				removeShadow();
 				if (isNewOrEdit(e)) {
 					switch (tool) {
 					case "UseCase_Actor":
@@ -226,7 +224,7 @@ public class UseCaseCanvaBox extends Pane {
 				if (actors.get(i).contains(point)) {
 					isNew = false;
 					//////////////
-					openActorEditBox();
+
 					//////////////
 					break;
 				}
@@ -236,29 +234,55 @@ public class UseCaseCanvaBox extends Pane {
 		if (processCycles.size() > 0) { // Process Cycle
 			for (int i = 0; i < processCycles.size(); i++) {
 				Point2D point = new Point2D(e.getX(), e.getY());
+				
+				//Label
+				Text msg=new Text("Process");
+				msg.layoutXProperty().bind(processCycles.get(i).centerXProperty().subtract(20));
+				msg.layoutYProperty().bind(processCycles.get(i).centerYProperty());
+				getChildren().add(msg);
+				
 				if (processCycles.get(i).contains(point)) {
 					isNew = false;
-					int index=i;
+					
+					
+
+					DropShadow dsEffect = new DropShadow();
+					dsEffect.setOffsetX(5);
+					dsEffect.setOffsetY(5);
+					dsEffect.setRadius(15);
+					processCycles.get(i).setEffect(dsEffect);
+					
+					int index = i;
+					// Label
+
 					//////////////
-					setOnMouseDragged(new EventHandler<MouseEvent>(){
+					setOnMouseDragged(new EventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent e) {
 							processCycles.get(index).setCenterX(e.getX());
 							processCycles.get(index).setCenterY(e.getY());
+							processCycles.get(index).setLabelx(e.getX());
+							processCycles.get(index).setLabely(e.getY());
+							
 						}
 					});
+
 					//////////////
 					break;
 				}
+
 			}
 		} // end of Process Cycle
 
 		return isNew;
 	}
-	public void openActorEditBox(){
-		
+
+	// RemoveShadow
+	public void removeShadow() {
+		for (int i = 0; i < processCycles.size(); i++) {
+			processCycles.get(i).setEffect(null);
+		}
 	}
-	
 
 	public void drawBody(Circle actor) {
 		double centerx = actor.getCenterX();
