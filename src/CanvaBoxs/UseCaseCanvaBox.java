@@ -148,8 +148,8 @@ public class UseCaseCanvaBox extends Pane {
 			@Override
 			public void handle(MouseEvent e) {
 				if (isActionLine) {
-					actionLine.setEndx(e.getX());
-					actionLine.setEndy(e.getY());
+					actionLine.setEndX(e.getX());
+					actionLine.setEndY(e.getY());
 				}
 				if (isProcessCycle) {
 					processCycle.setCenterx(e.getX());

@@ -1,50 +1,39 @@
 package Canvas;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class UC_Box extends Rectangle {
-	private double x;
-	private double y;
-	private double width;
-	private double height;
-	private double arcWidth;
-	private double arcHeight;
-	private Color bgcolor; //Background Color
-	private Color scolor;//Stroke Color
+	private Color bgcolor; // Background Color
 
-	public UC_Box() {
-		super(0, 0, 0, 0);
+	private StringProperty label;
+
+	public UC_Box(double x, double y, double width, double height, Color bgcolor, Color scolor) {
+		super(x,y, width, height);
+		setX(x);
+		setY(y);
+		setFill(bgcolor);
+		setOpacity(0.3);
+		setStroke(scolor);
+		setArcWidth(10);
+		setArcHeight(10);
+		label = new SimpleStringProperty("Box Label");
+		
 	}
 
-	public UC_Box(double x, double y, double width, double height) {
-		super(x,y,width,height);
-		setBgcolor(Color.WHITE);
-		setScolor(Color.BLACK);
+	public final StringProperty labelProperty() {
+		return label;
 	}
 
-	public UC_Box(double x, double y, double width, double height,Color bgcolor,Color scolor) {
-		super(x,y,width,height);
-		setBgcolor(bgcolor);
-		setScolor(scolor);
-	}
-	
 	public Color getBgcolor() {
 		return bgcolor;
 	}
 
 	public void setBgcolor(Color bgcolor) {
 		this.bgcolor = bgcolor;
-		setFill(bgcolor);
-	}
 
-	public Color getScolor() {
-		return scolor;
-	}
-
-	public void setScolor(Color scolor) {
-		this.scolor = scolor;
-		setStroke(scolor);
 	}
 
 }
