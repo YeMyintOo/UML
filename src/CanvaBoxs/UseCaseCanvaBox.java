@@ -10,14 +10,18 @@ import Canvas.UC_IncludeLine;
 import Canvas.UC_ProcessCycle;
 import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -234,25 +238,78 @@ public class UseCaseCanvaBox extends Pane {
 		if (processCycles.size() > 0) { // Process Cycle
 			for (int i = 0; i < processCycles.size(); i++) {
 				Point2D point = new Point2D(e.getX(), e.getY());
-				
-				//Label
-				Text msg=new Text("Process");
-				msg.layoutXProperty().bind(processCycles.get(i).centerXProperty().subtract(20));
+
+				// Label
+				Text msg = new Text("Process");
+				double label_half = msg.layoutBoundsProperty().getValue().getWidth() / 2;
+				msg.layoutXProperty().bind(processCycles.get(i).centerXProperty().subtract(label_half));
 				msg.layoutYProperty().bind(processCycles.get(i).centerYProperty());
-				getChildren().add(msg);
+
 				
 				if (processCycles.get(i).contains(point)) {
 					isNew = false;
+					int index = i;
+					//Label Null
+					if (processCycles.get(i).getLabel().equals("")) {
+						getChildren().add(msg);
+						processCycles.get(i).setLabel(msg.getText());
+					}
 					
-					
+					//Label=Process
+					if (processCycles.get(i).getLabel().equals("Process")) {
 
+						// Alert Box
+						TextField field = new TextField();
+						field.setLayoutX(processCycles.get(index).getCenterX());
+						field.setLayoutY(processCycles.get(index).getCenterY());
+						getChildren().add(field);
+						field.setOnKeyReleased(new EventHandler<KeyEvent>() {
+							@Override
+							public void handle(KeyEvent event) {
+								Text msgedit = null;
+								if (event.getCode().equals(KeyCode.ENTER)) {
+									if(!field.getText().equals("")){
+										msgedit = new Text("Process");
+										msgedit.setText(field.getText());
+										msg.setText("");
+										processCycles.get(index).setLabel(msgedit.getText());
+									}
+									getChildren().remove(field);
+									getChildren().add(msgedit);
+									
+									
+									double label_half = msgedit.layoutBoundsProperty().getValue().getWidth() / 2;
+									msgedit.layoutXProperty().bind(processCycles.get(index).centerXProperty().subtract(label_half));
+									msgedit.layoutYProperty().bind(processCycles.get(index).centerYProperty());
+									
+									DoubleProperty w = new SimpleDoubleProperty();
+									w.set(msgedit.layoutBoundsProperty().getValue().getWidth());
+									processCycles.get(index).radiusXProperty().bind(w);
+								}
+							}
+						});
+		
+					}else{
+						setOnMouseClicked(new EventHandler<MouseEvent>() {
+							@Override
+							public void handle(MouseEvent e) {
+								if (e.getClickCount() == 2) {
+									System.out.println("Label is already set");
+								}
+							}
+						});
+						
+					}
+					
+					
+					
 					DropShadow dsEffect = new DropShadow();
 					dsEffect.setOffsetX(5);
 					dsEffect.setOffsetY(5);
 					dsEffect.setRadius(15);
 					processCycles.get(i).setEffect(dsEffect);
+
 					
-					int index = i;
 					// Label
 
 					//////////////
@@ -263,19 +320,27 @@ public class UseCaseCanvaBox extends Pane {
 							processCycles.get(index).setCenterY(e.getY());
 							processCycles.get(index).setLabelx(e.getX());
 							processCycles.get(index).setLabely(e.getY());
-							
+
 						}
 					});
-
+					
+					
 					//////////////
 					break;
 				}
 
 			}
 		} // end of Process Cycle
-
+		resetBooleans();
+		
 		return isNew;
 	}
+	
+	//Edit Label Function
+	public void editProcessCycleLael(){
+		
+	}
+	
 
 	// RemoveShadow
 	public void removeShadow() {
