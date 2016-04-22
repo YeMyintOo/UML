@@ -31,6 +31,7 @@ public class UC_ActionLine extends Line{
 		setEndy(endy);
 		setColor(color);
 		
+		
 	}
 
 	public double getStartx() {
