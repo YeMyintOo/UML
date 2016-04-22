@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import Canvas.UC_ActionLine;
 import Canvas.UC_Actor;
 import Canvas.UC_Box;
+import Canvas.UC_ProcessCycle;
 import Database.ToolHandler;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
@@ -23,7 +26,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class UseCaseCanvaBox2 extends Pane {
-
+	
 	private boolean isNew;
 
 	private ToolHandler toolHandler;
@@ -44,6 +47,11 @@ public class UseCaseCanvaBox2 extends Pane {
 	private ArrayList<UC_Box> boxs;
 	private UC_Box box;
 	private boolean isBox;
+
+	// Process
+	private ArrayList<UC_ProcessCycle> processCycles;
+	private UC_ProcessCycle processCycle;
+	private boolean isProcessCycle;
 
 	public UseCaseCanvaBox2() {
 		init();
@@ -74,10 +82,16 @@ public class UseCaseCanvaBox2 extends Pane {
 						break;
 					case "UseCase_Box":
 						box = new UC_Box(key.getX(), key.getY(), 300, 400, color, Color.GRAY);
-						//drawBoxLabel(box);
+						// drawBoxLabel(box);
 						isBox = true;
 						getChildren().add(box);
-						break;	
+						break;
+					case "UseCase_Process":
+						processCycle = new UC_ProcessCycle(key.getX(), key.getY(), 60, 30, color, Color.BLACK);
+						isProcessCycle = true;
+						getChildren().add(processCycle);
+						drawProcessLabel(processCycle);
+						break;
 
 					default:
 						break;
@@ -96,9 +110,13 @@ public class UseCaseCanvaBox2 extends Pane {
 					actionLine.setEndX(e.getX());
 					actionLine.setEndY(e.getY());
 				}
-				if(isBox){
-					box.setX(e.getX()-100);
-					box.setY(e.getY()-100);
+				if (isBox) {
+					box.setX(e.getX() - 100);
+					box.setY(e.getY() - 100);
+				}
+				if (isProcessCycle) {
+					processCycle.setCenterX(e.getX());
+					processCycle.setCenterY(e.getY());
 				}
 			}
 		});
@@ -113,9 +131,13 @@ public class UseCaseCanvaBox2 extends Pane {
 					actionLines.add(actionLine);
 					isActionLine = false;
 				}
-				if(isBox){
+				if (isBox) {
 					boxs.add(box);
-					isBox=false;
+					isBox = false;
+				}
+				if (isProcessCycle) {
+					processCycles.add(processCycle);
+					isProcessCycle = false;
 				}
 			}
 		});
@@ -130,17 +152,18 @@ public class UseCaseCanvaBox2 extends Pane {
 
 		actors = new ArrayList<UC_Actor>();
 		actionLines = new ArrayList<UC_ActionLine>();
-		boxs=new ArrayList<UC_Box>();
+		boxs = new ArrayList<UC_Box>();
+		processCycles = new ArrayList<UC_ProcessCycle>();
 	}
 
 	public void isNewOrEdit(MouseEvent e) {
 		isNew = true;
 		Point2D point = new Point2D(e.getX(), e.getY());
 		isNewOREditActor(e, point);
-		isNewOREditBox(e,point);
-		
+		isNewOREditBox(e, point);
+		isNewOREditProcess(e, point);
 	}
-	
+
 	public void isNewOREditActor(MouseEvent e, Point2D point) {
 		// Actor
 		for (int i = 0; i < actors.size(); i++) {
@@ -190,27 +213,27 @@ public class UseCaseCanvaBox2 extends Pane {
 
 		}
 	}
-	
-	public void isNewOREditBox(MouseEvent e,Point2D point){
-		for(int i=0;i<boxs.size();i++){
-			int index=i;
-			if(boxs.get(i).contains(point)){
-				isNew=false;
+
+	public void isNewOREditBox(MouseEvent e, Point2D point) {
+		for (int i = 0; i < boxs.size(); i++) {
+			int index = i;
+			if (boxs.get(i).contains(point)) {
+				isNew = false;
 				boxs.get(i).addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent key) {
-						boxs.get(index).setX(key.getX()-100);
-						boxs.get(index).setY(key.getY()-100);
+						boxs.get(index).setX(key.getX() - 100);
+						boxs.get(index).setY(key.getY() - 100);
 					}
 				});
-				
-				boxs.get(i).setOnScroll(new EventHandler<ScrollEvent>(){
+
+				boxs.get(i).setOnScroll(new EventHandler<ScrollEvent>() {
 					@Override
 					public void handle(ScrollEvent s) {
-						if(s.getDeltaY()==40){
-							boxs.get(index).setWidth(boxs.get(index).getWidth()+10);
-						}else{
-							boxs.get(index).setHeight(boxs.get(index).getHeight()+10);
+						if (s.getDeltaY() == 40) {
+							boxs.get(index).setWidth(boxs.get(index).getWidth() + 10);
+						} else {
+							boxs.get(index).setHeight(boxs.get(index).getHeight() + 10);
 						}
 					}
 				});
@@ -218,7 +241,56 @@ public class UseCaseCanvaBox2 extends Pane {
 			}
 		}
 	}
-	
+
+	public void isNewOREditProcess(MouseEvent e, Point2D point) {
+		for (int i = 0; i < processCycles.size(); i++) {
+			if (processCycles.get(i).contains(point)) {
+				isNew = false;
+				int index = i;
+				processCycles.get(i).setEffect(shape);
+				processCycles.get(i).addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent key) {
+						processCycles.get(index).setCenterX(key.getX());
+						processCycles.get(index).setCenterY(key.getY());
+					}
+				});
+
+				processCycles.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent key) {
+						Button x = null;
+						if (key.getClickCount() == 2) {
+							// Edit Actor Label
+							TextField data = new TextField();
+							data.layoutXProperty().bind(processCycles.get(index).centerXProperty().subtract(60));
+							data.layoutYProperty().bind(processCycles.get(index).centerYProperty().add(60));
+							getChildren().add(data);
+							data.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+								@Override
+								public void handle(KeyEvent e) {
+									if (e.getCode() == KeyCode.ENTER) {
+										if (!data.getText().equals("")) {
+											processCycles.get(index).labelProperty().set(data.getText().trim());
+											DoubleProperty w = new SimpleDoubleProperty();
+											Text msg = new Text(data.getText().trim());
+											w.set(msg.layoutBoundsProperty().getValue().getMaxX());
+											processCycles.get(index).radiusXProperty().bind(w);
+										}
+										getChildren().remove(data);
+									}
+								}
+							});
+						}
+					}
+				});
+
+			} else {
+				processCycles.get(i).setEffect(null);
+			}
+		}
+	}
+
 	public void drawActorBody(UC_Actor actor) {
 
 		double centerx = actor.getCenterX();
@@ -263,16 +335,27 @@ public class UseCaseCanvaBox2 extends Pane {
 		getChildren().addAll(body, leg, leg2, leg3, leg4, label);
 
 	}
-	
-	public void drawBoxLabel(UC_Box box){
+
+	public void drawBoxLabel(UC_Box box) {
 		Text label = new Text(box.labelProperty().getValue());
 		label.setFont(Font.font("Arial", FontWeight.BLACK, 16));
-		
+
 		label.textProperty().bind(box.labelProperty());
-		System.out.println(" Y "+box.layoutXProperty().doubleValue());
-		System.out.println(" X "+box.layoutYProperty().doubleValue());
-		//label.layoutXProperty().bind(box.);
-		//label.layoutYProperty().bind(box.layoutYProperty().subtract(40));
+		System.out.println(" Y " + box.layoutXProperty().doubleValue());
+		System.out.println(" X " + box.layoutYProperty().doubleValue());
+		// label.layoutXProperty().bind(box.);
+		// label.layoutYProperty().bind(box.layoutYProperty().subtract(40));
 		getChildren().add(label);
+	}
+
+	public void drawProcessLabel(UC_ProcessCycle cycle) {
+		Text plabel = new Text(cycle.labelProperty().getValue());
+		plabel.textProperty().bind(cycle.labelProperty());
+
+		plabel.layoutXProperty()
+				.bind(cycle.centerXProperty().subtract(plabel.layoutBoundsProperty().getValue().getWidth()/2));
+		plabel.layoutYProperty().bind(cycle.centerYProperty());
+
+		getChildren().addAll(plabel);
 	}
 }

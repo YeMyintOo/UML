@@ -152,7 +152,7 @@ public class UseCaseCanvaBox extends Pane {
 					actionLine.setEndY(e.getY());
 				}
 				if (isProcessCycle) {
-					processCycle.setCenterx(e.getX());
+					processCycle.setCenterX(e.getX());
 					processCycle.setCenterY(e.getY());
 				}
 				if (isBox) {
@@ -296,55 +296,9 @@ public class UseCaseCanvaBox extends Pane {
 					isNew = false;
 					int index = i;
 					// Label Null
-					if (processCycles.get(i).getLabel().equals("")) {
-						getChildren().add(msg);
-						processCycles.get(i).setLabel(msg.getText());
-					}
+					
 
-					// Label=Process
-					if (processCycles.get(i).getLabel().equals("Process")) {
-						// Alert Box
-						setOnMouseClicked(new EventHandler<MouseEvent>() {
-							@Override
-							public void handle(MouseEvent e) {
-								if (e.getButton() == MouseButton.SECONDARY) {
-									TextField field = new TextField();
-									field.setLayoutX(processCycles.get(index).getCenterX());
-									field.setLayoutY(processCycles.get(index).getCenterY());
-									getChildren().add(field);
-									field.setOnKeyReleased(new EventHandler<KeyEvent>() {
-										@Override
-										public void handle(KeyEvent event) {
-											Text msgedit = null;
-											if (event.getCode().equals(KeyCode.ENTER)) {
-												if (!field.getText().equals("")) {
-													msgedit = new Text("Process");
-													msgedit.setText(field.getText());
-													msg.setText("");
-													processCycles.get(index).setLabel(msgedit.getText());
-												}
-												getChildren().remove(field);
-												getChildren().add(msgedit);
-
-												double label_half = msgedit.layoutBoundsProperty().getValue().getWidth()
-														/ 2;
-												msgedit.layoutXProperty().bind(processCycles.get(index)
-														.centerXProperty().subtract(label_half));
-												msgedit.layoutYProperty()
-														.bind(processCycles.get(index).centerYProperty());
-
-												DoubleProperty w = new SimpleDoubleProperty();
-												w.set(msgedit.layoutBoundsProperty().getValue().getWidth());
-												processCycles.get(index).radiusXProperty().bind(w);
-											}
-										}
-									});
-								}
-							}
-						});
-					} else {
-						System.out.println("Label is already set");
-					}
+					
 
 					DropShadow dsEffect = new DropShadow();
 					dsEffect.setOffsetX(5);
@@ -357,8 +311,7 @@ public class UseCaseCanvaBox extends Pane {
 						public void handle(MouseEvent e) {
 							processCycles.get(index).setCenterX(e.getX());
 							processCycles.get(index).setCenterY(e.getY());
-							processCycles.get(index).setLabelx(e.getX());
-							processCycles.get(index).setLabely(e.getY());
+							
 						}
 					});
 					break;
