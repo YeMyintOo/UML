@@ -288,6 +288,15 @@ public class UseCaseCanvaBox2 extends Pane {
 			} else {
 				processCycles.get(i).setEffect(null);
 			}
+			
+			//Linked
+			for(int k=0; k<actionLines.size(); k++){
+				Point2D p=new Point2D(actionLines.get(k).getEndX(),actionLines.get(k).getEndY());
+				if(processCycles.get(i).contains(p)){
+					actionLines.get(k).endXProperty().bind(processCycles.get(i).centerXProperty());
+					actionLines.get(k).endYProperty().bind(processCycles.get(i).centerYProperty());
+				}
+			}
 		}
 	}
 

@@ -125,6 +125,7 @@ public class UseCaseCanvaBox extends Pane {
 					case "UseCase_Extend":
 						extendLine = new UC_ExtendLine(e.getX(), e.getY(), e.getX(), e.getY(), color);
 						isExtendLine = true;
+						
 						getChildren().add(extendLine);
 						break;
 
