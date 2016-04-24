@@ -180,6 +180,7 @@ public class UseCaseCanvaBox2 extends Pane {
 					isActionLine = false;
 				}
 				if (isBox) {
+					drawBoxLabel(box);
 					boxs.add(box);
 					isBox = false;
 				}
@@ -435,11 +436,8 @@ public class UseCaseCanvaBox2 extends Pane {
 		Text label = new Text(box.labelProperty().getValue());
 		label.setFont(Font.font("Arial", FontWeight.BLACK, 16));
 
-		label.textProperty().bind(box.labelProperty());
-		System.out.println(" Y " + box.layoutXProperty().doubleValue());
-		System.out.println(" X " + box.layoutYProperty().doubleValue());
-		// label.layoutXProperty().bind(box.);
-		// label.layoutYProperty().bind(box.layoutYProperty().subtract(40));
+		label.layoutXProperty().bind(box.xProperty().subtract(label.layoutBoundsProperty().getValue().getWidth() / 2));
+		label.layoutYProperty().bind(box.yProperty().subtract(20));
 		getChildren().add(label);
 	}
 
