@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import Canvas.UC_ActionLine;
 import Canvas.UC_Actor;
 import Canvas.UC_Box;
+import Canvas.UC_ExtendLine;
+import Canvas.UC_IncludeLine;
 import Canvas.UC_ProcessCycle;
+import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -21,12 +24,16 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class UseCaseCanvaBox2 extends Pane {
-	
+
 	private boolean isNew;
 
 	private ToolHandler toolHandler;
@@ -52,6 +59,21 @@ public class UseCaseCanvaBox2 extends Pane {
 	private ArrayList<UC_ProcessCycle> processCycles;
 	private UC_ProcessCycle processCycle;
 	private boolean isProcessCycle;
+
+	// ExtendLine
+	private ArrayList<UC_ExtendLine> extendLines;
+	private UC_ExtendLine extendLine;
+	private boolean isExtendLine;
+
+	// IncludeLine
+	private ArrayList<UC_IncludeLine> includeLines;
+	private UC_IncludeLine includeLine;
+	private boolean isIncludeLine;
+
+	// TypeOf
+	private ArrayList<UC_TypeOfLine> typeofLines;
+	private UC_TypeOfLine typeofLine;
+	private boolean isTypeofLine;
 
 	public UseCaseCanvaBox2() {
 		init();
@@ -92,7 +114,21 @@ public class UseCaseCanvaBox2 extends Pane {
 						getChildren().add(processCycle);
 						drawProcessLabel(processCycle);
 						break;
-
+					case "UseCase_Extend":
+						extendLine = new UC_ExtendLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
+						isExtendLine = true;
+						getChildren().add(extendLine);
+						break;
+					case "UseCase_Include":
+						includeLine = new UC_IncludeLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
+						isIncludeLine = true;
+						getChildren().add(includeLine);
+						break;
+					case "UseCase_Type":
+						typeofLine = new UC_TypeOfLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
+						isTypeofLine = true;
+						getChildren().add(typeofLine);
+						break;
 					default:
 						break;
 					}
@@ -118,6 +154,18 @@ public class UseCaseCanvaBox2 extends Pane {
 					processCycle.setCenterX(e.getX());
 					processCycle.setCenterY(e.getY());
 				}
+				if (isExtendLine) {
+					extendLine.setEndX(e.getX());
+					extendLine.setEndY(e.getY());
+				}
+				if (isIncludeLine) {
+					includeLine.setEndX(e.getX());
+					includeLine.setEndY(e.getY());
+				}
+				if (isTypeofLine) {
+					typeofLine.setEndX(e.getX());
+					typeofLine.setEndY(e.getY());
+				}
 			}
 		});
 		setOnMouseReleased(new EventHandler<MouseEvent>() {
@@ -139,6 +187,23 @@ public class UseCaseCanvaBox2 extends Pane {
 					processCycles.add(processCycle);
 					isProcessCycle = false;
 				}
+				if (isExtendLine) {
+					LineArrowHead(extendLine);
+					Linelabel(extendLine, "extend");
+					extendLines.add(extendLine);
+					isExtendLine = false;
+				}
+				if (isIncludeLine) {
+					LineArrowHead(includeLine);
+					Linelabel(includeLine, "include");
+					includeLines.add(includeLine);
+					isIncludeLine = false;
+				}
+				if (isTypeofLine) {
+					LineTriangleHead(typeofLine);
+					typeofLines.add(typeofLine);
+					isTypeofLine = false;
+				}
 			}
 		});
 		////////////////////////////////////////////////////
@@ -154,6 +219,9 @@ public class UseCaseCanvaBox2 extends Pane {
 		actionLines = new ArrayList<UC_ActionLine>();
 		boxs = new ArrayList<UC_Box>();
 		processCycles = new ArrayList<UC_ProcessCycle>();
+		extendLines = new ArrayList<UC_ExtendLine>();
+		includeLines = new ArrayList<UC_IncludeLine>();
+		typeofLines = new ArrayList<UC_TypeOfLine>();
 	}
 
 	public void isNewOrEdit(MouseEvent e) {
@@ -188,6 +256,7 @@ public class UseCaseCanvaBox2 extends Pane {
 							TextField data = new TextField();
 							data.layoutXProperty().bind(actors.get(index).centerXProperty().subtract(60));
 							data.layoutYProperty().bind(actors.get(index).centerYProperty().add(60));
+							//data.managedProperty().bind(data.visibleProperty());
 							getChildren().add(data);
 							data.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 								@Override
@@ -196,7 +265,7 @@ public class UseCaseCanvaBox2 extends Pane {
 										if (!data.getText().equals("")) {
 											actors.get(index).labelProperty().set(data.getText().trim());
 										}
-										getChildren().remove(data);
+										data.setVisible(!data.isVisible());
 									}
 								}
 							});
@@ -210,7 +279,20 @@ public class UseCaseCanvaBox2 extends Pane {
 			} else {
 				actors.get(i).setEffect(null);// Remove Shape
 			}
+			// Linked
 
+			for (int k = 0; k < actionLines.size(); k++) {
+				Rectangle rc = new Rectangle(actors.get(i).getCenterX() - 30, actors.get(i).getCenterY() - 30, 60, 100);
+				Point2D p = new Point2D(actionLines.get(k).getStartX(), actionLines.get(k).getStartY());
+				if (rc.contains(p)) {
+					double difx = actors.get(i).getCenterX() - actionLines.get(k).getStartX();
+					double dify = actors.get(i).getCenterY() - actionLines.get(k).getStartY();
+					actionLines.get(k).startXProperty().bind(actors.get(i).centerXProperty().add(difx + 30));
+					actionLines.get(k).startYProperty().bind(actors.get(i).centerYProperty());
+					actors.get(i).toFront();
+				}
+
+			}
 		}
 	}
 
@@ -288,13 +370,17 @@ public class UseCaseCanvaBox2 extends Pane {
 			} else {
 				processCycles.get(i).setEffect(null);
 			}
-			
-			//Linked
-			for(int k=0; k<actionLines.size(); k++){
-				Point2D p=new Point2D(actionLines.get(k).getEndX(),actionLines.get(k).getEndY());
-				if(processCycles.get(i).contains(p)){
-					actionLines.get(k).endXProperty().bind(processCycles.get(i).centerXProperty());
-					actionLines.get(k).endYProperty().bind(processCycles.get(i).centerYProperty());
+
+			// Linked
+			if (actionLines.size() > 0) {
+				for (int k = 0; k < actionLines.size(); k++) {
+					Point2D p = new Point2D(actionLines.get(k).getEndX(), actionLines.get(k).getEndY());
+					if (processCycles.get(i).contains(p)) {
+						actionLines.get(k).endXProperty().bind(processCycles.get(i).centerXProperty());
+						actionLines.get(k).endYProperty().bind(processCycles.get(i).centerYProperty());
+						processCycles.get(i).toFront();
+						drawProcessLabel(processCycles.get(i));
+					}
 				}
 			}
 		}
@@ -362,9 +448,112 @@ public class UseCaseCanvaBox2 extends Pane {
 		plabel.textProperty().bind(cycle.labelProperty());
 
 		plabel.layoutXProperty()
-				.bind(cycle.centerXProperty().subtract(plabel.layoutBoundsProperty().getValue().getWidth()/2));
+				.bind(cycle.centerXProperty().subtract(plabel.layoutBoundsProperty().getValue().getWidth() / 2));
 		plabel.layoutYProperty().bind(cycle.centerYProperty());
 
 		getChildren().addAll(plabel);
+	}
+
+	public void Linelabel(Line line, String label) {
+		double startx = line.getStartX();
+		double starty = line.getStartY();
+		double endx = line.getEndX();
+		double endy = line.getEndY();
+
+		double midx = (startx + endx) * 0.5;
+		double midy = (starty + endy) * 0.5;
+		double slope = (starty - endy) / (startx - endx);
+
+		String msg = "<<" + label + ">>";
+
+		if (startx < endx && starty < endy) {
+			System.out.println(" Figure 1");
+
+			getChildren().addAll(new Text(midx + 5, midy, msg));
+
+		} else if (startx > endx && starty > endy) {
+			System.out.println(" Figure 2");
+			getChildren().addAll(new Text(midx + 5, midy, msg));
+
+		} else if (startx > endx && starty < endy) {
+			System.out.println(" Figure 3");
+			getChildren().addAll(new Text(midx + 5, midy, msg));
+
+		} else if (startx < endx && starty > endy) {
+			System.out.println(" Figure 4");
+			getChildren().addAll(new Text(midx + 5, midy, msg));
+
+		} else if (startx < endx && starty == endy) {
+			System.out.println(" Figure 5");
+			getChildren().addAll(new Text(midx - 10, midy - 20, msg));
+
+		} else if (startx > endx && starty == endy) {
+			System.out.println(" Figure 6");
+			getChildren().addAll(new Text(midx - 10, midy - 20, msg));
+
+		} else if (startx == endx && starty < endy) {
+			System.out.println(" Figure 7");
+			getChildren().addAll(new Text(midx - 15, midy, msg));
+
+		} else if (startx == endx && starty > endy) {
+			System.out.println(" Figure 8");
+			getChildren().addAll(new Text(midx - 15, midy, msg));
+		} else {
+
+		}
+
+	}
+
+	public void LineArrowHead(Line line) {
+		double startx = line.getStartX();
+		double starty = line.getStartY();
+		double endx = line.getEndX();
+		double endy = line.getEndY();
+
+		// Arrow Head
+		double x, y, length;
+		Point2D end = new Point2D(endx, endy);
+		length = Math.sqrt((endx - startx) * (endx - startx) + (endy - starty) * (endy - starty));
+		x = (endx - startx) / length;
+		y = (endy - starty) / length;
+		Point2D base = new Point2D(endx - x * 10, endy - y * 10);
+		Point2D back_top = new Point2D(base.getX() - 10 * y, base.getY() + 10 * x);
+		Point2D back_bottom = new Point2D(base.getX() + 10 * y, base.getY() - 10 * x);
+		Path top = new Path();
+		top.setStroke(color);
+		top.getElements().add(new MoveTo(endx, endy));
+		top.getElements().add(new LineTo(back_top.getX(), back_top.getY()));
+
+		Path bot = new Path();
+		bot.setStroke(color);
+		bot.getElements().add(new MoveTo(endx, endy));
+		bot.getElements().add(new LineTo(back_bottom.getX(), back_bottom.getY()));
+
+		getChildren().addAll(top, bot);
+	}
+
+	public void LineTriangleHead(UC_TypeOfLine line) {
+
+		double startx = line.getStartX();
+		double starty = line.getStartY();
+		double endx = line.getEndX();
+		double endy = line.getEndY();
+
+		// Arrow Head
+		double x, y, length;
+		length = Math.sqrt((endx - startx) * (endx - startx) + (endy - starty) * (endy - starty));
+		x = (endx - startx) / length;
+		y = (endy - starty) / length;
+		Point2D base = new Point2D(endx - x * 10, endy - y * 10);
+		Point2D back_top = new Point2D(base.getX() - 10 * y, base.getY() + 10 * x);
+		Point2D back_bottom = new Point2D(base.getX() + 10 * y, base.getY() - 10 * x);
+		Path path = new Path();
+		path.setStroke(color);
+		path.getElements().add(new MoveTo(endx, endy));
+		path.getElements().add(new LineTo(back_top.getX(), back_top.getY()));
+		path.getElements().add(new LineTo(back_bottom.getX(), back_bottom.getY()));
+		path.getElements().add(new LineTo(endx, endy));
+		getChildren().addAll(path);
+
 	}
 }

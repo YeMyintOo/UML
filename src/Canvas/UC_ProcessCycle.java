@@ -17,6 +17,7 @@ public class UC_ProcessCycle extends Ellipse {
 		setFill(bgcolor);
 		setStroke(Color.GRAY);
 		label = new SimpleStringProperty("Process");
+		
 	}
 
 	public Color getBgcolor() {
