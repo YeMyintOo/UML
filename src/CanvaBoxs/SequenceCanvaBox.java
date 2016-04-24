@@ -37,7 +37,7 @@ public class SequenceCanvaBox extends Pane {
 	private ArrayList<SE_Role> roles;
 	private SE_Role role;
 	private boolean isRole;
-	private DoubleProperty length;
+	
 
 	public SequenceCanvaBox() {
 		init();
@@ -105,8 +105,8 @@ public class SequenceCanvaBox extends Pane {
 		Text label = new Text(role.labelProperty().getValue());
 		label.setFont(Font.font("Arial", FontWeight.BLACK, 14));
 		label.textProperty().bind(role.labelProperty());
-
-		length = new SimpleDoubleProperty(); // Dynamic Bind is Needed
+		
+		DoubleProperty length = new SimpleDoubleProperty(); 
 		length.bind(role.lifeProperty().add(10));
 		System.out.println(" Length :"+ length.doubleValue());
 		
