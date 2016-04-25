@@ -61,7 +61,7 @@ public class Window extends Application {
 
 	// WorkSpace
 	protected TabPane tabPane; // Multiple WorkSpaces;
-	protected WorkSpace workspace;
+	protected WorkSpace2 workspace;
 
 	// Dynamic Variables and loaded variables
 	private String workspaceVar;
@@ -260,7 +260,7 @@ public class Window extends Application {
 			new BuildCanvaXML(file); //Build XML file with Element Node
 			Tab tab = new Tab();
 			tab.setText(name);
-			workspace = new WorkSpace(type,file);
+			workspace = new WorkSpace2(type,file);
 			tab.setContent(workspace);
 			tabPane.getTabs().add(tab);
 		} catch (Exception e) {
