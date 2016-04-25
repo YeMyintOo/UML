@@ -510,7 +510,6 @@ public class UseCaseCanvaBox2 extends Pane {
 
 		// Arrow Head
 		double x, y, length;
-		Point2D end = new Point2D(endx, endy);
 		length = Math.sqrt((endx - startx) * (endx - startx) + (endy - starty) * (endy - starty));
 		x = (endx - startx) / length;
 		y = (endy - starty) / length;
