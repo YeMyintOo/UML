@@ -7,22 +7,33 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class ToolBar extends VBox {
 	private ToolHandler toolHandler;
+	private ColorPicker color;
+
 	public ToolBar(int type) {
+		toolHandler = new ToolHandler();
 		setStyle("-fx-padding:10 10 10 10;" + "-fx-border-style: solid inside;" + "-fx-border-width: 2;"
 				+ "-fx-border-insets: 5;" + "-fx-border-radius: 5;" + "-fx-border-color: rgb(78,238,148);");
 		setVisible(false);
 		setPrefHeight(0);
 		setMinHeight(0);
-		getChildren().addAll(new Button("Tool Box"));
 
+		color = new ColorPicker();
+		Color defaultColor = Color.web(toolHandler.getColor()); 
+		color.setValue(defaultColor);
+		color.setOnAction(e -> {
+			toolHandler.setColor(color.getValue().toString());
+		});
+		
 		switch (type) {
 
 		case 1: // Use_Case
@@ -52,8 +63,9 @@ public class ToolBar extends VBox {
 		case 9:// Deployment
 			getChildren().addAll(DeploymentToolBox());
 			break;
-		
 		}
+		
+		getChildren().add(color);
 
 	}
 
@@ -108,7 +120,7 @@ public class ToolBar extends VBox {
 			showPanel.play();
 		}
 	}
-	
+
 	public VBox UseCaseToolBox() {
 		VBox btnP = new VBox();
 		btnP.setSpacing(10);
