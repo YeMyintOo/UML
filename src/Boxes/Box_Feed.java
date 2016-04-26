@@ -1,6 +1,7 @@
 package Boxes;
 
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -15,8 +16,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -75,11 +76,49 @@ public class Box_Feed extends Stage {
 		hbox.setSpacing(20);
 		hbox.setStyle("-fx-padding: 10");
 
-		
+		ImageView fbv = new ImageView();
+		ImageView gov = new ImageView();
+		ImageView liv = new ImageView();
+
+		fbv.setFitHeight(50);
+		fbv.setFitWidth(50);
+
+		gov.setFitHeight(50);
+		gov.setFitWidth(50);
+
+		liv.setFitHeight(50);
+		liv.setFitWidth(50);
+
+		Image fbimg, goimg, limg;
+		try {
+			fbimg = new Image(new FileInputStream("Resources/Image/fb.png"));
+			goimg = new Image(new FileInputStream("Resources/Image/google.png"));
+			limg = new Image(new FileInputStream("Resources/Image/link.png"));
+			fbv.setImage(fbimg);
+			gov.setImage(goimg);
+			liv.setImage(limg);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		fb = new Circle(20);
+		fb.centerXProperty().bind(fbv.xProperty().add(25));
+		fb.centerYProperty().bind(fbv.yProperty().add(25));
+		fbv.setClip(fb);
+
 		gmail = new Circle(20);
+		gmail.centerXProperty().bind(gov.xProperty().add(25));
+		gmail.centerYProperty().bind(gov.yProperty().add(25));
+		gov.setClip(gmail);
+
 		linkin = new Circle(20);
-		hbox.getChildren().addAll(fb, gmail, linkin);
+		linkin.centerXProperty().bind(liv.xProperty().add(25));
+		linkin.centerYProperty().bind(liv.yProperty().add(25));
+		liv.setClip(linkin);
+		
+		
+		hbox.getChildren().addAll(fbv, gov, liv);
 
 		social.setLeft(typeP);
 		social.setRight(hbox);
