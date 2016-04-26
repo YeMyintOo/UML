@@ -30,7 +30,6 @@ public class ClassCanvaBox extends Pane {
 	private ArrayList<C_Class> cboxs;
 	private C_Class cbox;
 	private boolean isClass;
-	private int dataCount;
 
 	public ClassCanvaBox() {
 		init();
@@ -109,7 +108,8 @@ public class ClassCanvaBox extends Pane {
 
 	public void addDataLabel(int index) {
 		Text data = new Text("data");
-		data.textProperty().bindBidirectional(cboxs.get(index).getDatas().get(dataCount++));
+		int size = cboxs.get(index).getDatas().size();
+		data.textProperty().bindBidirectional(cboxs.get(index).getDatas().get(--size));
 		data.setFont(Font.font("Arial", FontWeight.BLACK, 12));
 		data.setLayoutX(cboxs.get(index).getdataBox().getX() + 10);
 		data.setLayoutY(cboxs.get(index).getdataBox().getY() + cboxs.get(index).getdataBox().getHeight());
@@ -153,8 +153,9 @@ public class ClassCanvaBox extends Pane {
 							if (cboxs.get(index).getdataBox().getWidth() < data.layoutBoundsProperty().getValue()
 									.getWidth()) {
 								System.out.println("Need to Repaint");
-								cboxs.get(index).arcWidthProperty().bind(
-										new SimpleDoubleProperty(data.layoutBoundsProperty().getValue().getWidth()));
+								cboxs.get(index).widthProperty().bind(
+										new SimpleDoubleProperty(data.layoutBoundsProperty().getValue().getWidth())
+												.add(20));
 							}
 							getChildren().remove(text);
 						}
@@ -163,6 +164,64 @@ public class ClassCanvaBox extends Pane {
 				//
 			}
 		});
+	}
+
+	public void addFunctionLabel(int index) {
+		Text data = new Text("data");
+		int size = cboxs.get(index).getFunctions().size();
+		data.textProperty().bindBidirectional(cboxs.get(index).getFunctions().get(--size));
+		data.setFont(Font.font("Arial", FontWeight.BLACK, 12));
+		data.setLayoutX(cboxs.get(index).getfunctionBox().getX() + 10);
+		data.setLayoutY(cboxs.get(index).getfunctionBox().getY() + cboxs.get(index).getfunctionBox().getHeight());
+		data.layoutXProperty().bind(cboxs.get(index).getfunctionBox().xProperty().add(10));
+		data.layoutYProperty()
+				.bind(cboxs.get(index).getfunctionBox().yProperty().add(cboxs.get(index).getfunctionBox().getHeight()));
+		cboxs.get(index).getfunctionBox().setHeight(cboxs.get(index).getfunctionBox().getHeight() + 20);
+		getChildren().add(data);
+
+		// Label Listener
+		data.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				data.setFill(Color.BLUE);
+			}
+		});
+		data.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				data.setFill(Color.BLACK);
+			}
+		});
+
+		data.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				// Edit
+				System.out.println("Clikc");
+				TextField text = new TextField();
+				text.layoutXProperty().bind(data.layoutXProperty().subtract(15));
+				text.layoutYProperty().bind(data.layoutYProperty().subtract(15));
+				getChildren().add(text);
+
+				text.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+					@Override
+					public void handle(KeyEvent e) {
+						if (e.getCode() == KeyCode.ENTER) {
+							data.setText(text.getText().trim());
+							if (cboxs.get(index).getfunctionBox().getWidth() < data.layoutBoundsProperty().getValue()
+									.getWidth()) {
+								cboxs.get(index).widthProperty().bind(
+										new SimpleDoubleProperty(data.layoutBoundsProperty().getValue().getWidth())
+												.add(20));
+							}
+							getChildren().remove(text);
+						}
+					}
+				});
+				//
+			}
+		});
+
 	}
 
 	public void isNewOrEditClass(MouseEvent e, Point2D point) {
@@ -179,8 +238,8 @@ public class ClassCanvaBox extends Pane {
 						cboxs.get(index).setY(key.getY());
 
 						// Check data list
-						for (int k = 0; k < cboxs.get(index).getDatas().size(); k++) {
-							System.out.println(" Data : " + cboxs.get(index).getDatas().get(k).get());
+						for (int k = 0; k < cboxs.get(index).getFunctions().size(); k++) {
+							System.out.println(" Data : " + cboxs.get(index).getFunctions().get(k).get());
 						}
 						System.out.println("-----------------------------");
 					}
@@ -194,20 +253,19 @@ public class ClassCanvaBox extends Pane {
 							public void handle(MouseEvent key) {
 								Button add = new Button("+");
 								getChildren().remove(add);
-								add.layoutXProperty().bind(cboxs.get(index).getdataBox().xProperty()
-										.add(cboxs.get(index).getdataBox().getWidth()));
+								add.layoutXProperty().bind(cboxs.get(index).getdataBox().xProperty().subtract(30));
 								add.layoutYProperty().bind(cboxs.get(index).getdataBox().yProperty());
 								getChildren().add(add);
 								add.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 									@Override
 									public void handle(MouseEvent e) {
 										// Text
-										cboxs.get(index).addData("sfsfsdf");
+										cboxs.get(index).addData("data");
 										addDataLabel(index);
 										//
 									}
 								});
-								add.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
+								add.addEventFilter(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
 									@Override
 									public void handle(MouseEvent e) {
 										getChildren().remove(add);
@@ -226,15 +284,14 @@ public class ClassCanvaBox extends Pane {
 							public void handle(MouseEvent key) {
 								Button addf = new Button("+");
 								getChildren().remove(addf);
-								addf.layoutXProperty().bind(cboxs.get(index).getfunctionBox().xProperty()
-										.add(cboxs.get(index).getdataBox().getWidth()));
+								addf.layoutXProperty().bind(cboxs.get(index).getfunctionBox().xProperty().subtract(30));
 								addf.layoutYProperty().bind(cboxs.get(index).getfunctionBox().yProperty());
 								getChildren().add(addf);
 								addf.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 									@Override
 									public void handle(MouseEvent e) {
-										cboxs.get(index).getfunctionBox()
-												.setHeight(cboxs.get(index).getfunctionBox().getHeight() + 20);
+										cboxs.get(index).addFunction("data");
+										addFunctionLabel(index);
 									}
 								});
 								addf.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
