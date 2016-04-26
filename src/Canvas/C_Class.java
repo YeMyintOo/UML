@@ -27,13 +27,13 @@ public class C_Class extends Rectangle {
 		dataBox = new Rectangle(x, y, width, height);
 		funBox = new Rectangle(x, y, width, height);
 
-		dataBox = new Rectangle(x, y + getHeight(), 100, 40);
-		dataBox.setFill(Color.BLUE);
+		dataBox = new Rectangle(x, y + getHeight(), 100, 20);
+		dataBox.setFill(Color.WHITE);
 		dataBox.setStroke(scolor);
 		dataBox.xProperty().bind(this.xProperty());
 		dataBox.yProperty().bind(this.yProperty().add(getHeight()));
 
-		funBox = new Rectangle(dataBox.getX(), dataBox.getY() + dataBox.getHeight(), 100, 40);
+		funBox = new Rectangle(dataBox.getX(), dataBox.getY() + dataBox.getHeight(), 100, 20);
 		funBox.setFill(Color.WHITE);
 		funBox.setStroke(scolor);
 		funBox.xProperty().bind(dataBox.xProperty());
@@ -56,6 +56,9 @@ public class C_Class extends Rectangle {
 
 		widthProperty().bind(dataBox.widthProperty());
 		dataBox.widthProperty().bind(funBox.widthProperty());
+
+		datas = new ArrayList<StringProperty>();
+		functions = new ArrayList<StringProperty>();
 	}
 
 	public Rectangle getdataBox() {

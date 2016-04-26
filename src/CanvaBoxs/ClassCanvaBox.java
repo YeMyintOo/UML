@@ -8,7 +8,10 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -27,9 +30,11 @@ public class ClassCanvaBox extends Pane {
 	private ArrayList<C_Class> cboxs;
 	private C_Class cbox;
 	private boolean isClass;
+	private int dataCount;
 
 	public ClassCanvaBox() {
 		init();
+
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -97,10 +102,67 @@ public class ClassCanvaBox extends Pane {
 		label.textProperty().bind(cbox.labelProperty());
 		label.layoutXProperty().bind(cbox.xProperty().add(label.layoutBoundsProperty().getValue().getWidth() / 3));
 		label.layoutYProperty().bind(cbox.yProperty().add(20));
-
 		cbox.widthProperty().bind(new SimpleDoubleProperty(label.layoutBoundsProperty().getValue().getWidth()).add(60));
-
 		getChildren().add(label);
+
+	}
+
+	public void addDataLabel(int index) {
+		Text data = new Text("data");
+		data.textProperty().bindBidirectional(cboxs.get(index).getDatas().get(dataCount++));
+		data.setFont(Font.font("Arial", FontWeight.BLACK, 12));
+		data.setLayoutX(cboxs.get(index).getdataBox().getX() + 10);
+		data.setLayoutY(cboxs.get(index).getdataBox().getY() + cboxs.get(index).getdataBox().getHeight());
+		data.layoutXProperty().bind(cboxs.get(index).getdataBox().xProperty().add(10));
+		data.layoutYProperty()
+				.bind(cboxs.get(index).getdataBox().yProperty().add(cboxs.get(index).getdataBox().getHeight()));
+		cboxs.get(index).getdataBox().setHeight(cboxs.get(index).getdataBox().getHeight() + 20);
+		getChildren().add(data);
+
+		System.out.println(" Height :" + cboxs.get(index).getdataBox().getHeight());
+
+		// Label Listener
+		data.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				data.setFill(Color.BLUE);
+			}
+		});
+		data.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				data.setFill(Color.BLACK);
+			}
+		});
+
+		data.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				// Edit
+				System.out.println("Clikc");
+				TextField text = new TextField();
+				text.layoutXProperty().bind(data.layoutXProperty().subtract(15));
+				text.layoutYProperty().bind(data.layoutYProperty().subtract(15));
+				getChildren().add(text);
+
+				text.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+					@Override
+					public void handle(KeyEvent e) {
+						if (e.getCode() == KeyCode.ENTER) {
+							data.setText(text.getText().trim());
+							if (cboxs.get(index).getdataBox().getWidth() < data.layoutBoundsProperty().getValue()
+									.getWidth()) {
+								System.out.println("Need to Repaint");
+								cboxs.get(index).arcWidthProperty().bind(
+										new SimpleDoubleProperty(data.layoutBoundsProperty().getValue().getWidth()));
+							}
+							getChildren().remove(text);
+						}
+					}
+				});
+				//
+			}
+		});
 	}
 
 	public void isNewOrEditClass(MouseEvent e, Point2D point) {
@@ -115,11 +177,17 @@ public class ClassCanvaBox extends Pane {
 					public void handle(MouseEvent key) {
 						cboxs.get(index).setX(key.getX());
 						cboxs.get(index).setY(key.getY());
+
+						// Check data list
+						for (int k = 0; k < cboxs.get(index).getDatas().size(); k++) {
+							System.out.println(" Data : " + cboxs.get(index).getDatas().get(k).get());
+						}
+						System.out.println("-----------------------------");
 					}
 				});
 
 				// Data/////////////////////////////////////////////////
-				
+
 				cboxs.get(i).getdataBox().addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET,
 						new EventHandler<MouseEvent>() {
 							@Override
@@ -133,8 +201,10 @@ public class ClassCanvaBox extends Pane {
 								add.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 									@Override
 									public void handle(MouseEvent e) {
-										cboxs.get(index).getdataBox()
-												.setHeight(cboxs.get(index).getdataBox().getHeight() + 20);
+										// Text
+										cboxs.get(index).addData("sfsfsdf");
+										addDataLabel(index);
+										//
 									}
 								});
 								add.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
@@ -145,10 +215,11 @@ public class ClassCanvaBox extends Pane {
 								});
 							}
 						});
-						//////////////////////////////////////////////////////
+
+				//////////////////////////////////////////////////////
 
 				// Function////////////////////////////////////////////
-				
+
 				cboxs.get(i).getfunctionBox().addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET,
 						new EventHandler<MouseEvent>() {
 							@Override
