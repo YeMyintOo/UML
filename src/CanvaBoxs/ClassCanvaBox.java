@@ -2,8 +2,10 @@ package CanvaBoxs;
 
 import java.util.ArrayList;
 
+import Canvas.C_Association;
 import Canvas.C_Class;
 import Database.ToolHandler;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -15,6 +17,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -31,28 +35,41 @@ public class ClassCanvaBox extends Pane {
 	private C_Class cbox;
 	private boolean isClass;
 
+	// Association
+	private ArrayList<C_Association> assos;
+	private C_Association asso;
+	private boolean isAssociation;
+
 	public ClassCanvaBox() {
 		init();
 
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-				isNewOREdit(e);
-				if (isNew) {
-					toolHandler = new ToolHandler();
-					color = Color.web(toolHandler.getColor());
-					switch (toolHandler.getTool()) {
-					case "Class_Class":
-						cbox = new C_Class(e.getX(), e.getY(), 100, 100, color, Color.LIGHTGRAY);
-						isClass = true;
-						getChildren().addAll(cbox, cbox.getdataBox(), cbox.getfunctionBox());
-						drawClassLabel(cbox);
-						break;
-					default:
-						break;
-					}
-				} else {
+				toolHandler = new ToolHandler();
+				color = Color.web(toolHandler.getColor());
 
+				// Association Link
+				if (toolHandler.getTool().equals("Class_Association")) {
+					isClass = false;
+					asso = new C_Association(e.getX(), e.getY(), e.getX(), e.getY(), Color.LIGHTGRAY);
+					isAssociation = true;
+					getChildren().addAll(asso);
+				} else {
+					isNewOREdit(e);
+
+					if (isNew) {
+						switch (toolHandler.getTool()) {
+						case "Class_Class":
+							cbox = new C_Class(e.getX(), e.getY(), 100, 100, color, Color.LIGHTGRAY);
+							isClass = true;
+							getChildren().addAll(cbox, cbox.getdataBox(), cbox.getfunctionBox());
+							drawClassLabel(cbox);
+							break;
+						default:
+							break;
+						}
+					}
 				}
 
 			}
@@ -62,8 +79,13 @@ public class ClassCanvaBox extends Pane {
 			@Override
 			public void handle(MouseEvent e) {
 				if (isClass) {
+					System.out.println("Initial Class MOuse Drag");
 					cbox.setX(e.getX());
 					cbox.setY(e.getY());
+				}
+				if (isAssociation) {
+					asso.setEndX(e.getX());
+					asso.setEndY(e.getY());
 				}
 			}
 		});
@@ -74,6 +96,12 @@ public class ClassCanvaBox extends Pane {
 				if (isClass) {
 					cboxs.add(cbox);
 					isClass = false;
+				}
+				if (isAssociation) {
+					getChildren().remove(asso);
+					drawAssociationLine(asso);
+					isAssociation = false;
+
 				}
 			}
 		});
@@ -87,6 +115,7 @@ public class ClassCanvaBox extends Pane {
 		shape.setRadius(15);
 
 		cboxs = new ArrayList<C_Class>();
+		assos = new ArrayList<C_Association>();
 	}
 
 	public void isNewOREdit(MouseEvent e) {
@@ -224,7 +253,139 @@ public class ClassCanvaBox extends Pane {
 
 	}
 
+	public void drawAssociationLine(C_Association asso) {
+
+		Text startL = new Text("Multiplicity");
+		startL.textProperty().bindBidirectional(asso.startMultiplicity());
+
+		Text endL = new Text("Multiplicity");
+		endL.textProperty().bindBidirectional(asso.endMultiplicity());
+
+		double startx = asso.getStartX();
+		double starty = asso.getStartY();
+		double endx = asso.getEndX();
+		double endy = asso.getEndY();
+		double slope = (starty - endy) / (startx - endx);
+
+		// Distance
+		double d = Math.sqrt((Math.pow(endx - startx, 2)) + (Math.pow(endy - starty, 2)));
+		double mid = d / 2;
+
+		if (startx < endx && starty < endy) {
+			System.out.println(" Figure 1");
+			if (slope < 2) {
+				Line l1 = new Line(startx, starty, startx + mid, starty);
+				l1.setStroke(color);
+				Line l2 = new Line(startx + mid, starty, startx + mid, endy);
+				l2.setStroke(color);
+				Line l3 = new Line(startx + mid, endy, endx, endy);
+				l3.setStroke(color);
+
+				Rectangle node1 = new Rectangle();
+				node1.setFill(Color.LIGHTBLUE);
+				node1.setX(startx + mid - 5);
+				node1.setY(starty - 5);
+				node1.setWidth(10);
+				node1.setHeight(10);
+
+				Rectangle node2 = new Rectangle();
+				node2.setFill(Color.LIGHTBLUE);
+				node2.setX(startx + mid - 5);
+				node2.setY(endy - 5);
+				node2.setWidth(10);
+				node2.setHeight(10);
+
+				l1.endXProperty().bind(node1.xProperty().add(5));
+				l1.startYProperty().bind(node1.yProperty().add(5));
+				l1.endYProperty().bind(node1.yProperty().add(5));
+				l2.startYProperty().bind(node1.yProperty().add(5));
+				l2.startXProperty().bind(node1.xProperty().add(5));
+				l2.endXProperty().bind(node2.xProperty().add(5));
+				l2.endYProperty().bind(node2.yProperty().add(5));
+				l3.startXProperty().bind(node2.xProperty().add(5));
+				l3.startYProperty().bind(node2.yProperty().add(5));
+				l3.endYProperty().bind(node2.yProperty().add(5));
+
+				asso.startXProperty().bind(l1.startXProperty());
+				asso.startYProperty().bind(l1.endYProperty());
+				asso.endXProperty().bind(l3.endXProperty());
+				asso.endYProperty().bind(l3.endYProperty());
+
+				startL.xProperty().bind(l1.startXProperty().add(20));
+				startL.yProperty().bind(l1.startYProperty().subtract(10));
+
+				endL.xProperty().bind(l3.endXProperty().subtract(20));
+				endL.yProperty().bind(l3.endYProperty().subtract(10));
+
+				node1.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node1.setX(e.getX() - 5);
+						node1.setY(e.getY() - 5);
+					}
+				});
+				node2.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node2.setX(e.getX() - 5);
+						node2.setY(e.getY() - 5);
+					}
+				});
+				assos.add(asso);
+				getChildren().addAll(l1, l2, l3, node1, node2, startL, endL);
+
+				// Linked
+				for (int i = 0; i < cboxs.size(); i++) {
+					Point2D start = new Point2D(l1.getStartX(), l1.getStartY());
+					Point2D end = new Point2D(l3.getEndX(), l3.getEndY());
+					if (cboxs.get(i).contains(start)) {
+						double dx = start.getX() - cboxs.get(i).getX();
+						double dy = start.getY() - cboxs.get(i).getY();
+						l1.startXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l1.startYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l1.toBack();
+					} else if (cboxs.get(i).contains(end)) {
+						double dy = end.getY() - cboxs.get(i).getY();
+						double dx = end.getX() - cboxs.get(i).getX();
+						l3.endXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l3.endYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l3.toBack();
+					}
+					
+				}
+			}
+
+		} else if (startx > endx && starty > endy) {
+			System.out.println(" Figure 2");
+
+		} else if (startx > endx && starty < endy) {
+			System.out.println(" Figure 3");
+
+		} else if (startx < endx && starty > endy) {
+			System.out.println(" Figure 4");
+
+		} else if (startx < endx && starty == endy) {
+			System.out.println(" Figure 5");
+
+		} else if (startx > endx && starty == endy) {
+			System.out.println(" Figure 6");
+
+		} else if (startx == endx && starty < endy) {
+			System.out.println(" Figure 7");
+
+		} else if (startx == endx && starty > endy) {
+			System.out.println(" Figure 8");
+
+		} else {
+
+		}
+
+	}
+
 	public void isNewOrEditClass(MouseEvent e, Point2D point) {
+
 		for (int i = 0; i < cboxs.size(); i++) {
 			if (cboxs.get(i).contains(point) || cboxs.get(i).getdataBox().contains(point)
 					|| cboxs.get(i).getfunctionBox().contains(point)) {
@@ -234,14 +395,14 @@ public class ClassCanvaBox extends Pane {
 				cboxs.get(i).addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent key) {
-						cboxs.get(index).setX(key.getX());
-						cboxs.get(index).setY(key.getY());
+						System.out.println("Edit Function Class MOuse Drag");
+						if (isAssociation) {
 
-						// Check data list
-						for (int k = 0; k < cboxs.get(index).getFunctions().size(); k++) {
-							System.out.println(" Data : " + cboxs.get(index).getFunctions().get(k).get());
+						} else {
+							cboxs.get(index).setX(key.getX());
+							cboxs.get(index).setY(key.getY());
 						}
-						System.out.println("-----------------------------");
+
 					}
 				});
 
@@ -305,10 +466,17 @@ public class ClassCanvaBox extends Pane {
 				//////////////////////////////////////////////////////
 
 				cboxs.get(i).setEffect(shape);
+				cboxs.get(i).getfunctionBox().setEffect(shape);
+				cboxs.get(i).getdataBox().setEffect(shape);
+
 			} else {
 				cboxs.get(i).setEffect(null);
+				cboxs.get(i).getfunctionBox().setEffect(null);
+				cboxs.get(i).getdataBox().setEffect(null);
 
 			}
+
 		}
+
 	}
 }

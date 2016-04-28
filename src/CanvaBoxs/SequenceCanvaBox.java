@@ -67,11 +67,12 @@ public class SequenceCanvaBox extends Pane {
 
 	public SequenceCanvaBox() {
 		init();
+		
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
 				isNewOrEdit(e);
-
+				
 				if (isNew) {
 					toolHandler = new ToolHandler();
 					color = Color.web(toolHandler.getColor());

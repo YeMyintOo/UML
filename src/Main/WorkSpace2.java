@@ -21,7 +21,7 @@ public class WorkSpace2 extends BorderPane {
 
 	public WorkSpace2(int type, File file) {
 		ToolBar toolbar = new ToolBar(type);
-
+		toolbar.slideHide();
 		addEventFilter(MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {

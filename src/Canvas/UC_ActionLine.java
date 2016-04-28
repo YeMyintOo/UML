@@ -12,20 +12,13 @@ public class UC_ActionLine extends Line {
 
 	public UC_ActionLine(double startx, double starty, double endx, double endy) {
 		super(startx, starty, endx, endy);
-		setColor(Color.BLACK);
+
 	}
 
 	public UC_ActionLine(double startx, double starty, double endx, double endy, Color color) {
 		super(startx, starty, endx, endy);
-		setColor(color);
-
-	}
-	public Color getColor() {
-		return color;
-	}
-
-	public void setColor(Color color) {
-		this.color = color;
 		setStroke(color);
+
 	}
+
 }
