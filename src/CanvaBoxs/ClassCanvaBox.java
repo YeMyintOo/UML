@@ -2,10 +2,12 @@ package CanvaBoxs;
 
 import java.util.ArrayList;
 
+import Canvas.C_AbstractClass;
+import Canvas.C_Aggregation;
 import Canvas.C_Association;
 import Canvas.C_Class;
+import Canvas.C_Interface;
 import Database.ToolHandler;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -20,6 +22,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
@@ -35,10 +38,25 @@ public class ClassCanvaBox extends Pane {
 	private C_Class cbox;
 	private boolean isClass;
 
+	// Abstract Class
+	private ArrayList<C_AbstractClass> acboxs;
+	private C_AbstractClass acbox;
+	private boolean isAbstractClass;
+
+	// Interface Class
+	private ArrayList<C_Interface> icboxs;
+	private C_Interface icbox;
+	private boolean isInterFace;
+
 	// Association
 	private ArrayList<C_Association> assos;
 	private C_Association asso;
 	private boolean isAssociation;
+
+	// Aggregation
+	private ArrayList<C_Aggregation> aggs;
+	private C_Aggregation agg;
+	private boolean isAggregation;
 
 	public ClassCanvaBox() {
 		init();
@@ -49,15 +67,17 @@ public class ClassCanvaBox extends Pane {
 				toolHandler = new ToolHandler();
 				color = Color.web(toolHandler.getColor());
 
-				// Association Link
-				if (toolHandler.getTool().equals("Class_Association")) {
-					isClass = false;
+				if (toolHandler.getTool().equals("Class_Aggregation")) {
+					agg = new C_Aggregation(e.getX(), e.getY(), e.getX(), e.getY(), Color.LIGHTGRAY);
+					isAggregation = true;
+					getChildren().addAll(agg);
+
+				} else if (toolHandler.getTool().equals("Class_Association")) {
 					asso = new C_Association(e.getX(), e.getY(), e.getX(), e.getY(), Color.LIGHTGRAY);
 					isAssociation = true;
 					getChildren().addAll(asso);
 				} else {
 					isNewOREdit(e);
-
 					if (isNew) {
 						switch (toolHandler.getTool()) {
 						case "Class_Class":
@@ -66,6 +86,20 @@ public class ClassCanvaBox extends Pane {
 							getChildren().addAll(cbox, cbox.getdataBox(), cbox.getfunctionBox());
 							drawClassLabel(cbox);
 							break;
+						case "Class_AbstractClass":
+							acbox = new C_AbstractClass(e.getX(), e.getY(), 100, 100, color, Color.LIGHTGRAY);
+							isAbstractClass = true;
+							getChildren().addAll(acbox, acbox.getdataBox(), acbox.getfunctionBox());
+							drawAbstractClassLabel(acbox);
+							break;
+
+						case "Class_InterfaceClass":
+							icbox = new C_Interface(e.getX(), e.getY(), 100, 100, color, Color.LIGHTGRAY);
+							isInterFace = true;
+							getChildren().addAll(icbox, icbox.getdataBox(), icbox.getfunctionBox());
+							drawInterfaceClassLabel(icbox);
+							break;
+
 						default:
 							break;
 						}
@@ -79,13 +113,24 @@ public class ClassCanvaBox extends Pane {
 			@Override
 			public void handle(MouseEvent e) {
 				if (isClass) {
-					System.out.println("Initial Class MOuse Drag");
 					cbox.setX(e.getX());
 					cbox.setY(e.getY());
+				}
+				if (isAbstractClass) {
+					acbox.setX(e.getX());
+					acbox.setY(e.getY());
+				}
+				if (isInterFace) {
+					icbox.setX(e.getX());
+					icbox.setY(e.getY());
 				}
 				if (isAssociation) {
 					asso.setEndX(e.getX());
 					asso.setEndY(e.getY());
+				}
+				if (isAggregation) {
+					agg.setEndX(e.getX());
+					agg.setEndY(e.getY());
 				}
 			}
 		});
@@ -97,12 +142,25 @@ public class ClassCanvaBox extends Pane {
 					cboxs.add(cbox);
 					isClass = false;
 				}
+				if (isAbstractClass) {
+					acboxs.add(acbox);
+					isAbstractClass = false;
+				}
+				if (isInterFace) {
+					icboxs.add(icbox);
+					isInterFace = false;
+				}
 				if (isAssociation) {
 					getChildren().remove(asso);
 					drawAssociationLine(asso);
 					isAssociation = false;
+				}
+				if (isAggregation) {
+					drawAggregationLine(agg);
+					isAggregation = false;
 
 				}
+
 			}
 		});
 
@@ -116,6 +174,9 @@ public class ClassCanvaBox extends Pane {
 
 		cboxs = new ArrayList<C_Class>();
 		assos = new ArrayList<C_Association>();
+		acboxs = new ArrayList<C_AbstractClass>();
+		icboxs = new ArrayList<C_Interface>();
+		aggs = new ArrayList<C_Aggregation>();
 	}
 
 	public void isNewOREdit(MouseEvent e) {
@@ -133,6 +194,34 @@ public class ClassCanvaBox extends Pane {
 		cbox.widthProperty().bind(new SimpleDoubleProperty(label.layoutBoundsProperty().getValue().getWidth()).add(60));
 		getChildren().add(label);
 
+	}
+
+	public void drawAbstractClassLabel(C_AbstractClass acbox) {
+		Text label = new Text(acbox.labelProperty().get());
+		label.setFont(Font.font("Arial", FontWeight.BLACK, FontPosture.ITALIC, 14));
+		label.textProperty().bind(acbox.labelProperty());
+		label.layoutXProperty().bind(acbox.xProperty().add(label.layoutBoundsProperty().getValue().getWidth() / 3));
+		label.layoutYProperty().bind(acbox.yProperty().add(20));
+		acbox.widthProperty()
+				.bind(new SimpleDoubleProperty(label.layoutBoundsProperty().getValue().getWidth()).add(60));
+		getChildren().add(label);
+	}
+
+	public void drawInterfaceClassLabel(C_Interface icbox) {
+		Text head = new Text("<<interface>>");
+		head.setFont(Font.font("Arial", FontWeight.BLACK, 14));
+		head.layoutXProperty()
+				.bind(icbox.xProperty().add(head.layoutBoundsProperty().getValue().getWidth() / 3).subtract(7));
+		head.layoutYProperty().bind(icbox.yProperty().add(20));
+
+		Text label = new Text(icbox.labelProperty().get());
+		label.setFont(Font.font("Arial", FontWeight.BLACK, 14));
+		label.textProperty().bind(icbox.labelProperty());
+		label.layoutXProperty().bind(icbox.xProperty().add(label.layoutBoundsProperty().getValue().getWidth() / 3));
+		label.layoutYProperty().bind(icbox.yProperty().add(40));
+		icbox.widthProperty()
+				.bind(new SimpleDoubleProperty(label.layoutBoundsProperty().getValue().getWidth()).add(60));
+		getChildren().addAll(label, head);
 	}
 
 	public void addDataLabel(int index) {
@@ -353,21 +442,365 @@ public class ClassCanvaBox extends Pane {
 						l3.endYProperty().bind(cboxs.get(i).yProperty().add(dy));
 						l3.toBack();
 					}
-					
+
 				}
 			}
 
 		} else if (startx > endx && starty > endy) {
 			System.out.println(" Figure 2");
 
+			if (slope < 1.5) {
+				Line l1 = new Line(startx, starty, startx - mid, starty);
+				l1.setStroke(color);
+				Line l2 = new Line(startx - mid, starty, startx - mid, endy);
+				l2.setStroke(color);
+				Line l3 = new Line(startx - mid, endy, endx, endy);
+				l3.setStroke(color);
+
+				Rectangle node1 = new Rectangle();
+				node1.setFill(Color.LIGHTBLUE);
+				node1.setX(startx - mid - 5);
+				node1.setY(starty - 5);
+				node1.setWidth(10);
+				node1.setHeight(10);
+
+				Rectangle node2 = new Rectangle();
+				node2.setFill(Color.LIGHTBLUE);
+				node2.setX(startx - mid - 5);
+				node2.setY(endy - 5);
+				node2.setWidth(10);
+				node2.setHeight(10);
+
+				l1.endXProperty().bind(node1.xProperty().add(5));
+				l1.startYProperty().bind(node1.yProperty().add(5));
+				l1.endYProperty().bind(node1.yProperty().add(5));
+				l2.startYProperty().bind(node1.yProperty().add(5));
+				l2.startXProperty().bind(node1.xProperty().add(5));
+				l2.endXProperty().bind(node2.xProperty().add(5));
+				l2.endYProperty().bind(node2.yProperty().add(5));
+				l3.startXProperty().bind(node2.xProperty().add(5));
+				l3.startYProperty().bind(node2.yProperty().add(5));
+				l3.endYProperty().bind(node2.yProperty().add(5));
+
+				asso.startXProperty().bind(l1.startXProperty());
+				asso.startYProperty().bind(l1.endYProperty());
+				asso.endXProperty().bind(l3.endXProperty());
+				asso.endYProperty().bind(l3.endYProperty());
+
+				node1.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node1.setX(e.getX() - 5);
+						node1.setY(e.getY() - 5);
+					}
+				});
+				node2.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node2.setX(e.getX() - 5);
+						node2.setY(e.getY() - 5);
+					}
+				});
+
+				startL.xProperty().bind(l1.startXProperty().subtract(20));
+				startL.yProperty().bind(l1.startYProperty().subtract(10));
+
+				endL.xProperty().bind(l3.endXProperty().add(20));
+				endL.yProperty().bind(l3.endYProperty().subtract(10));
+
+				getChildren().addAll(l1, l2, l3, node1, node2, startL, endL);
+
+				// Linked
+				for (int i = 0; i < cboxs.size(); i++) {
+					Point2D start = new Point2D(l1.getStartX(), l1.getStartY());
+					Point2D end = new Point2D(l3.getEndX(), l3.getEndY());
+					if (cboxs.get(i).contains(start)) {
+						double dx = start.getX() - cboxs.get(i).getX();
+						double dy = start.getY() - cboxs.get(i).getY();
+						l1.startXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l1.startYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l1.toBack();
+					} else if (cboxs.get(i).contains(end)) {
+						double dy = end.getY() - cboxs.get(i).getY();
+						double dx = end.getX() - cboxs.get(i).getX();
+						l3.endXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l3.endYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l3.toBack();
+					}
+
+				}
+
+			}
+
 		} else if (startx > endx && starty < endy) {
 			System.out.println(" Figure 3");
+			System.out.println(" SLope : " + slope);
+
+			if (slope > -1.5) {
+				Line l1 = new Line(startx, starty, startx - mid, starty);
+				l1.setStroke(color);
+				Line l2 = new Line(startx - mid, starty, startx - mid, endy);
+				l2.setStroke(color);
+				Line l3 = new Line(startx - mid, endy, endx, endy);
+				l3.setStroke(color);
+
+				Rectangle node1 = new Rectangle();
+				node1.setFill(Color.LIGHTBLUE);
+				node1.setX(startx - mid - 5);
+				node1.setY(starty - 5);
+				node1.setWidth(10);
+				node1.setHeight(10);
+
+				Rectangle node2 = new Rectangle();
+				node2.setFill(Color.LIGHTBLUE);
+				node2.setX(startx - mid - 5);
+				node2.setY(endy - 5);
+				node2.setWidth(10);
+				node2.setHeight(10);
+
+				l1.endXProperty().bind(node1.xProperty().add(5));
+				l1.startYProperty().bind(node1.yProperty().add(5));
+				l1.endYProperty().bind(node1.yProperty().add(5));
+				l2.startYProperty().bind(node1.yProperty().add(5));
+				l2.startXProperty().bind(node1.xProperty().add(5));
+				l2.endXProperty().bind(node2.xProperty().add(5));
+				l2.endYProperty().bind(node2.yProperty().add(5));
+				l3.startXProperty().bind(node2.xProperty().add(5));
+				l3.startYProperty().bind(node2.yProperty().add(5));
+				l3.endYProperty().bind(node2.yProperty().add(5));
+
+				asso.startXProperty().bind(l1.startXProperty());
+				asso.startYProperty().bind(l1.endYProperty());
+				asso.endXProperty().bind(l3.endXProperty());
+				asso.endYProperty().bind(l3.endYProperty());
+
+				node1.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node1.setX(e.getX() - 5);
+						node1.setY(e.getY() - 5);
+					}
+				});
+				node2.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node2.setX(e.getX() - 5);
+						node2.setY(e.getY() - 5);
+					}
+				});
+
+				startL.xProperty().bind(l1.startXProperty().subtract(20));
+				startL.yProperty().bind(l1.startYProperty().subtract(10));
+
+				endL.xProperty().bind(l3.endXProperty().add(20));
+				endL.yProperty().bind(l3.endYProperty().subtract(10));
+
+				getChildren().addAll(l1, l2, l3, node1, node2, startL, endL);
+
+				// Linked
+				for (int i = 0; i < cboxs.size(); i++) {
+					Point2D start = new Point2D(l1.getStartX(), l1.getStartY());
+					Point2D end = new Point2D(l3.getEndX(), l3.getEndY());
+					if (cboxs.get(i).contains(start)) {
+						double dx = start.getX() - cboxs.get(i).getX();
+						double dy = start.getY() - cboxs.get(i).getY();
+						l1.startXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l1.startYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l1.toBack();
+					} else if (cboxs.get(i).contains(end)) {
+						double dy = end.getY() - cboxs.get(i).getY();
+						double dx = end.getX() - cboxs.get(i).getX();
+						l3.endXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l3.endYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l3.toBack();
+					}
+
+				}
+			}
 
 		} else if (startx < endx && starty > endy) {
 			System.out.println(" Figure 4");
 
+			System.out.println(" SLope : " + slope);
+
+			if (slope > -1.5) {
+				Line l1 = new Line(startx, starty, startx + mid, starty);
+				l1.setStroke(color);
+				Line l2 = new Line(startx + mid, starty, startx + mid, endy);
+				l2.setStroke(color);
+				Line l3 = new Line(startx + mid, endy, endx, endy);
+				l3.setStroke(color);
+
+				Rectangle node1 = new Rectangle();
+				node1.setFill(Color.LIGHTBLUE);
+				node1.setX(startx + mid - 5);
+				node1.setY(starty - 5);
+				node1.setWidth(10);
+				node1.setHeight(10);
+
+				Rectangle node2 = new Rectangle();
+				node2.setFill(Color.LIGHTBLUE);
+				node2.setX(startx + mid - 5);
+				node2.setY(endy - 5);
+				node2.setWidth(10);
+				node2.setHeight(10);
+
+				l1.endXProperty().bind(node1.xProperty().add(5));
+				l1.startYProperty().bind(node1.yProperty().add(5));
+				l1.endYProperty().bind(node1.yProperty().add(5));
+				l2.startYProperty().bind(node1.yProperty().add(5));
+				l2.startXProperty().bind(node1.xProperty().add(5));
+				l2.endXProperty().bind(node2.xProperty().add(5));
+				l2.endYProperty().bind(node2.yProperty().add(5));
+				l3.startXProperty().bind(node2.xProperty().add(5));
+				l3.startYProperty().bind(node2.yProperty().add(5));
+				l3.endYProperty().bind(node2.yProperty().add(5));
+
+				asso.startXProperty().bind(l1.startXProperty());
+				asso.startYProperty().bind(l1.endYProperty());
+				asso.endXProperty().bind(l3.endXProperty());
+				asso.endYProperty().bind(l3.endYProperty());
+
+				node1.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node1.setX(e.getX() - 5);
+						node1.setY(e.getY() - 5);
+					}
+				});
+				node2.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node2.setX(e.getX() - 5);
+						node2.setY(e.getY() - 5);
+					}
+				});
+
+				startL.xProperty().bind(l1.startXProperty().add(20));
+				startL.yProperty().bind(l1.startYProperty().subtract(10));
+
+				endL.xProperty().bind(l3.endXProperty().subtract(20));
+				endL.yProperty().bind(l3.endYProperty().subtract(10));
+
+				getChildren().addAll(l1, l2, l3, node1, node2, startL, endL);
+
+				// Linked
+				for (int i = 0; i < cboxs.size(); i++) {
+					Point2D start = new Point2D(l1.getStartX(), l1.getStartY());
+					Point2D end = new Point2D(l3.getEndX(), l3.getEndY());
+					if (cboxs.get(i).contains(start)) {
+						double dx = start.getX() - cboxs.get(i).getX();
+						double dy = start.getY() - cboxs.get(i).getY();
+						l1.startXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l1.startYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l1.toBack();
+					} else if (cboxs.get(i).contains(end)) {
+						double dy = end.getY() - cboxs.get(i).getY();
+						double dx = end.getX() - cboxs.get(i).getX();
+						l3.endXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l3.endYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l3.toBack();
+					}
+
+				}
+
+			}
+
 		} else if (startx < endx && starty == endy) {
 			System.out.println(" Figure 5");
+			System.out.println(" SLope : " + slope);
+
+			if (slope == -0.0) {
+
+				Line l1 = new Line(startx, starty, startx + mid, starty);
+				l1.setStroke(color);
+				Line l2 = new Line(startx + mid, starty, startx + mid, endy);
+				l2.setStroke(color);
+				Line l3 = new Line(startx + mid, endy, endx, endy);
+				l3.setStroke(color);
+
+				Rectangle node1 = new Rectangle();
+				node1.setFill(Color.LIGHTBLUE);
+				node1.setX(startx + mid - 5);
+				node1.setY(starty - 5);
+				node1.setWidth(10);
+				node1.setHeight(10);
+
+				Rectangle node2 = new Rectangle();
+				node2.setFill(Color.LIGHTBLUE);
+				node2.setX(startx + mid - 5);
+				node2.setY(endy - 5);
+				node2.setWidth(10);
+				node2.setHeight(10);
+
+				l1.endXProperty().bind(node1.xProperty().add(5));
+				l1.startYProperty().bind(node1.yProperty().add(5));
+				l1.endYProperty().bind(node1.yProperty().add(5));
+				l2.startYProperty().bind(node1.yProperty().add(5));
+				l2.startXProperty().bind(node1.xProperty().add(5));
+				l2.endXProperty().bind(node2.xProperty().add(5));
+				l2.endYProperty().bind(node2.yProperty().add(5));
+				l3.startXProperty().bind(node2.xProperty().add(5));
+				l3.startYProperty().bind(node2.yProperty().add(5));
+				l3.endYProperty().bind(node2.yProperty().add(5));
+
+				asso.startXProperty().bind(l1.startXProperty());
+				asso.startYProperty().bind(l1.endYProperty());
+				asso.endXProperty().bind(l3.endXProperty());
+				asso.endYProperty().bind(l3.endYProperty());
+
+				startL.xProperty().bind(l1.startXProperty().add(20));
+				startL.yProperty().bind(l1.startYProperty().subtract(10));
+
+				endL.xProperty().bind(l3.endXProperty().subtract(20));
+				endL.yProperty().bind(l3.endYProperty().subtract(10));
+
+				node1.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node1.setX(e.getX() - 5);
+						node1.setY(e.getY() - 5);
+					}
+				});
+				node2.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node2.setX(e.getX() - 5);
+						node2.setY(e.getY() - 5);
+					}
+				});
+				assos.add(asso);
+				getChildren().addAll(l1, l2, l3, node1, node2, startL, endL);
+
+				// Linked
+				for (int i = 0; i < cboxs.size(); i++) {
+					Point2D start = new Point2D(l1.getStartX(), l1.getStartY());
+					Point2D end = new Point2D(l3.getEndX(), l3.getEndY());
+					if (cboxs.get(i).contains(start)) {
+						double dx = start.getX() - cboxs.get(i).getX();
+						double dy = start.getY() - cboxs.get(i).getY();
+						l1.startXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l1.startYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l1.toBack();
+					} else if (cboxs.get(i).contains(end)) {
+						double dy = end.getY() - cboxs.get(i).getY();
+						double dx = end.getX() - cboxs.get(i).getX();
+						l3.endXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l3.endYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l3.toBack();
+					}
+
+				}
+
+			}
 
 		} else if (startx > endx && starty == endy) {
 			System.out.println(" Figure 6");
@@ -378,7 +811,501 @@ public class ClassCanvaBox extends Pane {
 		} else if (startx == endx && starty > endy) {
 			System.out.println(" Figure 8");
 
-		} else {
+		}
+
+	}
+
+	public void drawAggregationLine(C_Aggregation agg) {
+
+		Text startL = new Text("Multiplicity");
+		startL.textProperty().bindBidirectional(agg.startMultiplicity());
+
+		Text endL = new Text("Multiplicity");
+		endL.textProperty().bindBidirectional(agg.endMultiplicity());
+
+		double startx = agg.getStartX();
+		double starty = agg.getStartY();
+		double endx = agg.getEndX();
+		double endy = agg.getEndY();
+		double slope = (starty - endy) / (startx - endx);
+
+		// Distance
+		double d = Math.sqrt((Math.pow(endx - startx, 2)) + (Math.pow(endy - starty, 2)));
+		double mid = d / 2;
+
+		if (startx < endx && starty < endy) {
+			System.out.println(" Figure 1");
+			if (slope < 2) {
+				Line l1 = new Line(startx, starty, startx + mid, starty);
+				l1.setStroke(color);
+				Line l2 = new Line(startx + mid, starty, startx + mid, endy);
+				l2.setStroke(color);
+				Line l3 = new Line(startx + mid, endy, endx, endy);
+				l3.setStroke(color);
+
+				Rectangle node1 = new Rectangle();
+				node1.setFill(Color.LIGHTBLUE);
+				node1.setX(startx + mid - 5);
+				node1.setY(starty - 5);
+				node1.setWidth(10);
+				node1.setHeight(10);
+
+				Rectangle node2 = new Rectangle();
+				node2.setFill(Color.LIGHTBLUE);
+				node2.setX(startx + mid - 5);
+				node2.setY(endy - 5);
+				node2.setWidth(10);
+				node2.setHeight(10);
+
+				// Aggregation Node
+				Rectangle node3 = new Rectangle();
+				node3.setFill(Color.LIGHTBLUE);
+				node3.setRotate(45);
+				node3.setX(l3.getEndX()-20);
+				node3.setY(l3.getEndY()-10);
+				node3.setWidth(20);
+				node3.setHeight(20);
+				
+				node3.xProperty().bind(l3.endXProperty().subtract(20));
+				node3.yProperty().bind(l3.endYProperty().subtract(10));
+
+				l1.endXProperty().bind(node1.xProperty().add(5));
+				l1.startYProperty().bind(node1.yProperty().add(5));
+				l1.endYProperty().bind(node1.yProperty().add(5));
+				l2.startYProperty().bind(node1.yProperty().add(5));
+				l2.startXProperty().bind(node1.xProperty().add(5));
+				l2.endXProperty().bind(node2.xProperty().add(5));
+				l2.endYProperty().bind(node2.yProperty().add(5));
+				l3.startXProperty().bind(node2.xProperty().add(5));
+				l3.startYProperty().bind(node2.yProperty().add(5));
+				l3.endYProperty().bind(node2.yProperty().add(5));
+
+				agg.startXProperty().bind(l1.startXProperty());
+				agg.startYProperty().bind(l1.endYProperty());
+				agg.endXProperty().bind(l3.endXProperty());
+				agg.endYProperty().bind(l3.endYProperty());
+
+				startL.xProperty().bind(l1.startXProperty().add(20));
+				startL.yProperty().bind(l1.startYProperty().subtract(10));
+
+				endL.xProperty().bind(l3.endXProperty().subtract(20));
+				endL.yProperty().bind(l3.endYProperty().subtract(10));
+
+				node1.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAggregation = false;
+						node1.setX(e.getX() - 5);
+						node1.setY(e.getY() - 5);
+					}
+				});
+				node2.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAggregation = false;
+						node2.setX(e.getX() - 5);
+						node2.setY(e.getY() - 5);
+					}
+				});
+				aggs.add(agg);
+				getChildren().addAll(l1, l2, l3, node1, node2, startL, endL, node3);
+
+				// Linked
+				for (int i = 0; i < cboxs.size(); i++) {
+					Point2D start = new Point2D(l1.getStartX(), l1.getStartY());
+					Point2D end = new Point2D(l3.getEndX(), l3.getEndY());
+					if (cboxs.get(i).contains(start)) {
+						double dx = start.getX() - cboxs.get(i).getX();
+						double dy = start.getY() - cboxs.get(i).getY();
+						l1.startXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l1.startYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l1.toBack();
+					} else if (cboxs.get(i).contains(end)) {
+						double dy = end.getY() - cboxs.get(i).getY();
+						double dx = end.getX() - cboxs.get(i).getX();
+						l3.endXProperty().bind(cboxs.get(i).xProperty());
+						l3.endYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l3.toBack();
+					}
+				}
+			}
+
+		} else if (startx > endx && starty > endy) {
+			System.out.println(" Figure 2");
+
+			if (slope < 1.5) {
+				Line l1 = new Line(startx, starty, startx - mid, starty);
+				l1.setStroke(color);
+				Line l2 = new Line(startx - mid, starty, startx - mid, endy);
+				l2.setStroke(color);
+				Line l3 = new Line(startx - mid, endy, endx, endy);
+				l3.setStroke(color);
+
+				Rectangle node1 = new Rectangle();
+				node1.setFill(Color.LIGHTBLUE);
+				node1.setX(startx - mid - 5);
+				node1.setY(starty - 5);
+				node1.setWidth(10);
+				node1.setHeight(10);
+
+				Rectangle node2 = new Rectangle();
+				node2.setFill(Color.LIGHTBLUE);
+				node2.setX(startx - mid - 5);
+				node2.setY(endy - 5);
+				node2.setWidth(10);
+				node2.setHeight(10);
+				
+				// Aggregation Node
+				Rectangle node3 = new Rectangle();
+				node3.setFill(Color.LIGHTBLUE);
+				node3.setRotate(45);
+				node3.setX(l3.getEndX());
+				node3.setY(l3.getEndY()-10);
+				node3.setWidth(20);
+				node3.setHeight(20);
+				
+				node3.xProperty().bind(l3.endXProperty());
+				node3.yProperty().bind(l3.endYProperty().subtract(10));
+
+				l1.endXProperty().bind(node1.xProperty().add(5));
+				l1.startYProperty().bind(node1.yProperty().add(5));
+				l1.endYProperty().bind(node1.yProperty().add(5));
+				l2.startYProperty().bind(node1.yProperty().add(5));
+				l2.startXProperty().bind(node1.xProperty().add(5));
+				l2.endXProperty().bind(node2.xProperty().add(5));
+				l2.endYProperty().bind(node2.yProperty().add(5));
+				l3.startXProperty().bind(node2.xProperty().add(5));
+				l3.startYProperty().bind(node2.yProperty().add(5));
+				l3.endYProperty().bind(node2.yProperty().add(5));
+
+				agg.startXProperty().bind(l1.startXProperty());
+				agg.startYProperty().bind(l1.endYProperty());
+				agg.endXProperty().bind(l3.endXProperty());
+				agg.endYProperty().bind(l3.endYProperty());
+
+				node1.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node1.setX(e.getX() - 5);
+						node1.setY(e.getY() - 5);
+					}
+				});
+				node2.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node2.setX(e.getX() - 5);
+						node2.setY(e.getY() - 5);
+					}
+				});
+
+				startL.xProperty().bind(l1.startXProperty().subtract(20));
+				startL.yProperty().bind(l1.startYProperty().subtract(10));
+
+				endL.xProperty().bind(l3.endXProperty().add(20));
+				endL.yProperty().bind(l3.endYProperty().subtract(10));
+
+				getChildren().addAll(l1, l2, l3, node1, node2,node3, startL, endL);
+
+				// Linked
+				for (int i = 0; i < cboxs.size(); i++) {
+					Point2D start = new Point2D(l1.getStartX(), l1.getStartY());
+					Point2D end = new Point2D(l3.getEndX(), l3.getEndY());
+					if (cboxs.get(i).contains(start)) {
+						double dx = start.getX() - cboxs.get(i).getX();
+						double dy = start.getY() - cboxs.get(i).getY();
+						l1.startXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l1.startYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l1.toBack();
+					} else if (cboxs.get(i).contains(end)) {
+						double dy = end.getY() - cboxs.get(i).getY();
+						double dx = end.getX() - cboxs.get(i).getX();
+						l3.endXProperty().bind(cboxs.get(i).xProperty().add(cboxs.get(i).getWidth()));
+						l3.endYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l3.toBack();
+					}
+
+				}
+
+			}
+
+		} else if (startx > endx && starty < endy) {
+			System.out.println(" Figure 3");
+			System.out.println(" SLope : " + slope);
+
+			if (slope > -1.5) {
+				Line l1 = new Line(startx, starty, startx - mid, starty);
+				l1.setStroke(color);
+				Line l2 = new Line(startx - mid, starty, startx - mid, endy);
+				l2.setStroke(color);
+				Line l3 = new Line(startx - mid, endy, endx, endy);
+				l3.setStroke(color);
+
+				Rectangle node1 = new Rectangle();
+				node1.setFill(Color.LIGHTBLUE);
+				node1.setX(startx - mid - 5);
+				node1.setY(starty - 5);
+				node1.setWidth(10);
+				node1.setHeight(10);
+
+				Rectangle node2 = new Rectangle();
+				node2.setFill(Color.LIGHTBLUE);
+				node2.setX(startx - mid - 5);
+				node2.setY(endy - 5);
+				node2.setWidth(10);
+				node2.setHeight(10);
+
+				l1.endXProperty().bind(node1.xProperty().add(5));
+				l1.startYProperty().bind(node1.yProperty().add(5));
+				l1.endYProperty().bind(node1.yProperty().add(5));
+				l2.startYProperty().bind(node1.yProperty().add(5));
+				l2.startXProperty().bind(node1.xProperty().add(5));
+				l2.endXProperty().bind(node2.xProperty().add(5));
+				l2.endYProperty().bind(node2.yProperty().add(5));
+				l3.startXProperty().bind(node2.xProperty().add(5));
+				l3.startYProperty().bind(node2.yProperty().add(5));
+				l3.endYProperty().bind(node2.yProperty().add(5));
+
+				agg.startXProperty().bind(l1.startXProperty());
+				agg.startYProperty().bind(l1.endYProperty());
+				agg.endXProperty().bind(l3.endXProperty());
+				agg.endYProperty().bind(l3.endYProperty());
+
+				node1.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node1.setX(e.getX() - 5);
+						node1.setY(e.getY() - 5);
+					}
+				});
+				node2.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node2.setX(e.getX() - 5);
+						node2.setY(e.getY() - 5);
+					}
+				});
+
+				startL.xProperty().bind(l1.startXProperty().subtract(20));
+				startL.yProperty().bind(l1.startYProperty().subtract(10));
+
+				endL.xProperty().bind(l3.endXProperty().add(20));
+				endL.yProperty().bind(l3.endYProperty().subtract(10));
+
+				getChildren().addAll(l1, l2, l3, node1, node2, startL, endL);
+
+				// Linked
+				for (int i = 0; i < cboxs.size(); i++) {
+					Point2D start = new Point2D(l1.getStartX(), l1.getStartY());
+					Point2D end = new Point2D(l3.getEndX(), l3.getEndY());
+					if (cboxs.get(i).contains(start)) {
+						double dx = start.getX() - cboxs.get(i).getX();
+						double dy = start.getY() - cboxs.get(i).getY();
+						l1.startXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l1.startYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l1.toBack();
+					} else if (cboxs.get(i).contains(end)) {
+						double dy = end.getY() - cboxs.get(i).getY();
+						double dx = end.getX() - cboxs.get(i).getX();
+						l3.endXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l3.endYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l3.toBack();
+					}
+
+				}
+			}
+
+		} else if (startx < endx && starty > endy) {
+			System.out.println(" Figure 4");
+
+			System.out.println(" SLope : " + slope);
+
+			if (slope > -1.5) {
+				Line l1 = new Line(startx, starty, startx + mid, starty);
+				l1.setStroke(color);
+				Line l2 = new Line(startx + mid, starty, startx + mid, endy);
+				l2.setStroke(color);
+				Line l3 = new Line(startx + mid, endy, endx, endy);
+				l3.setStroke(color);
+
+				Rectangle node1 = new Rectangle();
+				node1.setFill(Color.LIGHTBLUE);
+				node1.setX(startx + mid - 5);
+				node1.setY(starty - 5);
+				node1.setWidth(10);
+				node1.setHeight(10);
+
+				Rectangle node2 = new Rectangle();
+				node2.setFill(Color.LIGHTBLUE);
+				node2.setX(startx + mid - 5);
+				node2.setY(endy - 5);
+				node2.setWidth(10);
+				node2.setHeight(10);
+
+				l1.endXProperty().bind(node1.xProperty().add(5));
+				l1.startYProperty().bind(node1.yProperty().add(5));
+				l1.endYProperty().bind(node1.yProperty().add(5));
+				l2.startYProperty().bind(node1.yProperty().add(5));
+				l2.startXProperty().bind(node1.xProperty().add(5));
+				l2.endXProperty().bind(node2.xProperty().add(5));
+				l2.endYProperty().bind(node2.yProperty().add(5));
+				l3.startXProperty().bind(node2.xProperty().add(5));
+				l3.startYProperty().bind(node2.yProperty().add(5));
+				l3.endYProperty().bind(node2.yProperty().add(5));
+
+				agg.startXProperty().bind(l1.startXProperty());
+				agg.startYProperty().bind(l1.endYProperty());
+				agg.endXProperty().bind(l3.endXProperty());
+				agg.endYProperty().bind(l3.endYProperty());
+
+				node1.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node1.setX(e.getX() - 5);
+						node1.setY(e.getY() - 5);
+					}
+				});
+				node2.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node2.setX(e.getX() - 5);
+						node2.setY(e.getY() - 5);
+					}
+				});
+
+				startL.xProperty().bind(l1.startXProperty().add(20));
+				startL.yProperty().bind(l1.startYProperty().subtract(10));
+
+				endL.xProperty().bind(l3.endXProperty().subtract(20));
+				endL.yProperty().bind(l3.endYProperty().subtract(10));
+
+				getChildren().addAll(l1, l2, l3, node1, node2, startL, endL);
+
+				// Linked
+				for (int i = 0; i < cboxs.size(); i++) {
+					Point2D start = new Point2D(l1.getStartX(), l1.getStartY());
+					Point2D end = new Point2D(l3.getEndX(), l3.getEndY());
+					if (cboxs.get(i).contains(start)) {
+						double dx = start.getX() - cboxs.get(i).getX();
+						double dy = start.getY() - cboxs.get(i).getY();
+						l1.startXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l1.startYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l1.toBack();
+					} else if (cboxs.get(i).contains(end)) {
+						double dy = end.getY() - cboxs.get(i).getY();
+						double dx = end.getX() - cboxs.get(i).getX();
+						l3.endXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l3.endYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l3.toBack();
+					}
+
+				}
+
+			}
+
+		} else if (startx < endx && starty == endy) {
+			System.out.println(" Figure 5");
+			System.out.println(" SLope : " + slope);
+
+			if (slope == -0.0) {
+
+				Line l1 = new Line(startx, starty, startx + mid, starty);
+				l1.setStroke(color);
+				Line l2 = new Line(startx + mid, starty, startx + mid, endy);
+				l2.setStroke(color);
+				Line l3 = new Line(startx + mid, endy, endx, endy);
+				l3.setStroke(color);
+
+				Rectangle node1 = new Rectangle();
+				node1.setFill(Color.LIGHTBLUE);
+				node1.setX(startx + mid - 5);
+				node1.setY(starty - 5);
+				node1.setWidth(10);
+				node1.setHeight(10);
+
+				Rectangle node2 = new Rectangle();
+				node2.setFill(Color.LIGHTBLUE);
+				node2.setX(startx + mid - 5);
+				node2.setY(endy - 5);
+				node2.setWidth(10);
+				node2.setHeight(10);
+
+				l1.endXProperty().bind(node1.xProperty().add(5));
+				l1.startYProperty().bind(node1.yProperty().add(5));
+				l1.endYProperty().bind(node1.yProperty().add(5));
+				l2.startYProperty().bind(node1.yProperty().add(5));
+				l2.startXProperty().bind(node1.xProperty().add(5));
+				l2.endXProperty().bind(node2.xProperty().add(5));
+				l2.endYProperty().bind(node2.yProperty().add(5));
+				l3.startXProperty().bind(node2.xProperty().add(5));
+				l3.startYProperty().bind(node2.yProperty().add(5));
+				l3.endYProperty().bind(node2.yProperty().add(5));
+
+				agg.startXProperty().bind(l1.startXProperty());
+				agg.startYProperty().bind(l1.endYProperty());
+				agg.endXProperty().bind(l3.endXProperty());
+				agg.endYProperty().bind(l3.endYProperty());
+
+				startL.xProperty().bind(l1.startXProperty().add(20));
+				startL.yProperty().bind(l1.startYProperty().subtract(10));
+
+				endL.xProperty().bind(l3.endXProperty().subtract(20));
+				endL.yProperty().bind(l3.endYProperty().subtract(10));
+
+				node1.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node1.setX(e.getX() - 5);
+						node1.setY(e.getY() - 5);
+					}
+				});
+				node2.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						isAssociation = false;
+						node2.setX(e.getX() - 5);
+						node2.setY(e.getY() - 5);
+					}
+				});
+				aggs.add(agg);
+				getChildren().addAll(l1, l2, l3, node1, node2, startL, endL);
+
+				// Linked
+				for (int i = 0; i < cboxs.size(); i++) {
+					Point2D start = new Point2D(l1.getStartX(), l1.getStartY());
+					Point2D end = new Point2D(l3.getEndX(), l3.getEndY());
+					if (cboxs.get(i).contains(start)) {
+						double dx = start.getX() - cboxs.get(i).getX();
+						double dy = start.getY() - cboxs.get(i).getY();
+						l1.startXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l1.startYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l1.toBack();
+					} else if (cboxs.get(i).contains(end)) {
+						double dy = end.getY() - cboxs.get(i).getY();
+						double dx = end.getX() - cboxs.get(i).getX();
+						l3.endXProperty().bind(cboxs.get(i).xProperty().add(dx));
+						l3.endYProperty().bind(cboxs.get(i).yProperty().add(dy));
+						l3.toBack();
+					}
+
+				}
+
+			}
+
+		} else if (startx > endx && starty == endy) {
+			System.out.println(" Figure 6");
+
+		} else if (startx == endx && starty < endy) {
+			System.out.println(" Figure 7");
+
+		} else if (startx == endx && starty > endy) {
+			System.out.println(" Figure 8");
 
 		}
 

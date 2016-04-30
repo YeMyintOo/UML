@@ -28,12 +28,12 @@ public class ToolBar extends VBox {
 		setMinHeight(0);
 
 		color = new ColorPicker();
-		Color defaultColor = Color.web(toolHandler.getColor()); 
+		Color defaultColor = Color.web(toolHandler.getColor());
 		color.setValue(defaultColor);
 		color.setOnAction(e -> {
 			toolHandler.setColor(color.getValue().toString());
 		});
-		
+
 		switch (type) {
 
 		case 1: // Use_Case
@@ -64,7 +64,7 @@ public class ToolBar extends VBox {
 			getChildren().addAll(DeploymentToolBox());
 			break;
 		}
-		
+
 		getChildren().add(color);
 
 	}
@@ -252,7 +252,11 @@ public class ToolBar extends VBox {
 		btnP.setSpacing(10);
 		btnP.setAlignment(Pos.CENTER_LEFT);
 		ToggleButton classD = new ToggleButton("Class");
+		ToggleButton aclassD = new ToggleButton("Abstract Class");
+		ToggleButton iclassD = new ToggleButton("Interface Class");
 		ToggleButton asso = new ToggleButton("Association");
+		ToggleButton agg = new ToggleButton("Aggregation");
+		
 
 		ToggleGroup group = new ToggleGroup();
 		classD.setToggleGroup(group);
@@ -261,11 +265,21 @@ public class ToolBar extends VBox {
 		classD.setOnAction(e -> {
 			toolHandler.setTool("Class_Class");
 		});
+		aclassD.setOnAction(e -> {
+			toolHandler.setTool("Class_AbstractClass");
+		});
+		iclassD.setOnAction(e -> {
+			toolHandler.setTool("Class_InterfaceClass");
+		});
+
 		asso.setOnAction(e -> {
 			toolHandler.setTool("Class_Association");
 		});
+		agg.setOnAction(e -> {
+			toolHandler.setTool("Class_Aggregation");
+		});
 
-		btnP.getChildren().addAll(classD, asso);
+		btnP.getChildren().addAll(classD, aclassD,iclassD, asso,agg);
 		return btnP;
 	}
 
