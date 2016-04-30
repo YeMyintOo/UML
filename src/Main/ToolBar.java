@@ -256,7 +256,6 @@ public class ToolBar extends VBox {
 		ToggleButton iclassD = new ToggleButton("Interface Class");
 		ToggleButton asso = new ToggleButton("Association");
 		ToggleButton agg = new ToggleButton("Aggregation");
-		
 
 		ToggleGroup group = new ToggleGroup();
 		classD.setToggleGroup(group);
@@ -279,7 +278,7 @@ public class ToolBar extends VBox {
 			toolHandler.setTool("Class_Aggregation");
 		});
 
-		btnP.getChildren().addAll(classD, aclassD,iclassD, asso,agg);
+		btnP.getChildren().addAll(classD, aclassD, iclassD, asso, agg);
 		return btnP;
 	}
 
@@ -327,11 +326,39 @@ public class ToolBar extends VBox {
 		VBox btnP = new VBox();
 		btnP.setSpacing(10);
 		btnP.setAlignment(Pos.CENTER_LEFT);
-		ToggleButton object = new ToggleButton("Activity Tool");
+		ToggleButton init = new ToggleButton("Initial Node");
+		ToggleButton end = new ToggleButton("End Node");
+		ToggleButton action = new ToggleButton("Action");
+		ToggleButton edge = new ToggleButton("Edge");
+		ToggleButton merge = new ToggleButton("Merge");
+		ToggleButton time = new ToggleButton("Time");
+		ToggleButton region = new ToggleButton("Region");
 
 		ToggleGroup group = new ToggleGroup();
 
-		btnP.getChildren().addAll(object);
+		init.setOnAction(e -> {
+			toolHandler.setTool("Activity_InitNode");
+		});
+		end.setOnAction(e -> {
+			toolHandler.setTool("Activity_EndNode");
+		});
+		action.setOnAction(e -> {
+			toolHandler.setTool("Activity_Action");
+		});
+		edge.setOnAction(e -> {
+			toolHandler.setTool("Activity_Edge");
+		});
+		merge.setOnAction(e -> {
+			toolHandler.setTool("Activity_Merge");
+		});
+		time.setOnAction(e -> {
+			toolHandler.setTool("Activity_Time");
+		});
+		region.setOnAction(e -> {
+			toolHandler.setTool("Activity_Region");
+		});
+
+		btnP.getChildren().addAll(init, end, action, edge, merge, time, region);
 		return btnP;
 	}
 
