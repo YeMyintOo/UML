@@ -2,6 +2,7 @@ package CanvaBoxs;
 
 import java.util.ArrayList;
 
+import Calculate.ScreenDetail;
 import Canvas.UC_ActionLine;
 import Canvas.UC_Actor;
 import Canvas.UC_Box;
@@ -10,6 +11,7 @@ import Canvas.UC_IncludeLine;
 import Canvas.UC_ProcessCycle;
 import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
+import Library.MyGridLine;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
@@ -31,14 +33,17 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 public class UseCaseCanvaBox2 extends Pane {
 
 	private boolean isNew;
+	protected ScreenDetail screen;
 
 	private ToolHandler toolHandler;
 	private Color color;
 	private DropShadow shape;
+	private Stage owner;
 
 	// Actor
 	private ArrayList<UC_Actor> actors;
@@ -75,7 +80,13 @@ public class UseCaseCanvaBox2 extends Pane {
 	private UC_TypeOfLine typeofLine;
 	private boolean isTypeofLine;
 
-	public UseCaseCanvaBox2() {
+	public UseCaseCanvaBox2(Stage owner) {
+		this.owner = owner;
+
+		toolHandler = new ToolHandler();
+		if (toolHandler.getGrid().equals("Show")) {
+			drawGridLines();
+		}
 		init();
 		// Life Cycle////////////////////////////////////////
 		setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -83,8 +94,6 @@ public class UseCaseCanvaBox2 extends Pane {
 			public void handle(MouseEvent key) {
 				// Is New or Edit///////////////
 				isNewOrEdit(key);
-				////////////////////////////////
-
 				if (isNew) {
 					/// Get Color and Tool//////////
 					toolHandler = new ToolHandler();
@@ -236,7 +245,6 @@ public class UseCaseCanvaBox2 extends Pane {
 	public void isNewOREditActor(MouseEvent e, Point2D point) {
 		// Actor
 		for (int i = 0; i < actors.size(); i++) {
-
 			if (actors.get(i).contains(point)) {
 				isNew = false;
 				// Edition Process////////////
@@ -253,11 +261,9 @@ public class UseCaseCanvaBox2 extends Pane {
 					public void handle(MouseEvent key) {
 						Button x = null;
 						if (key.getClickCount() == 2) {
-							// Edit Actor Label
 							TextField data = new TextField();
 							data.layoutXProperty().bind(actors.get(index).centerXProperty().subtract(60));
 							data.layoutYProperty().bind(actors.get(index).centerYProperty().add(60));
-							// data.managedProperty().bind(data.visibleProperty());
 							getChildren().add(data);
 							data.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 								@Override
@@ -266,7 +272,7 @@ public class UseCaseCanvaBox2 extends Pane {
 										if (!data.getText().equals("")) {
 											actors.get(index).labelProperty().set(data.getText().trim());
 										}
-										data.setVisible(!data.isVisible());
+										getChildren().remove(data);
 									}
 								}
 							});
@@ -275,13 +281,25 @@ public class UseCaseCanvaBox2 extends Pane {
 				});
 
 				actors.get(i).setEffect(shape);
-				/////////////////////////////
-				// break;
-			} else {
-				actors.get(i).setEffect(null);// Remove Shape
-			}
-			// Linked
 
+				// Delete
+				owner.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+					@Override
+					public void handle(KeyEvent e) {
+						if(e.getCode()==KeyCode.DELETE){
+							getChildren().removeAll(actors.get(index),actors.get(index).getBody(), actors.get(index).getLeg(), actors.get(index).getLeg2(), actors.get(index).getLeg3(),
+									actors.get(index).getLeg4(), actors.get(index).getLabel());
+							actors.remove(index);
+							System.out.println("No of Actor : "+ actors.size());
+						}
+					}
+				});
+
+			} else {
+				actors.get(i).setEffect(null);
+			}
+
+			// Linked
 			for (int k = 0; k < actionLines.size(); k++) {
 				Rectangle rc = new Rectangle(actors.get(i).getCenterX() - 30, actors.get(i).getCenterY() - 30, 60, 100);
 				Point2D p = new Point2D(actionLines.get(k).getStartX(), actionLines.get(k).getStartY());
@@ -508,4 +526,20 @@ public class UseCaseCanvaBox2 extends Pane {
 		getChildren().addAll(path);
 
 	}
+
+	public void drawGridLines() {
+		int i = 10;
+		while (i < 800) {
+			MyGridLine l = new MyGridLine(10, i, 1340, i);
+			getChildren().add(l);
+			i = i + 20;
+		}
+		int k = 10;
+		while (k < 1340) {
+			MyGridLine l = new MyGridLine(k, 10, k, 690);
+			getChildren().add(l);
+			k = k + 20;
+		}
+	}
+
 }

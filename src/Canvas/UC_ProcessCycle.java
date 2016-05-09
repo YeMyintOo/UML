@@ -19,16 +19,6 @@ public class UC_ProcessCycle extends Ellipse {
 		label = new SimpleStringProperty("Process");
 		
 	}
-
-	public Color getBgcolor() {
-		return bgcolor;
-	}
-
-	public void setBgcolor(Color bgcolor) {
-		this.bgcolor = bgcolor;
-
-	}
-
 	public final StringProperty labelProperty() {
 		return label;
 	}

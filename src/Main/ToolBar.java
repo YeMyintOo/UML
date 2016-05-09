@@ -9,6 +9,7 @@ import javafx.animation.Transition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
@@ -45,11 +46,12 @@ public class ToolBar extends VBox {
 		shape.setRadius(5);
 
 		toolHandler = new ToolHandler();
-		setStyle("-fx-padding:100 10 10 10;");
+		toolHandler.setTool("");
 		setVisible(false);
 		setPrefHeight(0);
 		setMinHeight(0);
 		color = new ColorPicker();
+		color.setPrefWidth(50);
 		Color defaultColor = Color.web(toolHandler.getColor());
 		color.setValue(defaultColor);
 		color.setOnAction(e -> {
@@ -158,6 +160,10 @@ public class ToolBar extends VBox {
 		includeV = new MyImageView();
 		typeV = new MyImageView();
 
+		Button colorB = new Button("Color");
+		colorB.setPrefHeight(50);
+		colorB.setPrefWidth(50);
+
 		try {
 			actor = new Image(new FileInputStream("Resources/Icons/UseCaseIcon/Actor.png"));
 			action = new Image(new FileInputStream("Resources/Icons/UseCaseIcon/Action.png"));
@@ -234,7 +240,8 @@ public class ToolBar extends VBox {
 				typeV.setEffect(shape);
 			}
 		});
-		btnP.getChildren().addAll(head, actorV, actionV, boxV, processV, extendV, includeV, typeV, color);
+
+		btnP.getChildren().addAll(actorV, actionV, boxV, processV, extendV, includeV, typeV, color);
 		return btnP;
 	}
 

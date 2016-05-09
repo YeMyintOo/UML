@@ -257,7 +257,6 @@ public class ClassCanvaBox extends Pane {
 			@Override
 			public void handle(MouseEvent e) {
 				// Edit
-				System.out.println("Clikc");
 				TextField text = new TextField();
 				text.layoutXProperty().bind(data.layoutXProperty().subtract(15));
 				text.layoutYProperty().bind(data.layoutYProperty().subtract(15));

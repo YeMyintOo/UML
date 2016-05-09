@@ -1,10 +1,10 @@
 package Main;
 
 import java.io.File;
+
 import Boxes.Box_Exit;
 import Boxes.Box_Feed;
 import Boxes.Box_Guide;
-import Boxes.Box_Mail;
 import Boxes.Box_NFile;
 import Boxes.Box_NPro;
 import Boxes.Box_Print;
@@ -13,14 +13,17 @@ import Boxes.Box_Version;
 import Boxes.Box_WS;
 import Calculate.ScreenDetail;
 import Database.SystemHandler;
+import Database.ToolHandler;
 import Library.BuildCanvaXML;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -66,6 +69,7 @@ public class Window extends Application {
 	// Dynamic Variables and loaded variables
 	private String workspaceVar;
 	private SystemHandler sysHandler;
+	private ToolHandler toolHandler;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -101,13 +105,9 @@ public class Window extends Application {
 
 		// View Menu
 		ruler = new MenuItem("GridLines");
-		// zoomin = new MenuItem("Zoom In");
-		// zoomout = new MenuItem("Zoom Out");
-		// normal = new MenuItem("Normal");
 		view.getItems().addAll(ruler);
 
 		// Project Menu
-		// mail = new MenuItem("Mail");
 		print = new MenuItem("Print");
 		clean = new MenuItem("Clean");
 		project.getItems().addAll(print, clean);
@@ -137,6 +137,10 @@ public class Window extends Application {
 		if (sysHandler == null) {
 			sysHandler = new SystemHandler();
 		}
+		if (toolHandler == null) {
+			toolHandler = new ToolHandler();
+		}
+
 		workspaceVar = sysHandler.getDefaultWorkspace();
 
 		// Actions///////////////////////////////////
@@ -246,7 +250,22 @@ public class Window extends Application {
 			box.showAndWait(); // Wait until close This Dialog
 			root.setDisable(false);
 		});
+
+		ruler.setOnAction(e -> {
+			if (toolHandler.getGrid().equals("Hide")) {
+				toolHandler.setGrid("Show");
+			} else {
+				toolHandler.setGrid("Hide");
+			}
+		});
 		//////////////////////////////////////////
+
+		stage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent e) {
+				System.out.println(" Key Code : " + e.getCode());
+			}
+		});
 	}
 
 	// Add Tab in TabPane (New WorkSpace)
@@ -257,7 +276,7 @@ public class Window extends Application {
 			new BuildCanvaXML(file); // Build XML file with Element Node
 			Tab tab = new Tab();
 			tab.setText(name);
-			workspace = new WorkSpace2(type, file);
+			workspace = new WorkSpace2(type, file, stage);
 			tab.setContent(workspace);
 			tabPane.getTabs().add(tab);
 		} catch (Exception e) {

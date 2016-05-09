@@ -13,15 +13,28 @@ import CanvaBoxs.SequenceCanvaBox;
 import CanvaBoxs.StatechartCanvaBox;
 import CanvaBoxs.UseCaseCanvaBox2;
 import javafx.event.EventHandler;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 
 public class WorkSpace2 extends BorderPane {
 	private BorderPane boderPane; // Drawing Area
-
-	public WorkSpace2(int type, File file) {
+	protected Stage owner;
+	public WorkSpace2(int type, File file,Stage owner) {
+		this.owner=owner;
 		ToolBar toolbar = new ToolBar(type);
-		toolbar.slideHide();
+		boderPane = new BorderPane();
+		boderPane.setStyle("-fx-background-color:white;" + "-fx-border-style: solid inside;" + "-fx-border-width: 2;"
+				+ "-fx-border-insets: 5;" + "-fx-border-radius: 5;" + "-fx-border-color: blue;");
+		toolbar.setStyle("-fx-padding:100 10 10 10;" + "-fx-background-color:white;" + "-fx-border-style: solid inside;"
+				+ "-fx-border-width: 2;" + "-fx-border-insets: 5;" + "-fx-border-radius: 5;"
+				+ "-fx-border-color: green;");
+
+		boderPane.setLeft(toolbar);
+		RenderTool(type);
+		setCenter(boderPane);
+
 		addEventFilter(MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -37,24 +50,15 @@ public class WorkSpace2 extends BorderPane {
 					});
 
 				}
-
 			}
 		});
-
-		boderPane = new BorderPane();
-		boderPane.setStyle("-fx-background-color:white;" + "-fx-border-style: solid inside;" + "-fx-border-width: 2;"
-				+ "-fx-border-insets: 5;" + "-fx-border-radius: 5;" + "-fx-border-color: blue;");
-
-		boderPane.setLeft(toolbar);
-		RenderTool(type);
-		setCenter(boderPane);
 	}
 
 	public void RenderTool(int type) {
 
 		switch (type) {
 		case 1: // Use_Case
-			boderPane.setCenter(new UseCaseCanvaBox2());
+			boderPane.setCenter(new UseCaseCanvaBox2(owner));
 			break;
 		case 2:// Object
 			boderPane.setCenter(new ObjectCanvaBox());
