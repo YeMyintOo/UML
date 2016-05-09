@@ -17,7 +17,7 @@ public class CO_Package extends Rectangle {
 		setFill(color);
 
 		label = new Text("Package Name");
-		label.xProperty().bind(xProperty().add(label.layoutBoundsProperty().getValue().getWidth() / 3));
+		label.xProperty().bind(xProperty().add(widthProperty().getValue() / 2).subtract(label.layoutBoundsProperty().getValue().getWidth()/2));
 		label.yProperty().bind(yProperty().add(22));
 
 		node1 = new Rectangle();
