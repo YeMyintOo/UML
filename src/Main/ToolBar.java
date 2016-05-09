@@ -1,6 +1,9 @@
 package Main;
 
+import java.io.FileInputStream;
+
 import Database.ToolHandler;
+import Library.MyImageView;
 import javafx.animation.Animation;
 import javafx.animation.Transition;
 import javafx.event.ActionEvent;
@@ -10,6 +13,10 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -19,11 +26,26 @@ import javafx.util.Duration;
 public class ToolBar extends VBox {
 	private ToolHandler toolHandler;
 	private ColorPicker color;
+	private DropShadow shape;
+
+	// UseCase Image View
+	MyImageView actorV;
+	MyImageView actionV;
+	MyImageView boxV;
+	MyImageView processV;
+	MyImageView extendV;
+	MyImageView includeV;
+	MyImageView typeV;
+	///////////////////////
 
 	public ToolBar(int type) {
+		shape = new DropShadow();
+		shape.setOffsetX(5);
+		shape.setOffsetY(5);
+		shape.setRadius(5);
+
 		toolHandler = new ToolHandler();
-		setStyle("-fx-padding:100 10 10 10;" + "-fx-border-style: solid inside;" + "-fx-border-width: 2;"
-				+ "-fx-border-insets: 5;" + "-fx-border-radius: 5;" + "-fx-border-color: rgb(78,238,148);");
+		setStyle("-fx-padding:100 10 10 10;");
 		setVisible(false);
 		setPrefHeight(0);
 		setMinHeight(0);
@@ -64,8 +86,6 @@ public class ToolBar extends VBox {
 			getChildren().addAll(DeploymentToolBox());
 			break;
 		}
-
-		getChildren().add(color);
 
 	}
 
@@ -125,47 +145,96 @@ public class ToolBar extends VBox {
 		VBox btnP = new VBox();
 		btnP.setSpacing(10);
 		btnP.setAlignment(Pos.CENTER_LEFT);
-		Label head = new Label("Use Case Toolbox");
+		Label head = new Label("UseCase Tools");
 		head.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+		head.setStyle("-fx-padding:0 0 20 0;");
 
-		ToggleButton actor = new ToggleButton("Actor"); // Actor
-		ToggleButton action = new ToggleButton("Action"); // Action
-		ToggleButton rec = new ToggleButton("Box"); // Rectangle
-		ToggleButton line = new ToggleButton("Process"); // Process
-		ToggleButton extend = new ToggleButton("Extend"); // Extend
-		ToggleButton include = new ToggleButton("Include"); // Include
-		ToggleButton type = new ToggleButton("Type Of"); // Type of
-		ToggleGroup group = new ToggleGroup();
-		actor.setToggleGroup(group);
-		action.setToggleGroup(group);
-		rec.setToggleGroup(group);
-		line.setToggleGroup(group);
-		extend.setToggleGroup(group);
-		include.setToggleGroup(group);
-		type.setToggleGroup(group);
+		Image actor, action, box, process, extend, include, type;
+		actorV = new MyImageView();
+		actionV = new MyImageView();
+		boxV = new MyImageView();
+		processV = new MyImageView();
+		extendV = new MyImageView();
+		includeV = new MyImageView();
+		typeV = new MyImageView();
 
-		actor.setOnAction(e -> {
-			toolHandler.setTool("UseCase_Actor");
+		try {
+			actor = new Image(new FileInputStream("Resources/Icons/UseCaseIcon/Actor.png"));
+			action = new Image(new FileInputStream("Resources/Icons/UseCaseIcon/Action.png"));
+			box = new Image(new FileInputStream("Resources/Icons/UseCaseIcon/Box.png"));
+			process = new Image(new FileInputStream("Resources/Icons/UseCaseIcon/Process.png"));
+			extend = new Image(new FileInputStream("Resources/Icons/UseCaseIcon/Extend.png"));
+			include = new Image(new FileInputStream("Resources/Icons/UseCaseIcon/Include.png"));
+			type = new Image(new FileInputStream("Resources/Icons/UseCaseIcon/Type.png"));
+			actorV.setImage(actor);
+			actionV.setImage(action);
+			boxV.setImage(box);
+			processV.setImage(process);
+			extendV.setImage(extend);
+			includeV.setImage(include);
+			typeV.setImage(type);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		actorV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("UseCase_Actor");
+				ClearUseCaseToolShape();
+				actorV.setEffect(shape);
+			}
 		});
-		action.setOnAction(e -> {
-			toolHandler.setTool("UseCase_Action");
+		actionV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("UseCase_Action");
+				ClearUseCaseToolShape();
+				actionV.setEffect(shape);
+			}
 		});
-		rec.setOnAction(e -> {
-			toolHandler.setTool("UseCase_Box");
+		boxV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("UseCase_Box");
+				ClearUseCaseToolShape();
+				boxV.setEffect(shape);
+			}
 		});
-		line.setOnAction(e -> {
-			toolHandler.setTool("UseCase_Process");
+		processV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("UseCase_Process");
+				ClearUseCaseToolShape();
+				processV.setEffect(shape);
+			}
 		});
-		extend.setOnAction(e -> {
-			toolHandler.setTool("UseCase_Extend");
+		extendV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("UseCase_Extend");
+				ClearUseCaseToolShape();
+				extendV.setEffect(shape);
+			}
 		});
-		include.setOnAction(e -> {
-			toolHandler.setTool("UseCase_Include");
+
+		includeV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("UseCase_Include");
+				ClearUseCaseToolShape();
+				includeV.setEffect(shape);
+			}
 		});
-		type.setOnAction(e -> {
-			toolHandler.setTool("UseCase_Type");
+		typeV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("UseCase_Type");
+				ClearUseCaseToolShape();
+				typeV.setEffect(shape);
+			}
 		});
-		btnP.getChildren().addAll(head, actor, action, rec, line, extend, include, type);
+		btnP.getChildren().addAll(head, actorV, actionV, boxV, processV, extendV, includeV, typeV, color);
 		return btnP;
 	}
 
@@ -452,5 +521,15 @@ public class ToolBar extends VBox {
 
 		btnP.getChildren().addAll(hardware, software, database, protocol, file, component, system);
 		return btnP;
+	}
+
+	public void ClearUseCaseToolShape() {
+		actorV.setEffect(null);
+		actionV.setEffect(null);
+		boxV.setEffect(null);
+		processV.setEffect(null);
+		extendV.setEffect(null);
+		includeV.setEffect(null);
+		typeV.setEffect(null);
 	}
 }

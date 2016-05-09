@@ -101,16 +101,16 @@ public class Window extends Application {
 
 		// View Menu
 		ruler = new MenuItem("GridLines");
-		zoomin = new MenuItem("Zoom In");
-		zoomout = new MenuItem("Zoom Out");
-		normal = new MenuItem("Normal");
-		view.getItems().addAll(ruler, zoomin, zoomout, normal);
+		// zoomin = new MenuItem("Zoom In");
+		// zoomout = new MenuItem("Zoom Out");
+		// normal = new MenuItem("Normal");
+		view.getItems().addAll(ruler);
 
 		// Project Menu
-		mail = new MenuItem("Mail");
+		// mail = new MenuItem("Mail");
 		print = new MenuItem("Print");
 		clean = new MenuItem("Clean");
-		project.getItems().addAll(mail, print, clean);
+		project.getItems().addAll(print, clean);
 
 		// Help Menu
 		guide = new MenuItem("User Guide");
@@ -208,15 +208,12 @@ public class Window extends Application {
 			box.showAndWait(); // Wait until close This Dialog
 			root.setDisable(false);
 		});
-
-		mail.setOnAction(e -> {
-			Box_Mail box = new Box_Mail(stage);
-			box.sizeToScene();
-			root.setDisable(true);
-			box.setAlwaysOnTop(true);
-			box.showAndWait(); // Wait until close This Dialog
-			root.setDisable(false);
-		});
+		/*
+		 * mail.setOnAction(e -> { Box_Mail box = new Box_Mail(stage);
+		 * box.sizeToScene(); root.setDisable(true); box.setAlwaysOnTop(true);
+		 * box.showAndWait(); // Wait until close This Dialog
+		 * root.setDisable(false); });
+		 */
 		print.setOnAction(e -> {
 			Box_Print box = new Box_Print(stage);
 			box.sizeToScene();
@@ -257,10 +254,10 @@ public class Window extends Application {
 		// Create File (Filename.xml)
 		File file = new File(path + "\\" + name + ".xml");
 		try {
-			new BuildCanvaXML(file); //Build XML file with Element Node
+			new BuildCanvaXML(file); // Build XML file with Element Node
 			Tab tab = new Tab();
 			tab.setText(name);
-			workspace = new WorkSpace2(type,file);
+			workspace = new WorkSpace2(type, file);
 			tab.setContent(workspace);
 			tabPane.getTabs().add(tab);
 		} catch (Exception e) {
