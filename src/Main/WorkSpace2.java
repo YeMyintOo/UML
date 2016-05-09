@@ -13,6 +13,7 @@ import CanvaBoxs.SequenceCanvaBox;
 import CanvaBoxs.StatechartCanvaBox;
 import CanvaBoxs.UseCaseCanvaBox2;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -20,8 +21,8 @@ import javafx.stage.Stage;
 
 public class WorkSpace2 extends BorderPane {
 	private BorderPane boderPane; // Drawing Area
-	protected Stage owner;
-	public WorkSpace2(int type, File file,Stage owner) {
+	protected Scene owner;
+	public WorkSpace2(int type, File file,Scene owner) {
 		this.owner=owner;
 		ToolBar toolbar = new ToolBar(type);
 		boderPane = new BorderPane();

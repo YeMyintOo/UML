@@ -5,6 +5,7 @@ import java.io.File;
 import CanvaBoxs.*;
 import Database.ToolHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ToggleButton;
@@ -23,8 +24,8 @@ public class WorkSpace extends BorderPane {
 
 	private int type;
 	private ToolHandler toolHandler; // To set and get Selected Tool;
-	private Stage owner;
-	public WorkSpace(int type, File file,Stage owner) {
+	private Scene owner;
+	public WorkSpace(int type, File file,Scene owner) {
 		this.owner=owner;
 		this.type = type;
 		toolHandler = new ToolHandler();

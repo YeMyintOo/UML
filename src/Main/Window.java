@@ -16,6 +16,7 @@ import Database.SystemHandler;
 import Database.ToolHandler;
 import Library.BuildCanvaXML;
 import javafx.application.Application;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -122,6 +123,7 @@ public class Window extends Application {
 		root.setTop(bar);
 		root.setCenter(tabPane);
 		scene = new Scene(root, screen.getWidth(), screen.getHeight());
+		
 
 		// Design
 		File f = new File("Resources/Css/MenuDesign.css");
@@ -260,12 +262,6 @@ public class Window extends Application {
 		});
 		//////////////////////////////////////////
 
-		stage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent e) {
-				System.out.println(" Key Code : " + e.getCode());
-			}
-		});
 	}
 
 	// Add Tab in TabPane (New WorkSpace)
@@ -276,7 +272,7 @@ public class Window extends Application {
 			new BuildCanvaXML(file); // Build XML file with Element Node
 			Tab tab = new Tab();
 			tab.setText(name);
-			workspace = new WorkSpace2(type, file, stage);
+			workspace = new WorkSpace2(type, file, scene);
 			tab.setContent(workspace);
 			tabPane.getTabs().add(tab);
 		} catch (Exception e) {

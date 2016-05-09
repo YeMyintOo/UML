@@ -16,6 +16,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
@@ -43,7 +44,7 @@ public class UseCaseCanvaBox2 extends Pane {
 	private ToolHandler toolHandler;
 	private Color color;
 	private DropShadow shape;
-	private Stage owner;
+	private Scene owner;
 
 	// Actor
 	private ArrayList<UC_Actor> actors;
@@ -80,9 +81,8 @@ public class UseCaseCanvaBox2 extends Pane {
 	private UC_TypeOfLine typeofLine;
 	private boolean isTypeofLine;
 
-	public UseCaseCanvaBox2(Stage owner) {
+	public UseCaseCanvaBox2(Scene owner) {
 		this.owner = owner;
-
 		toolHandler = new ToolHandler();
 		if (toolHandler.getGrid().equals("Show")) {
 			drawGridLines();
@@ -244,7 +244,8 @@ public class UseCaseCanvaBox2 extends Pane {
 
 	public void isNewOREditActor(MouseEvent e, Point2D point) {
 		// Actor
-		for (int i = 0; i < actors.size(); i++) {
+		int i;
+		for (i = 0; i < actors.size(); i++) {
 			if (actors.get(i).contains(point)) {
 				isNew = false;
 				// Edition Process////////////
@@ -283,15 +284,13 @@ public class UseCaseCanvaBox2 extends Pane {
 				actors.get(i).setEffect(shape);
 
 				// Delete
-				owner.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-					@Override
-					public void handle(KeyEvent e) {
-						if(e.getCode()==KeyCode.DELETE){
-							getChildren().removeAll(actors.get(index),actors.get(index).getBody(), actors.get(index).getLeg(), actors.get(index).getLeg2(), actors.get(index).getLeg3(),
-									actors.get(index).getLeg4(), actors.get(index).getLabel());
-							actors.remove(index);
-							System.out.println("No of Actor : "+ actors.size());
-						}
+				actors.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				actors.get(i).setOnKeyPressed(key -> {
+					if (key.getCode() == KeyCode.DELETE) {
+						getChildren().removeAll(actors.get(index), actors.get(index).getBody(),
+								actors.get(index).getLeg(), actors.get(index).getLeg2(), actors.get(index).getLeg3(),
+								actors.get(index).getLeg4(), actors.get(index).getLabel());
+						actors.remove(index);
 					}
 				});
 
@@ -312,6 +311,14 @@ public class UseCaseCanvaBox2 extends Pane {
 				}
 
 			}
+
+		}
+	}
+
+	public void rePrintActros() {
+		for (int i = 0; i < actors.size(); i++) {
+			System.out.println(" Index :" + i);
+			System.out.println(" Value :" + actors.get(i).getCenterX());
 		}
 	}
 
@@ -540,6 +547,10 @@ public class UseCaseCanvaBox2 extends Pane {
 			getChildren().add(l);
 			k = k + 20;
 		}
+	}
+
+	public Scene getOwner() {
+		return owner;
 	}
 
 }
