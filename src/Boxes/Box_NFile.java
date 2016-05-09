@@ -116,6 +116,10 @@ public class Box_NFile extends Stage {
 		okB = new Button("Finish");
 		closeB = new Button("Cancel");
 		resetB = new Button("Reset");
+		File f = new File("Resources/Css/ButtonDesign.css");
+		okB.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+		closeB.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+		resetB.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
 		btn.getChildren().addAll(resetB, okB, closeB);
 		btn.setSpacing(4);
 		btn.setStyle("-fx-padding:10 10 10 10;" + "-fx-background-color:rgb(220,220,220);" + "-fx-cursor: hand;");

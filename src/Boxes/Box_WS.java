@@ -39,6 +39,9 @@ public class Box_WS extends Stage {
 		// Default path value
 		path = "";
 
+		
+		
+
 		BorderPane pane = new BorderPane();
 
 		// WorkSpace
@@ -57,6 +60,12 @@ public class Box_WS extends Stage {
 		okB = new Button("Finish");
 		closeB = new Button("Cancel");
 		resetB = new Button("Reset");
+		//Style Button
+		File f = new File("Resources/Css/ButtonDesign.css");
+		okB.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+		closeB.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+		resetB.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+		
 		btn.getChildren().addAll(resetB, okB, closeB);
 		btn.setSpacing(4);
 		btn.setStyle("-fx-padding:10 10 10 10;" + "-fx-background-color:rgb(220,220,220);" + "-fx-cursor: hand;");
@@ -85,8 +94,8 @@ public class Box_WS extends Stage {
 			wsChooser.setTitle("Select New Workspace");
 			File selectedDirectory = wsChooser.showDialog(this);
 			pathF.setText(selectedDirectory.toString());
-			if(systemHandler==null){
-				systemHandler=new SystemHandler();
+			if (systemHandler == null) {
+				systemHandler = new SystemHandler();
 			}
 			systemHandler.setDefaultWorkspace(selectedDirectory.toString());
 		});

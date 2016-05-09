@@ -80,6 +80,10 @@ public class Box_NPro extends Stage {
 		okB = new Button("Finish");
 		closeB = new Button("Cancel");
 		resetB = new Button("Reset");
+		File f = new File("Resources/Css/ButtonDesign.css");
+		okB.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+		closeB.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+		resetB.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
 		btn.getChildren().addAll(resetB, okB, closeB);
 		btn.setSpacing(4);
 		btn.setStyle("-fx-padding:10 10 10 10;" + "-fx-background-color:rgb(220,220,220);" + "-fx-cursor: hand;");
@@ -92,6 +96,15 @@ public class Box_NPro extends Stage {
 		setScene(scene);
 
 		// Actions
+		wsB.setOnAction(e -> {
+			System.out.println("Workspace Change");
+			Box_WS box = new Box_WS(this);
+			box.sizeToScene();
+			box.setAlwaysOnTop(true);
+			box.showAndWait();
+			wsF.setText(box.getPath());
+		});
+
 		resetB.setOnAction(e -> {
 			nameF.setText("");
 			wsF.setText("");
@@ -132,16 +145,12 @@ public class Box_NPro extends Stage {
 			}
 
 		});
-		wsB.setOnAction(e -> {
-
-		});
-
 	}
 
 	public void createProjectProperties(String path) throws IOException, InterruptedException {
 		File file = new File(path + "\\Properties.xml");
-		//file.createNewFile();
-		new BuildPropertiesXML(file);		
+		// file.createNewFile();
+		new BuildPropertiesXML(file);
 		System.out.println("Create Project Properties File");
 		// Hidden Properties File
 		// Window Only

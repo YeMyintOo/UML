@@ -13,6 +13,7 @@ import Library.Project;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -39,13 +40,14 @@ public class OpenProjectList extends BorderPane {
 
 	public OpenProjectList(String workspacePath) {
 		this.workspacePath = workspacePath;
+
 		// Action Bar
 		BorderPane tableP = new BorderPane();
 		table = new TableView<>();
 
 		table.setPlaceholder(new Label("No Project exist in this Workspace"));
 		tableP.setStyle("-fx-padding:100 50 0 50;");
-		loadColumns(); // Call Calumns
+		loadColumns(); // Call
 		tableP.setTop(table);
 
 		// Start Button

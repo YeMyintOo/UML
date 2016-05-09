@@ -6,13 +6,14 @@ import javafx.animation.Transition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 
 public class ToolBar extends VBox {
@@ -21,12 +22,11 @@ public class ToolBar extends VBox {
 
 	public ToolBar(int type) {
 		toolHandler = new ToolHandler();
-		setStyle("-fx-padding:10 10 10 10;" + "-fx-border-style: solid inside;" + "-fx-border-width: 2;"
+		setStyle("-fx-padding:100 10 10 10;" + "-fx-border-style: solid inside;" + "-fx-border-width: 2;"
 				+ "-fx-border-insets: 5;" + "-fx-border-radius: 5;" + "-fx-border-color: rgb(78,238,148);");
 		setVisible(false);
 		setPrefHeight(0);
 		setMinHeight(0);
-
 		color = new ColorPicker();
 		Color defaultColor = Color.web(toolHandler.getColor());
 		color.setValue(defaultColor);
@@ -125,6 +125,9 @@ public class ToolBar extends VBox {
 		VBox btnP = new VBox();
 		btnP.setSpacing(10);
 		btnP.setAlignment(Pos.CENTER_LEFT);
+		Label head = new Label("Use Case Toolbox");
+		head.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+
 		ToggleButton actor = new ToggleButton("Actor"); // Actor
 		ToggleButton action = new ToggleButton("Action"); // Action
 		ToggleButton rec = new ToggleButton("Box"); // Rectangle
@@ -162,7 +165,7 @@ public class ToolBar extends VBox {
 		type.setOnAction(e -> {
 			toolHandler.setTool("UseCase_Type");
 		});
-		btnP.getChildren().addAll(actor, action, rec, line, extend, include, type);
+		btnP.getChildren().addAll(head, actor, action, rec, line, extend, include, type);
 		return btnP;
 	}
 

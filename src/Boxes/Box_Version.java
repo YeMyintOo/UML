@@ -1,5 +1,7 @@
 package Boxes;
 
+import java.io.File;
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -25,6 +27,8 @@ public class Box_Version extends Stage{
 		// Button Panel
 		HBox btn = new HBox();
 		okB = new Button("Close");
+		File f = new File("Resources/Css/ButtonDesign.css");
+		okB.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
 		btn.getChildren().addAll(okB);
 		btn.setSpacing(4);
 		btn.setStyle("-fx-padding:10 10 10 10;" + "-fx-background-color:rgb(220,220,220);" + "-fx-cursor: hand;");

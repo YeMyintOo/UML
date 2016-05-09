@@ -1,5 +1,7 @@
 package Boxes;
 
+import java.io.File;
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -33,7 +35,10 @@ public class Box_Exit extends Stage {
 		HBox btn = new HBox();
 		yesB = new Button("Yes");
 		noB = new Button("No");
-
+		File f = new File("Resources/Css/ButtonDesign.css");
+		yesB.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+		noB.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+		
 		btn.getChildren().addAll(yesB, noB);
 		btn.setSpacing(4);
 		btn.setStyle("-fx-padding:10 10 10 10;" + "-fx-background-color:rgb(220,220,220);" + "-fx-cursor: hand;"
