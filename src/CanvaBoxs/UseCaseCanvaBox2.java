@@ -121,8 +121,7 @@ public class UseCaseCanvaBox2 extends Pane {
 					case "UseCase_Process":
 						processCycle = new UC_ProcessCycle(key.getX(), key.getY(), 60, 30, color, Color.BLACK);
 						isProcessCycle = true;
-						getChildren().add(processCycle);
-						drawProcessLabel(processCycle);
+						getChildren().addAll(processCycle, processCycle.getLabel());
 						break;
 					case "UseCase_Extend":
 						extendLine = new UC_ExtendLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
@@ -195,6 +194,7 @@ public class UseCaseCanvaBox2 extends Pane {
 					isBox = false;
 				}
 				if (isProcessCycle) {
+					getChildren().add(processCycle.getText(false));
 					processCycles.add(processCycle);
 					isProcessCycle = false;
 				}
@@ -401,10 +401,11 @@ public class UseCaseCanvaBox2 extends Pane {
 					@Override
 					public void handle(MouseEvent key) {
 						if (key.getClickCount() == 2) {
-							boxs.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+							boxs.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED,
+									new EventHandler<KeyEvent>() {
 								@Override
 								public void handle(KeyEvent e) {
-									if(e.getCode()==KeyCode.ENTER){
+									if (e.getCode() == KeyCode.ENTER) {
 										boxs.get(index).setTextInVisible();
 									}
 								}
@@ -431,32 +432,44 @@ public class UseCaseCanvaBox2 extends Pane {
 						processCycles.get(index).setCenterY(key.getY());
 					}
 				});
-
 				processCycles.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent key) {
 						Button x = null;
 						if (key.getClickCount() == 2) {
-							// Edit Actor Label
-							TextField data = new TextField();
-							data.layoutXProperty().bind(processCycles.get(index).centerXProperty().subtract(60));
-							data.layoutYProperty().bind(processCycles.get(index).centerYProperty().add(60));
-							getChildren().add(data);
-							data.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+							processCycles.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED,
+									new EventHandler<KeyEvent>() {
 								@Override
 								public void handle(KeyEvent e) {
 									if (e.getCode() == KeyCode.ENTER) {
-										if (!data.getText().equals("")) {
-											processCycles.get(index).labelProperty().set(data.getText().trim());
-											DoubleProperty w = new SimpleDoubleProperty();
-											Text msg = new Text(data.getText().trim());
-											w.set(msg.layoutBoundsProperty().getValue().getMaxX());
-											processCycles.get(index).radiusXProperty().bind(w);
-										}
-										getChildren().remove(data);
+										DoubleProperty width = new SimpleDoubleProperty();
+										width.set(processCycles.get(index).getLabel().layoutBoundsProperty().getValue()
+												.getWidth());
+										processCycles.get(index).radiusXProperty().bind(width);
+										processCycles.get(index).getLabel()
+												.layoutXProperty().bind(
+														processCycles.get(index).centerXProperty()
+																.subtract(processCycles.get(index).getLabel()
+																		.layoutBoundsProperty().getValue().getWidth()
+																		/ 2));
+										processCycles.get(index).setTextInVisible();
 									}
 								}
 							});
+						}
+					}
+				});
+
+				// Delete
+				processCycles.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				processCycles.get(i).setOnKeyPressed(key -> {
+					if (key.getCode() == KeyCode.DELETE) {
+						if (processCycles.size() > 0) {
+							getChildren().removeAll(processCycles.get(index), processCycles.get(index).getLabel(),
+									processCycles.get(index).getText(false));
+							processCycles.remove(index);
+						} else {
+							System.out.println("No ProcessCycle to delete");
 						}
 					}
 				});
@@ -473,22 +486,11 @@ public class UseCaseCanvaBox2 extends Pane {
 						actionLines.get(k).endXProperty().bind(processCycles.get(i).centerXProperty());
 						actionLines.get(k).endYProperty().bind(processCycles.get(i).centerYProperty());
 						processCycles.get(i).toFront();
-						drawProcessLabel(processCycles.get(i));
+						processCycles.get(i).getLabel().toFront();
 					}
 				}
 			}
 		}
-	}
-
-	public void drawProcessLabel(UC_ProcessCycle cycle) {
-		Text plabel = new Text(cycle.labelProperty().getValue());
-		plabel.textProperty().bind(cycle.labelProperty());
-
-		plabel.layoutXProperty()
-				.bind(cycle.centerXProperty().subtract(plabel.layoutBoundsProperty().getValue().getWidth() / 2));
-		plabel.layoutYProperty().bind(cycle.centerYProperty());
-
-		getChildren().addAll(plabel);
 	}
 
 	public void Linelabel(Line line, String label) {

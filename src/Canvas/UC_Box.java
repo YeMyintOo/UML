@@ -29,11 +29,11 @@ public class UC_Box extends Rectangle {
 		label.textProperty().bindBidirectional(labelProperty());
 		label.setFont(Font.font("Arial", FontWeight.BLACK, 16));
 		label.layoutXProperty().bind(xProperty());
-		label.layoutYProperty().bind(yProperty().subtract(20));
+		label.layoutYProperty().bind(yProperty().subtract(15));
 
 		text = new TextField(data.get());
 		text.layoutXProperty().bind(xProperty());
-		text.layoutYProperty().bind(yProperty().subtract(20));
+		text.layoutYProperty().bind(yProperty().subtract(10));
 		
 		labelProperty().bindBidirectional(getTextData().textProperty());
 
