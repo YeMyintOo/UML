@@ -116,7 +116,7 @@ public class UseCaseCanvaBox2 extends Pane {
 					case "UseCase_Box":
 						box = new UC_Box(key.getX(), key.getY(), 300, 400, color, Color.GRAY);
 						isBox = true;
-						getChildren().add(box);
+						getChildren().addAll(box, box.getLabel());
 						break;
 					case "UseCase_Process":
 						processCycle = new UC_ProcessCycle(key.getX(), key.getY(), 60, 30, color, Color.BLACK);
@@ -190,7 +190,7 @@ public class UseCaseCanvaBox2 extends Pane {
 					isActionLine = false;
 				}
 				if (isBox) {
-					drawBoxLabel(box);
+					getChildren().add(box.getText(false));
 					boxs.add(box);
 					isBox = false;
 				}
@@ -387,7 +387,6 @@ public class UseCaseCanvaBox2 extends Pane {
 						boxs.get(index).setY(key.getY() - 100);
 					}
 				});
-
 				boxs.get(i).setOnScroll(new EventHandler<ScrollEvent>() {
 					@Override
 					public void handle(ScrollEvent s) {
@@ -398,6 +397,22 @@ public class UseCaseCanvaBox2 extends Pane {
 						}
 					}
 				});
+				boxs.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent key) {
+						if (key.getClickCount() == 2) {
+							boxs.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+								@Override
+								public void handle(KeyEvent e) {
+									if(e.getCode()==KeyCode.ENTER){
+										boxs.get(index).setTextInVisible();
+									}
+								}
+							});
+						}
+					}
+				});
+
 				break;
 			}
 		}
@@ -463,15 +478,6 @@ public class UseCaseCanvaBox2 extends Pane {
 				}
 			}
 		}
-	}
-
-	public void drawBoxLabel(UC_Box box) {
-		Text label = new Text(box.labelProperty().getValue());
-		label.setFont(Font.font("Arial", FontWeight.BLACK, 16));
-
-		label.layoutXProperty().bind(box.xProperty().subtract(label.layoutBoundsProperty().getValue().getWidth() / 2));
-		label.layoutYProperty().bind(box.yProperty().subtract(20));
-		getChildren().add(label);
 	}
 
 	public void drawProcessLabel(UC_ProcessCycle cycle) {
