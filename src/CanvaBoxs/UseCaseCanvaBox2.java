@@ -126,7 +126,7 @@ public class UseCaseCanvaBox2 extends Pane {
 					case "UseCase_Extend":
 						extendLine = new UC_ExtendLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
 						isExtendLine = true;
-						getChildren().add(extendLine);
+						getChildren().addAll(extendLine);
 						break;
 					case "UseCase_Include":
 						includeLine = new UC_IncludeLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
@@ -199,19 +199,20 @@ public class UseCaseCanvaBox2 extends Pane {
 					isProcessCycle = false;
 				}
 				if (isExtendLine) {
-					LineArrowHead(extendLine);
-					Linelabel(extendLine, "extend");
+					extendLine.recalculatePoint();
+					getChildren().addAll(extendLine.getLabel(true), extendLine.getTop(), extendLine.getBot());
 					extendLines.add(extendLine);
 					isExtendLine = false;
 				}
 				if (isIncludeLine) {
-					LineArrowHead(includeLine);
-					Linelabel(includeLine, "include");
+					includeLine.recalculatePoint();
+					getChildren().addAll(includeLine.getLabel(true), includeLine.getTop(), includeLine.getBot());
 					includeLines.add(includeLine);
 					isIncludeLine = false;
 				}
 				if (isTypeofLine) {
-					LineTriangleHead(typeofLine);
+					typeofLine.calculateTri();
+					getChildren().add(typeofLine.getTri());
 					typeofLines.add(typeofLine);
 					isTypeofLine = false;
 				}
@@ -242,6 +243,9 @@ public class UseCaseCanvaBox2 extends Pane {
 		isNewOREditAction(e, point);
 		isNewOREditBox(e, point);
 		isNewOREditProcess(e, point);
+		isNewOREditTypeOf(e, point);
+		isNewOREditInclude(e, point);
+		isNewOREditExtend(e,point);
 	}
 
 	public void isNewOREditActor(MouseEvent e, Point2D point) {
@@ -325,10 +329,6 @@ public class UseCaseCanvaBox2 extends Pane {
 
 	public void isNewOREditAction(MouseEvent e, Point2D point) {
 		for (int i = 0; i < actionLines.size(); i++) {
-			// Line x = new Line(point.getX() - 5, point.getY(), point.getX() +
-			// 5, point.getY());
-			// Line y = new Line(point.getX(), point.getY() - 5, point.getX(),
-			// point.getY() + 5);
 			int index = i;
 			boolean isclick = actionLines.get(i).contains(point.getX(), point.getY())
 					|| actionLines.get(i).contains(point.getX() - 1, point.getY())
@@ -493,108 +493,167 @@ public class UseCaseCanvaBox2 extends Pane {
 		}
 	}
 
-	public void Linelabel(Line line, String label) {
-		double startx = line.getStartX();
-		double starty = line.getStartY();
-		double endx = line.getEndX();
-		double endy = line.getEndY();
+	public void isNewOREditTypeOf(MouseEvent e, Point2D point) {
+		for (int i = 0; i < typeofLines.size(); i++) {
 
-		double midx = (startx + endx) * 0.5;
-		double midy = (starty + endy) * 0.5;
-		double slope = (starty - endy) / (startx - endx);
+			int index = i;
+			boolean isclick = typeofLines.get(i).contains(point.getX(), point.getY())
+					|| typeofLines.get(i).contains(point.getX() - 1, point.getY())
+					|| typeofLines.get(i).contains(point.getX() - 2, point.getY())
+					|| typeofLines.get(i).contains(point.getX() - 3, point.getY())
+					|| typeofLines.get(i).contains(point.getX() - 4, point.getY())
+					|| typeofLines.get(i).contains(point.getX() - 5, point.getY())
+					|| typeofLines.get(i).contains(point.getX() + 1, point.getY())
+					|| typeofLines.get(i).contains(point.getX() + 2, point.getY())
+					|| typeofLines.get(i).contains(point.getX() + 3, point.getY())
+					|| typeofLines.get(i).contains(point.getX() + 4, point.getY())
+					|| typeofLines.get(i).contains(point.getX() + 5, point.getY())
+					|| typeofLines.get(i).contains(point.getX(), point.getY() - 1)
+					|| typeofLines.get(i).contains(point.getX(), point.getY() - 2)
+					|| typeofLines.get(i).contains(point.getX(), point.getY() - 3)
+					|| typeofLines.get(i).contains(point.getX(), point.getY() - 4)
+					|| typeofLines.get(i).contains(point.getX(), point.getY() - 5)
+					|| typeofLines.get(i).contains(point.getX(), point.getY() + 1)
+					|| typeofLines.get(i).contains(point.getX(), point.getY() + 2)
+					|| typeofLines.get(i).contains(point.getX(), point.getY() + 3)
+					|| typeofLines.get(i).contains(point.getX(), point.getY() + 4)
+					|| typeofLines.get(i).contains(point.getX(), point.getY() + 5);
+			if (isclick) {
+				isNew = false;
 
-		String msg = "<<" + label + ">>";
-
-		if (startx < endx && starty < endy) {
-			System.out.println(" Figure 1");
-
-			getChildren().addAll(new Text(midx + 5, midy, msg));
-
-		} else if (startx > endx && starty > endy) {
-			System.out.println(" Figure 2");
-			getChildren().addAll(new Text(midx + 5, midy, msg));
-
-		} else if (startx > endx && starty < endy) {
-			System.out.println(" Figure 3");
-			getChildren().addAll(new Text(midx + 5, midy, msg));
-
-		} else if (startx < endx && starty > endy) {
-			System.out.println(" Figure 4");
-			getChildren().addAll(new Text(midx + 5, midy, msg));
-
-		} else if (startx < endx && starty == endy) {
-			System.out.println(" Figure 5");
-			getChildren().addAll(new Text(midx - 10, midy - 20, msg));
-
-		} else if (startx > endx && starty == endy) {
-			System.out.println(" Figure 6");
-			getChildren().addAll(new Text(midx - 10, midy - 20, msg));
-
-		} else if (startx == endx && starty < endy) {
-			System.out.println(" Figure 7");
-			getChildren().addAll(new Text(midx - 15, midy, msg));
-
-		} else if (startx == endx && starty > endy) {
-			System.out.println(" Figure 8");
-			getChildren().addAll(new Text(midx - 15, midy, msg));
-		} else {
+				// Delete
+				typeofLines.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				typeofLines.get(i).setOnKeyPressed(key -> {
+					if (key.getCode() == KeyCode.DELETE) {
+						if (typeofLines.size() > 0) {
+							getChildren().removeAll(typeofLines.get(index), typeofLines.get(index).getTri());
+							typeofLines.remove(index);
+						} else {
+							System.out.println("No TypeOfLine to delete");
+						}
+					}
+				});
+				typeofLines.get(i).setEffect(shape);
+				typeofLines.get(i).getTri().setEffect(shape);
+				// getChildren().addAll(x, y);
+			} else {
+				typeofLines.get(i).setEffect(null);
+				typeofLines.get(i).getTri().setEffect(null);
+			}
 
 		}
-
 	}
 
-	public void LineArrowHead(Line line) {
-		double startx = line.getStartX();
-		double starty = line.getStartY();
-		double endx = line.getEndX();
-		double endy = line.getEndY();
+	public void isNewOREditInclude(MouseEvent e, Point2D point) {
+		for (int i = 0; i < includeLines.size(); i++) {
 
-		// Arrow Head
-		double x, y, length;
-		length = Math.sqrt((endx - startx) * (endx - startx) + (endy - starty) * (endy - starty));
-		x = (endx - startx) / length;
-		y = (endy - starty) / length;
-		Point2D base = new Point2D(endx - x * 10, endy - y * 10);
-		Point2D back_top = new Point2D(base.getX() - 10 * y, base.getY() + 10 * x);
-		Point2D back_bottom = new Point2D(base.getX() + 10 * y, base.getY() - 10 * x);
-		Path top = new Path();
-		top.setStroke(color);
-		top.getElements().add(new MoveTo(endx, endy));
-		top.getElements().add(new LineTo(back_top.getX(), back_top.getY()));
+			int index = i;
+			boolean isclick = includeLines.get(i).contains(point.getX(), point.getY())
+					|| includeLines.get(i).contains(point.getX() - 1, point.getY())
+					|| includeLines.get(i).contains(point.getX() - 2, point.getY())
+					|| includeLines.get(i).contains(point.getX() - 3, point.getY())
+					|| includeLines.get(i).contains(point.getX() - 4, point.getY())
+					|| includeLines.get(i).contains(point.getX() - 5, point.getY())
+					|| includeLines.get(i).contains(point.getX() + 1, point.getY())
+					|| includeLines.get(i).contains(point.getX() + 2, point.getY())
+					|| includeLines.get(i).contains(point.getX() + 3, point.getY())
+					|| includeLines.get(i).contains(point.getX() + 4, point.getY())
+					|| includeLines.get(i).contains(point.getX() + 5, point.getY())
+					|| includeLines.get(i).contains(point.getX(), point.getY() - 1)
+					|| includeLines.get(i).contains(point.getX(), point.getY() - 2)
+					|| includeLines.get(i).contains(point.getX(), point.getY() - 3)
+					|| includeLines.get(i).contains(point.getX(), point.getY() - 4)
+					|| includeLines.get(i).contains(point.getX(), point.getY() - 5)
+					|| includeLines.get(i).contains(point.getX(), point.getY() + 1)
+					|| includeLines.get(i).contains(point.getX(), point.getY() + 2)
+					|| includeLines.get(i).contains(point.getX(), point.getY() + 3)
+					|| includeLines.get(i).contains(point.getX(), point.getY() + 4)
+					|| includeLines.get(i).contains(point.getX(), point.getY() + 5);
+			if (isclick) {
+				isNew = false;
 
-		Path bot = new Path();
-		bot.setStroke(color);
-		bot.getElements().add(new MoveTo(endx, endy));
-		bot.getElements().add(new LineTo(back_bottom.getX(), back_bottom.getY()));
+				// Delete
+				includeLines.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				includeLines.get(i).setOnKeyPressed(key -> {
+					if (key.getCode() == KeyCode.DELETE) {
+						if (includeLines.size() > 0) {
+							getChildren().removeAll(includeLines.get(index), includeLines.get(index).getTop(),
+									includeLines.get(index).getBot(),includeLines.get(index).getLabel(false));
+							includeLines.remove(index);
+						} else {
+							System.out.println("No Include Line to delete");
+						}
+					}
+				});
+				includeLines.get(i).setEffect(shape);
+				includeLines.get(i).getTop().setEffect(shape);
+				includeLines.get(i).getBot().setEffect(shape);
+				// getChildren().addAll(x, y);
+			} else {
+				includeLines.get(i).setEffect(null);
+				includeLines.get(i).getTop().setEffect(null);
+				includeLines.get(i).getBot().setEffect(null);
+			}
 
-		getChildren().addAll(top, bot);
+		}
 	}
+	
+	public void isNewOREditExtend(MouseEvent e,Point2D point){
 
-	public void LineTriangleHead(UC_TypeOfLine line) {
+		for (int i = 0; i < extendLines.size(); i++) {
 
-		double startx = line.getStartX();
-		double starty = line.getStartY();
-		double endx = line.getEndX();
-		double endy = line.getEndY();
+			int index = i;
+			boolean isclick = extendLines.get(i).contains(point.getX(), point.getY())
+					|| extendLines.get(i).contains(point.getX() - 1, point.getY())
+					|| extendLines.get(i).contains(point.getX() - 2, point.getY())
+					|| extendLines.get(i).contains(point.getX() - 3, point.getY())
+					|| extendLines.get(i).contains(point.getX() - 4, point.getY())
+					|| extendLines.get(i).contains(point.getX() - 5, point.getY())
+					|| extendLines.get(i).contains(point.getX() + 1, point.getY())
+					|| extendLines.get(i).contains(point.getX() + 2, point.getY())
+					|| extendLines.get(i).contains(point.getX() + 3, point.getY())
+					|| extendLines.get(i).contains(point.getX() + 4, point.getY())
+					|| extendLines.get(i).contains(point.getX() + 5, point.getY())
+					|| extendLines.get(i).contains(point.getX(), point.getY() - 1)
+					|| extendLines.get(i).contains(point.getX(), point.getY() - 2)
+					|| extendLines.get(i).contains(point.getX(), point.getY() - 3)
+					|| extendLines.get(i).contains(point.getX(), point.getY() - 4)
+					|| extendLines.get(i).contains(point.getX(), point.getY() - 5)
+					|| extendLines.get(i).contains(point.getX(), point.getY() + 1)
+					|| extendLines.get(i).contains(point.getX(), point.getY() + 2)
+					|| extendLines.get(i).contains(point.getX(), point.getY() + 3)
+					|| extendLines.get(i).contains(point.getX(), point.getY() + 4)
+					|| extendLines.get(i).contains(point.getX(), point.getY() + 5);
+			if (isclick) {
+				isNew = false;
 
-		// Arrow Head
-		double x, y, length;
-		length = Math.sqrt((endx - startx) * (endx - startx) + (endy - starty) * (endy - starty));
-		x = (endx - startx) / length;
-		y = (endy - starty) / length;
-		Point2D base = new Point2D(endx - x * 10, endy - y * 10);
-		Point2D back_top = new Point2D(base.getX() - 10 * y, base.getY() + 10 * x);
-		Point2D back_bottom = new Point2D(base.getX() + 10 * y, base.getY() - 10 * x);
-		Path path = new Path();
-		path.setStroke(color);
-		path.getElements().add(new MoveTo(endx, endy));
-		path.getElements().add(new LineTo(back_top.getX(), back_top.getY()));
-		path.getElements().add(new LineTo(back_bottom.getX(), back_bottom.getY()));
-		path.getElements().add(new LineTo(endx, endy));
-		getChildren().addAll(path);
+				// Delete
+				extendLines.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				extendLines.get(i).setOnKeyPressed(key -> {
+					if (key.getCode() == KeyCode.DELETE) {
+						if (extendLines.size() > 0) {
+							getChildren().removeAll(extendLines.get(index), extendLines.get(index).getTop(),
+									extendLines.get(index).getBot(),extendLines.get(index).getLabel(false));
+							extendLines.remove(index);
+						} else {
+							System.out.println("No Extend Line to delete");
+						}
+					}
+				});
+				extendLines.get(i).setEffect(shape);
+				extendLines.get(i).getTop().setEffect(shape);
+				extendLines.get(i).getBot().setEffect(shape);
+				// getChildren().addAll(x, y);
+			} else {
+				extendLines.get(i).setEffect(null);
+				extendLines.get(i).getTop().setEffect(null);
+				extendLines.get(i).getBot().setEffect(null);
+			}
 
+		}
+	
 	}
-
+	
 	public void drawGridLines() {
 		int i = 10;
 		while (i < 800) {

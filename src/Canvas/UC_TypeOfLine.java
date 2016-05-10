@@ -1,78 +1,48 @@
 package Canvas;
 
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 
-public class UC_TypeOfLine extends Line{
-	private double startx;
-	private double starty;
-	private double endx;
-	private double endy;
+public class UC_TypeOfLine extends Line {
 	private Color color;
 
-	public UC_TypeOfLine() {
-		this(0, 0, 0, 0);
-	}
-
-	public UC_TypeOfLine(double startx, double starty, double endx, double endy) {
-		this(startx, starty, endx, endy, Color.BLACK);
-	}
+	private Path tri;
 
 	public UC_TypeOfLine(double startx, double starty, double endx, double endy, Color color) {
 		super(startx, starty, endx, endy);
-		setStartx(startx);
-		setStarty(starty);
-		setEndx(endx);
-		setEndy(endy);
-		setStroke(color);
-		
-	}
-
-	public double getStartx() {
-		return startx;
-	}
-
-	public void setStartx(double startx) {
-		this.startx = startx;
-	}
-
-	public double getStarty() {
-		return starty;
-	}
-
-	public void setStarty(double starty) {
-		this.starty = starty;
-	}
-
-	public double getEndx() {
-		return endx;
-	}
-
-	public void setEndx(double endx) {
-		this.endx = endx;
-		setEndX(endx);
-	}
-
-	public double getEndy() {
-		return endy;
-	}
-
-	public void setEndy(double endy) {
-		this.endy = endy;
-		setEndY(endy);
-	}
-
-	public Color getColor() {
-		return color;
-	}
-
-	public void setColor(Color color) {
 		this.color = color;
-		setFill(color);
+		setStroke(color);
+
 	}
 
+	public Path getTri() {
+		return tri;
+	}
 
+	public void calculateTri() {
+		double startx = getStartX();
+		double starty = getStartY();
+		double endx = getEndX();
+		double endy = getEndY();
 
-
-
+		// Arrow Head
+		double x, y, length;
+		length = Math.sqrt((endx - startx) * (endx - startx) + (endy - starty) * (endy - starty));
+		x = (endx - startx) / length;
+		y = (endy - starty) / length;
+		Point2D base = new Point2D(endx - x * 10, endy - y * 10);
+		Point2D back_top = new Point2D(base.getX() - 10 * y, base.getY() + 10 * x);
+		Point2D back_bottom = new Point2D(base.getX() + 10 * y, base.getY() - 10 * x);
+		tri = new Path();
+		tri.setStroke(Color.LIGHTGRAY);
+		tri.setFill(color);
+		tri.getElements().add(new MoveTo(endx, endy));
+		tri.getElements().add(new LineTo(back_top.getX(), back_top.getY()));
+		tri.getElements().add(new LineTo(back_bottom.getX(), back_bottom.getY()));
+		tri.getElements().add(new LineTo(endx, endy));
+	}
 }
