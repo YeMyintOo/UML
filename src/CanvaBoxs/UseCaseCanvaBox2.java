@@ -15,6 +15,7 @@ import Library.MyGridLine;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -26,11 +27,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -88,7 +91,6 @@ public class UseCaseCanvaBox2 extends Pane {
 			drawGridLines();
 		}
 		init();
-		// Life Cycle////////////////////////////////////////
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent key) {
@@ -109,11 +111,10 @@ public class UseCaseCanvaBox2 extends Pane {
 					case "UseCase_Action":
 						actionLine = new UC_ActionLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
 						isActionLine = true;
-						getChildren().add(actionLine);
+						getChildren().addAll(actionLine);
 						break;
 					case "UseCase_Box":
 						box = new UC_Box(key.getX(), key.getY(), 300, 400, color, Color.GRAY);
-						// drawBoxLabel(box);
 						isBox = true;
 						getChildren().add(box);
 						break;
@@ -216,7 +217,7 @@ public class UseCaseCanvaBox2 extends Pane {
 				}
 			}
 		});
-		////////////////////////////////////////////////////
+
 	}
 
 	public void init() {
@@ -238,6 +239,7 @@ public class UseCaseCanvaBox2 extends Pane {
 		isNew = true;
 		Point2D point = new Point2D(e.getX(), e.getY());
 		isNewOREditActor(e, point);
+		isNewOREditAction(e, point);
 		isNewOREditBox(e, point);
 		isNewOREditProcess(e, point);
 	}
@@ -287,10 +289,16 @@ public class UseCaseCanvaBox2 extends Pane {
 				actors.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
 				actors.get(i).setOnKeyPressed(key -> {
 					if (key.getCode() == KeyCode.DELETE) {
-						getChildren().removeAll(actors.get(index), actors.get(index).getBody(),
-								actors.get(index).getLeg(), actors.get(index).getLeg2(), actors.get(index).getLeg3(),
-								actors.get(index).getLeg4(), actors.get(index).getLabel());
-						actors.remove(index);
+						if (actors.size() > 0) {
+							getChildren().removeAll(actors.get(index), actors.get(index).getBody(),
+									actors.get(index).getLeg(), actors.get(index).getLeg2(),
+									actors.get(index).getLeg3(), actors.get(index).getLeg4(),
+									actors.get(index).getLabel());
+							actors.remove(index);
+						} else {
+							System.out.println("No Actor to delete");
+						}
+
 					}
 				});
 
@@ -315,10 +323,55 @@ public class UseCaseCanvaBox2 extends Pane {
 		}
 	}
 
-	public void rePrintActros() {
-		for (int i = 0; i < actors.size(); i++) {
-			System.out.println(" Index :" + i);
-			System.out.println(" Value :" + actors.get(i).getCenterX());
+	public void isNewOREditAction(MouseEvent e, Point2D point) {
+		for (int i = 0; i < actionLines.size(); i++) {
+			// Line x = new Line(point.getX() - 5, point.getY(), point.getX() +
+			// 5, point.getY());
+			// Line y = new Line(point.getX(), point.getY() - 5, point.getX(),
+			// point.getY() + 5);
+			int index = i;
+			boolean isclick = actionLines.get(i).contains(point.getX(), point.getY())
+					|| actionLines.get(i).contains(point.getX() - 1, point.getY())
+					|| actionLines.get(i).contains(point.getX() - 2, point.getY())
+					|| actionLines.get(i).contains(point.getX() - 3, point.getY())
+					|| actionLines.get(i).contains(point.getX() - 4, point.getY())
+					|| actionLines.get(i).contains(point.getX() - 5, point.getY())
+					|| actionLines.get(i).contains(point.getX() + 1, point.getY())
+					|| actionLines.get(i).contains(point.getX() + 2, point.getY())
+					|| actionLines.get(i).contains(point.getX() + 3, point.getY())
+					|| actionLines.get(i).contains(point.getX() + 4, point.getY())
+					|| actionLines.get(i).contains(point.getX() + 5, point.getY())
+					|| actionLines.get(i).contains(point.getX(), point.getY() - 1)
+					|| actionLines.get(i).contains(point.getX(), point.getY() - 2)
+					|| actionLines.get(i).contains(point.getX(), point.getY() - 3)
+					|| actionLines.get(i).contains(point.getX(), point.getY() - 4)
+					|| actionLines.get(i).contains(point.getX(), point.getY() - 5)
+					|| actionLines.get(i).contains(point.getX(), point.getY() + 1)
+					|| actionLines.get(i).contains(point.getX(), point.getY() + 2)
+					|| actionLines.get(i).contains(point.getX(), point.getY() + 3)
+					|| actionLines.get(i).contains(point.getX(), point.getY() + 4)
+					|| actionLines.get(i).contains(point.getX(), point.getY() + 5);
+			if (isclick) {
+				isNew = false;
+
+				// Delete
+				actionLines.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				actionLines.get(i).setOnKeyPressed(key -> {
+					if (key.getCode() == KeyCode.DELETE) {
+						if (actionLines.size() > 0) {
+							getChildren().removeAll(actionLines.get(index));
+							actionLines.remove(index);
+						} else {
+							System.out.println("No ActionLine to delete");
+						}
+					}
+				});
+				actionLines.get(i).setEffect(shape);
+				// getChildren().addAll(x, y);
+			} else {
+				actionLines.get(i).setEffect(null);
+			}
+
 		}
 	}
 
