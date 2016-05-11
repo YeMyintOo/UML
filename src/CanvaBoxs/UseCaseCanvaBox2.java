@@ -124,6 +124,7 @@ public class UseCaseCanvaBox2 extends Pane {
 						isActor = true;
 						getChildren().addAll(actor, actor.getBody(), actor.getLeg(), actor.getLeg2(), actor.getLeg3(),
 								actor.getLeg4(), actor.getLabel());
+						requestFocus();
 						break;
 					case "UseCase_Action":
 						actionLine = new UC_ActionLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
@@ -769,7 +770,9 @@ public class UseCaseCanvaBox2 extends Pane {
 			e.printStackTrace();
 		}
 	}
-
+	
+	
+	
 	public Scene getOwner() {
 		return owner;
 	}

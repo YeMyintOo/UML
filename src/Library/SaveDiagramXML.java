@@ -17,6 +17,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import Canvas.UC_Actor;
+
 public class SaveDiagramXML {
 
 	protected DocumentBuilderFactory dbFactory;
@@ -37,7 +39,7 @@ public class SaveDiagramXML {
 		}
 	}
 
-	public void addActorCanva(ArrayList<?> actors) {
+	public void addActorCanva(ArrayList<UC_Actor> actors) {
 		try {
 			Node root = doc.getElementsByTagName("Data").item(0);
 
@@ -48,15 +50,36 @@ public class SaveDiagramXML {
 				root.appendChild(list);
 				for (int i = 0; i < actors.size(); i++) {
 					Element data = doc.createElement("Actor");
-					data.appendChild(doc.createTextNode("Actor" + (i + 1)));
+					Element x = doc.createElement("x");
+					Element y = doc.createElement("y");
+					Element color = doc.createElement("color");
+
+					x.appendChild(doc.createTextNode(""+actors.get(i).getCenterX()));
+					y.appendChild(doc.createTextNode(""+actors.get(i).getCenterY()));
+					color.appendChild(doc.createTextNode(""+actors.get(i).getFill()));
+					
+					data.appendChild(x);
+					data.appendChild(y);
+					data.appendChild(color);
 					list.appendChild(data);
 				}
 			} else {
 				Node node = doc.getElementsByTagName("Actors").item(0);
-				root.appendChild(node);				
+				root.appendChild(node);
+				removeChilds(node);
 				for (int i = 0; i < actors.size(); i++) {
 					Element data = doc.createElement("Actor");
-					data.appendChild(doc.createTextNode("Actor" + (i + 1)));
+					Element x = doc.createElement("x");
+					Element y = doc.createElement("y");
+					Element color = doc.createElement("color");
+
+					x.appendChild(doc.createTextNode(""+actors.get(i).getCenterX()));
+					y.appendChild(doc.createTextNode(""+actors.get(i).getCenterY()));
+					color.appendChild(doc.createTextNode(""+actors.get(i).getFill()));
+					
+					data.appendChild(x);
+					data.appendChild(y);
+					data.appendChild(color);					
 					node.appendChild(data);
 				}
 			}
@@ -84,5 +107,10 @@ public class SaveDiagramXML {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void removeChilds(Node node) {
+	    while (node.hasChildNodes())
+	        node.removeChild(node.getFirstChild());
 	}
 }
