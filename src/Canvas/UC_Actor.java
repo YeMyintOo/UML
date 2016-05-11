@@ -19,10 +19,6 @@ public class UC_Actor extends Circle {
 	private Line leg3;
 	private Line leg4;
 
-	public UC_Actor() {
-		super(0, 0, 0);
-	}
-
 	public UC_Actor(double centerX, double centerY, double radius) {
 		this(centerX, centerY, radius, Color.WHEAT, Color.GRAY);
 	}

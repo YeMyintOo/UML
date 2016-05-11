@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -48,7 +51,6 @@ public class UseCaseCanvaBox2 extends Pane {
 	protected DocumentBuilderFactory dbFactory;
 	protected DocumentBuilder dBuilder;
 	protected Document doc;
-	
 
 	private boolean isNew;
 	private boolean isLoad;
@@ -367,18 +369,22 @@ public class UseCaseCanvaBox2 extends Pane {
 			}
 
 			// Linked
-			for (int k = 0; k < actionLines.size(); k++) {
-				Rectangle rc = new Rectangle(actors.get(i).getCenterX() - 30, actors.get(i).getCenterY() - 30, 60, 100);
-				Point2D p = new Point2D(actionLines.get(k).getStartX(), actionLines.get(k).getStartY());
-				if (rc.contains(p)) {
-					double difx = actors.get(i).getCenterX() - actionLines.get(k).getStartX();
-					double dify = actors.get(i).getCenterY() - actionLines.get(k).getStartY();
-					actionLines.get(k).startXProperty().bind(actors.get(i).centerXProperty().add(difx + 30));
-					actionLines.get(k).startYProperty().bind(actors.get(i).centerYProperty());
-					actors.get(i).toFront();
-				}
-
-			}
+			/*
+			 * for (int k = 0; k < actionLines.size(); k++) { Rectangle rc = new
+			 * Rectangle(actors.get(i).getCenterX() - 30,
+			 * actors.get(i).getCenterY() - 30, 60, 100); Point2D p = new
+			 * Point2D(actionLines.get(k).getStartX(),
+			 * actionLines.get(k).getStartY()); if (rc.contains(p)) { double
+			 * difx = actors.get(i).getCenterX() -
+			 * actionLines.get(k).getStartX(); double dify =
+			 * actors.get(i).getCenterY() - actionLines.get(k).getStartY();
+			 * actionLines.get(k).startXProperty().bind(actors.get(i).
+			 * centerXProperty().add(difx + 30));
+			 * actionLines.get(k).startYProperty().bind(actors.get(i).
+			 * centerYProperty()); actors.get(i).toFront(); }
+			 * 
+			 * }
+			 */
 
 		}
 	}
@@ -763,16 +769,39 @@ public class UseCaseCanvaBox2 extends Pane {
 			NodeList nodes = node.getChildNodes();
 			for (int i = 0; i < nodes.getLength(); i++) {
 				org.w3c.dom.Node data = nodes.item(i);
-				System.out.println(" Node :"+ data.getTextContent());
+				System.out.println(" Node :" + data.getTextContent());
+				// Create Actor
+				NodeList datas = data.getChildNodes();
+				double x = 0, y = 0;
+				Color color = null;
+				for (int k = 0; k < datas.getLength(); k++) {
+					
+					org.w3c.dom.Node element = datas.item(k);
+					if ("x".equals(element.getNodeName())) {
+						System.out.println(" Center X Value : " + element.getTextContent());
+						x = Double.parseDouble(element.getTextContent());
+					}
+					if ("y".equals(element.getNodeName())) {
+						System.out.println(" Center Y Value : " + element.getTextContent());
+						y = Double.parseDouble(element.getTextContent());
+					}
+					if ("color".equals(element.getNodeName())) {
+						System.out.println(" color : " + element.getTextContent());
+						color=Color.web(element.getTextContent());
+					}
+
+				}
+				UC_Actor actor = new UC_Actor(x, y, 20,color,Color.LIGHTGRAY);
+				actors.add(actor);
+				getChildren().addAll(actor, actor.getBody());
+
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
+
 	public Scene getOwner() {
 		return owner;
 	}

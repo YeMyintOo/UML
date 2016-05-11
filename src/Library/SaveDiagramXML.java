@@ -109,7 +109,7 @@ public class SaveDiagramXML {
 		}
 	}
 	
-	public static void removeChilds(Node node) {
+	public void removeChilds(Node node) {
 	    while (node.hasChildNodes())
 	        node.removeChild(node.getFirstChild());
 	}
