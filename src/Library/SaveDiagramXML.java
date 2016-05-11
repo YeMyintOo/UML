@@ -15,6 +15,7 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class SaveDiagramXML {
 
@@ -37,30 +38,40 @@ public class SaveDiagramXML {
 	}
 
 	public void addActorCanva(ArrayList<?> actors) {
-		 try {
+		try {
 			Node root = doc.getElementsByTagName("Data").item(0);
-			
-			String check="/UseCase/Data";
-			String isCheck=read.compile(check).evaluate(doc);
-			if(isCheck.equals("")){
-				Element list = doc.createElement("Actors"); 
+
+			String check = "/UseCase/Data";
+			String isCheck = read.compile(check).evaluate(doc);
+			if (isCheck.equals("")) {
+				Element list = doc.createElement("Actors");
 				root.appendChild(list);
 				for (int i = 0; i < actors.size(); i++) {
 					Element data = doc.createElement("Actor");
 					data.appendChild(doc.createTextNode("Actor" + (i + 1)));
 					list.appendChild(data);
 				}
-			}else{
-				
+			} else {
+				Node node = doc.getElementsByTagName("Actors").item(0);
+				root.appendChild(node);				
+				for (int i = 0; i < actors.size(); i++) {
+					Element data = doc.createElement("Actor");
+					data.appendChild(doc.createTextNode("Actor" + (i + 1)));
+					node.appendChild(data);
+				}
 			}
-			
-			
+
 			save();
 			System.out.println("Succss Save Actor");
 
-		} catch (Exception e) {
+		} catch (
+
+		Exception e)
+
+		{
 			e.printStackTrace();
 		}
+
 	}
 
 	public void save() {
