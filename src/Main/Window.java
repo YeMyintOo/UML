@@ -7,6 +7,7 @@ import Boxes.Box_Feed;
 import Boxes.Box_Guide;
 import Boxes.Box_NFile;
 import Boxes.Box_NPro;
+import Boxes.Box_OFile;
 import Boxes.Box_Print;
 import Boxes.Box_Save;
 import Boxes.Box_Version;
@@ -15,16 +16,14 @@ import Calculate.ScreenDetail;
 import Database.SystemHandler;
 import Database.ToolHandler;
 import Library.BuildCanvaXML;
+import Library.LoadCanvaXML;
 import javafx.application.Application;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -37,6 +36,7 @@ public class Window extends Application {
 	protected MenuItem oProject; // Open Project
 	protected MenuItem cWorkSpace; // WorkSpace
 	protected MenuItem nFile; // New File
+	protected MenuItem oFile;// Open File
 	protected MenuItem save; // Save
 	protected MenuItem exit; // Exit;
 
@@ -91,9 +91,10 @@ public class Window extends Application {
 		oProject = new MenuItem("Open Project");
 		cWorkSpace = new MenuItem("WorkSpace");
 		nFile = new MenuItem("New Diagram");
+		oFile = new MenuItem("Open Diagram");
 		save = new MenuItem("Save");
 		exit = new MenuItem("Exit");
-		file.getItems().addAll(nProject, oProject, cWorkSpace, nFile, save, exit);
+		file.getItems().addAll(nProject, oProject, cWorkSpace, nFile, oFile, save, exit);
 
 		// Edit Menu
 		copy = new MenuItem("Copy");
@@ -123,7 +124,6 @@ public class Window extends Application {
 		root.setTop(bar);
 		root.setCenter(tabPane);
 		scene = new Scene(root, screen.getWidth(), screen.getHeight());
-		
 
 		// Design
 		File f = new File("Resources/Css/MenuDesign.css");
@@ -197,6 +197,16 @@ public class Window extends Application {
 			}
 			root.setDisable(false);
 		});
+		oFile.setOnAction(e -> {
+			Box_OFile box = new Box_OFile(stage);
+			box.sizeToScene();
+			box.setAlwaysOnTop(true);
+			box.showAndWait();
+			root.setCenter(tabPane);
+			loadWorkSpace(box.getPath());
+			root.setDisable(false);
+		});
+
 		exit.setOnAction(e -> {
 			Box_Exit box = new Box_Exit(stage);
 			box.sizeToScene();
@@ -269,13 +279,36 @@ public class Window extends Application {
 		// Create File (Filename.xml)
 		File file = new File(path + "\\" + name + ".xml");
 		try {
-			new BuildCanvaXML(file); // Build XML file with Element Node
+			new BuildCanvaXML(file, name); // Build XML file
 			Tab tab = new Tab();
 			tab.setText(name);
 			workspace = new WorkSpace2(type, file, scene);
 			tab.setContent(workspace);
 			tabPane.getTabs().add(tab);
 		} catch (Exception e) {
+		}
+
+	}
+
+	public void loadWorkSpace(String path) {
+		// Read XML File
+		File file = new File(path);
+		int type = 0;
+		try {
+			LoadCanvaXML xml = new LoadCanvaXML(file);
+			switch (xml.getDiagram()) {
+			case "UseCase":
+				type = 1;
+				break;
+			}
+
+			Tab tab = new Tab();
+			workspace = new WorkSpace2(type, file, scene);
+			tab.setContent(workspace);
+			tabPane.getTabs().add(tab);
+			tab.setText(xml.getName());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}

@@ -22,8 +22,10 @@ import javafx.stage.Stage;
 public class WorkSpace2 extends BorderPane {
 	private BorderPane boderPane; // Drawing Area
 	protected Scene owner;
-	public WorkSpace2(int type, File file,Scene owner) {
+	protected File path;
+	public WorkSpace2(int type, File path,Scene owner) {
 		this.owner=owner;
+		this.path=path;
 		ToolBar toolbar = new ToolBar(type);
 		boderPane = new BorderPane();
 		boderPane.setStyle("-fx-background-color:white;" + "-fx-border-style: solid inside;" + "-fx-border-width: 2;"
@@ -59,7 +61,7 @@ public class WorkSpace2 extends BorderPane {
 
 		switch (type) {
 		case 1: // Use_Case
-			boderPane.setCenter(new UseCaseCanvaBox2(owner));
+			boderPane.setCenter(new UseCaseCanvaBox2(owner,path));
 			break;
 		case 2:// Object
 			boderPane.setCenter(new ObjectCanvaBox());

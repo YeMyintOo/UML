@@ -1,5 +1,6 @@
 package CanvaBoxs;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import Calculate.ScreenDetail;
@@ -12,6 +13,7 @@ import Canvas.UC_ProcessCycle;
 import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
 import Library.MyGridLine;
+import Library.SaveDiagramXML;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
@@ -43,6 +45,7 @@ public class UseCaseCanvaBox2 extends Pane {
 	protected ScreenDetail screen;
 
 	private ToolHandler toolHandler;
+	private SaveDiagramXML save;
 	private BorderPane gridLine;
 	private Printer defaultprinter;
 	private PageLayout pageLayout;
@@ -85,7 +88,7 @@ public class UseCaseCanvaBox2 extends Pane {
 	private UC_TypeOfLine typeofLine;
 	private boolean isTypeofLine;
 
-	public UseCaseCanvaBox2(Scene owner) {
+	public UseCaseCanvaBox2(Scene owner,File path) {
 		this.owner = owner;
 		gridLine = new BorderPane();
 		toolHandler = new ToolHandler();
@@ -185,7 +188,7 @@ public class UseCaseCanvaBox2 extends Pane {
 				if (isActor) {
 					actors.add(actor);
 					isActor = false;
-					
+
 				}
 				if (isActionLine) {
 					actionLines.add(actionLine);
@@ -220,12 +223,13 @@ public class UseCaseCanvaBox2 extends Pane {
 					typeofLines.add(typeofLine);
 					isTypeofLine = false;
 				}
-				
+
 			}
 		});
 
 		this.onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
 		this.setOnKeyPressed(e -> {
+			// Print
 			if (e.getCode() == KeyCode.PRINTSCREEN) {
 				System.out.println("Print MEthod is called");
 				if (defaultprinter == null) {
@@ -239,6 +243,16 @@ public class UseCaseCanvaBox2 extends Pane {
 				PrintNode(this, pageLayout);
 				getChildren().add(gridLine);
 				gridLine.toBack();
+			}
+
+			// Save
+			if (e.getCode() == KeyCode.F1) {
+				if(save==null){
+					save =new SaveDiagramXML(path);
+				}
+				if(actors.size()>0){
+					save.addActorCanva(actors);
+				}
 			}
 		});
 	}

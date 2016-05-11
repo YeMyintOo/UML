@@ -18,8 +18,8 @@ import org.w3c.dom.Element;
 
 public class BuildCanvaXML {
 	private Document document;
-	
-	public BuildCanvaXML(File path) {
+
+	public BuildCanvaXML(File path, String name) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -28,39 +28,28 @@ public class BuildCanvaXML {
 			parserException.printStackTrace();
 		}
 
-		// Root Node
-		Element root = document.createElement("root");
+		Element root = document.createElement("UseCase");
+
+		Element nameNode = document.createElement("Name"); // Canvas Name
+		nameNode.appendChild(document.createTextNode(name));
+
+		Element dataNode = document.createElement("Data"); // Draw Data
+															// Information
+
 		document.appendChild(root);
-
-		// Element Node
-		Element firstName = document.createElement("FirstName");
-		// Character Data
-		firstName.appendChild(document.createTextNode("First Name"));
-
-		// Append
-		root.appendChild(firstName);
+		root.appendChild(nameNode);
+		root.appendChild(dataNode);
 
 		try {
-
-			// create DOMSource for source XML document
 			Source xmlSource = new DOMSource(document);
-
-			// create StreamResult for transformation result
 			Result result = new StreamResult(new FileOutputStream(path));
-
-			// create TransformerFactory
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-
-			// create Transformer for transformation
 			Transformer transformer = transformerFactory.newTransformer();
-
 			transformer.setOutputProperty("indent", "yes");
-
-			// transform and deliver content to client
 			transformer.transform(xmlSource, result);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

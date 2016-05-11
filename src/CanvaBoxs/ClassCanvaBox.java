@@ -151,7 +151,7 @@ public class ClassCanvaBox extends Pane {
 					isInterFace = false;
 				}
 				if (isAssociation) {
-					getChildren().remove(asso);
+					//getChildren().remove(asso);
 					drawAssociationLine(asso);
 					isAssociation = false;
 				}
@@ -364,10 +364,10 @@ public class ClassCanvaBox extends Pane {
 			if (slope < 2) {
 				Line l1 = new Line(startx, starty, startx + mid, starty);
 				l1.setStroke(color);
-				Line l2 = new Line(startx + mid, starty, startx + mid, endy);
-				l2.setStroke(color);
-				Line l3 = new Line(startx + mid, endy, endx, endy);
+				Line l3 = new Line(endx, endy, endx-mid, endy);
 				l3.setStroke(color);
+				Line l2 = new Line(l1.getEndX(),l1.getEndY(),l3.getEndX(), l3.getEndY());
+				l2.setStroke(color);
 
 				Rectangle node1 = new Rectangle();
 				node1.setFill(Color.LIGHTBLUE);

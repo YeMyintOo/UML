@@ -25,8 +25,11 @@ public class WorkSpace extends BorderPane {
 	private int type;
 	private ToolHandler toolHandler; // To set and get Selected Tool;
 	private Scene owner;
-	public WorkSpace(int type, File file,Scene owner) {
+	private File path;
+	
+	public WorkSpace(int type, File path,Scene owner) {
 		this.owner=owner;
+		this.path=path;
 		this.type = type;
 		toolHandler = new ToolHandler();
 		// Drawing Area
@@ -72,7 +75,7 @@ public class WorkSpace extends BorderPane {
 
 		switch (type) {
 		case 1: // Use_Case
-			work.setCenter(new UseCaseCanvaBox2(owner));
+			work.setCenter(new UseCaseCanvaBox2(owner,path));
 			tool.setCenter(UseCaseToolBox());
 			break;
 		case 2:// Object
