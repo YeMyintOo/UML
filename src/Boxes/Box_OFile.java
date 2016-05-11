@@ -26,6 +26,7 @@ public class Box_OFile extends Stage {
 	private Button closeB;
 	private Button resetB;
 	
+	private String value;
 	private String path;
 
 	public Box_OFile(Stage owner) {
@@ -72,10 +73,12 @@ public class Box_OFile extends Stage {
 
 		okB.setOnAction(e -> {
 			setPath(pathF.getText().trim());
+			setValue("finish");
 			close();
 		});
 		closeB.setOnAction(e -> {
 			setPath("none");
+			setValue("close");
 			close();
 		});
 		resetB.setOnAction(e -> {
@@ -98,5 +101,12 @@ public class Box_OFile extends Stage {
 	public void setPath(String path) {
 		this.path = path;
 	}
+	
+	public void setValue(String value) {
+		this.value = value;
+	}
 
+	public String getValue() {
+		return value;
+	}
 }

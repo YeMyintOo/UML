@@ -75,7 +75,7 @@ public class WorkSpace extends BorderPane {
 
 		switch (type) {
 		case 1: // Use_Case
-			work.setCenter(new UseCaseCanvaBox2(owner,path));
+			work.setCenter(new UseCaseCanvaBox2(owner,path,false));
 			tool.setCenter(UseCaseToolBox());
 			break;
 		case 2:// Object

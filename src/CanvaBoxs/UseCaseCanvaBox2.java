@@ -2,6 +2,10 @@ package CanvaBoxs;
 
 import java.io.File;
 import java.util.ArrayList;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import Calculate.ScreenDetail;
 import Canvas.UC_ActionLine;
@@ -41,9 +45,15 @@ import javafx.scene.transform.Scale;
 
 public class UseCaseCanvaBox2 extends Pane {
 
-	private boolean isNew;
-	protected ScreenDetail screen;
+	protected DocumentBuilderFactory dbFactory;
+	protected DocumentBuilder dBuilder;
+	protected Document doc;
+	
 
+	private boolean isNew;
+	private boolean isLoad;
+	private File path;
+	protected ScreenDetail screen;
 	private ToolHandler toolHandler;
 	private SaveDiagramXML save;
 	private BorderPane gridLine;
@@ -88,8 +98,10 @@ public class UseCaseCanvaBox2 extends Pane {
 	private UC_TypeOfLine typeofLine;
 	private boolean isTypeofLine;
 
-	public UseCaseCanvaBox2(Scene owner,File path) {
+	public UseCaseCanvaBox2(Scene owner, File path, boolean isLoad) {
 		this.owner = owner;
+		this.isLoad = isLoad;
+		this.path = path;
 		gridLine = new BorderPane();
 		toolHandler = new ToolHandler();
 		if (toolHandler.getGrid().equals("Show")) {
@@ -247,10 +259,10 @@ public class UseCaseCanvaBox2 extends Pane {
 
 			// Save
 			if (e.getCode() == KeyCode.F1) {
-				if(save==null){
-					save =new SaveDiagramXML(path);
+				if (save == null) {
+					save = new SaveDiagramXML(path);
 				}
-				if(actors.size()>0){
+				if (actors.size() > 0) {
 					save.addActorCanva(actors);
 				}
 			}
@@ -263,13 +275,20 @@ public class UseCaseCanvaBox2 extends Pane {
 		shape.setOffsetY(5);
 		shape.setRadius(15);
 
-		actors = new ArrayList<UC_Actor>();
-		actionLines = new ArrayList<UC_ActionLine>();
-		boxs = new ArrayList<UC_Box>();
-		processCycles = new ArrayList<UC_ProcessCycle>();
-		extendLines = new ArrayList<UC_ExtendLine>();
-		includeLines = new ArrayList<UC_IncludeLine>();
-		typeofLines = new ArrayList<UC_TypeOfLine>();
+		if (isLoad) {
+			actors = new ArrayList<UC_Actor>();
+			System.out.println(" Load Actor data From XML");
+			loadXMLData("Actors");
+		} else {
+			actors = new ArrayList<UC_Actor>();
+			actionLines = new ArrayList<UC_ActionLine>();
+			boxs = new ArrayList<UC_Box>();
+			processCycles = new ArrayList<UC_ProcessCycle>();
+			extendLines = new ArrayList<UC_ExtendLine>();
+			includeLines = new ArrayList<UC_IncludeLine>();
+			typeofLines = new ArrayList<UC_TypeOfLine>();
+		}
+
 	}
 
 	public void isNewOrEdit(MouseEvent e) {
@@ -732,6 +751,23 @@ public class UseCaseCanvaBox2 extends Pane {
 
 		}
 
+	}
+
+	private void loadXMLData(String tagName) {
+		try {
+			dbFactory = DocumentBuilderFactory.newInstance();
+			dBuilder = dbFactory.newDocumentBuilder();
+			doc = dBuilder.parse(path);
+			org.w3c.dom.Node node = doc.getElementsByTagName(tagName).item(0);
+			NodeList nodes = node.getChildNodes();
+			for (int i = 0; i < nodes.getLength(); i++) {
+				org.w3c.dom.Node data = nodes.item(i);
+				System.out.println(" Node :"+ data.getTextContent());
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Scene getOwner() {

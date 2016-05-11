@@ -192,8 +192,6 @@ public class Window extends Application {
 			if (box.getValue().equals("finish")) {
 				root.setCenter(tabPane); // Reassign
 				addWorkSpace(box.getFileName(), box.getType(), box.getPath());
-			} else {
-
 			}
 			root.setDisable(false);
 		});
@@ -202,8 +200,10 @@ public class Window extends Application {
 			box.sizeToScene();
 			box.setAlwaysOnTop(true);
 			box.showAndWait();
-			root.setCenter(tabPane);
-			loadWorkSpace(box.getPath());
+			if (box.getValue().equals("finish")) {
+				root.setCenter(tabPane);
+				loadWorkSpace(box.getPath());
+			}
 			root.setDisable(false);
 		});
 
@@ -282,7 +282,7 @@ public class Window extends Application {
 			new BuildCanvaXML(file, name); // Build XML file
 			Tab tab = new Tab();
 			tab.setText(name);
-			workspace = new WorkSpace2(type, file, scene);
+			workspace = new WorkSpace2(type, file, scene,false);
 			tab.setContent(workspace);
 			tabPane.getTabs().add(tab);
 		} catch (Exception e) {
@@ -301,9 +301,8 @@ public class Window extends Application {
 				type = 1;
 				break;
 			}
-
 			Tab tab = new Tab();
-			workspace = new WorkSpace2(type, file, scene);
+			workspace = new WorkSpace2(type, file, scene,true);
 			tab.setContent(workspace);
 			tabPane.getTabs().add(tab);
 			tab.setText(xml.getName());
