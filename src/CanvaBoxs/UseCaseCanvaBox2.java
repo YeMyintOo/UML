@@ -15,8 +15,14 @@ import Library.MyGridLine;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.print.JobSettings;
+import javafx.print.PageLayout;
+import javafx.print.PageOrientation;
+import javafx.print.Paper;
+import javafx.print.Printer;
+import javafx.print.PrinterJob;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -25,19 +31,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
+import javafx.scene.transform.Scale;
 
 public class UseCaseCanvaBox2 extends Pane {
 
@@ -45,6 +43,9 @@ public class UseCaseCanvaBox2 extends Pane {
 	protected ScreenDetail screen;
 
 	private ToolHandler toolHandler;
+	private BorderPane gridLine;
+	private Printer defaultprinter;
+	private PageLayout pageLayout;
 	private Color color;
 	private DropShadow shape;
 	private Scene owner;
@@ -86,9 +87,10 @@ public class UseCaseCanvaBox2 extends Pane {
 
 	public UseCaseCanvaBox2(Scene owner) {
 		this.owner = owner;
+		gridLine = new BorderPane();
 		toolHandler = new ToolHandler();
 		if (toolHandler.getGrid().equals("Show")) {
-			drawGridLines();
+			setGridLines();
 		}
 		init();
 		setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -183,6 +185,7 @@ public class UseCaseCanvaBox2 extends Pane {
 				if (isActor) {
 					actors.add(actor);
 					isActor = false;
+					
 				}
 				if (isActionLine) {
 					actionLines.add(actionLine);
@@ -192,6 +195,7 @@ public class UseCaseCanvaBox2 extends Pane {
 					getChildren().add(box.getText(false));
 					boxs.add(box);
 					isBox = false;
+					requestFocus();
 				}
 				if (isProcessCycle) {
 					getChildren().add(processCycle.getText(false));
@@ -216,9 +220,27 @@ public class UseCaseCanvaBox2 extends Pane {
 					typeofLines.add(typeofLine);
 					isTypeofLine = false;
 				}
+				
 			}
 		});
 
+		this.onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+		this.setOnKeyPressed(e -> {
+			if (e.getCode() == KeyCode.PRINTSCREEN) {
+				System.out.println("Print MEthod is called");
+				if (defaultprinter == null) {
+					defaultprinter = Printer.getDefaultPrinter();
+					pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
+							Printer.MarginType.HARDWARE_MINIMUM);
+					System.out.println("Printer is created");
+				}
+				// Remove GriLines
+				getChildren().remove(gridLine);
+				PrintNode(this, pageLayout);
+				getChildren().add(gridLine);
+				gridLine.toBack();
+			}
+		});
 	}
 
 	public void init() {
@@ -245,7 +267,7 @@ public class UseCaseCanvaBox2 extends Pane {
 		isNewOREditProcess(e, point);
 		isNewOREditTypeOf(e, point);
 		isNewOREditInclude(e, point);
-		isNewOREditExtend(e,point);
+		isNewOREditExtend(e, point);
 	}
 
 	public void isNewOREditActor(MouseEvent e, Point2D point) {
@@ -578,7 +600,7 @@ public class UseCaseCanvaBox2 extends Pane {
 					if (key.getCode() == KeyCode.DELETE) {
 						if (includeLines.size() > 0) {
 							getChildren().removeAll(includeLines.get(index), includeLines.get(index).getTop(),
-									includeLines.get(index).getBot(),includeLines.get(index).getLabel(false));
+									includeLines.get(index).getBot(), includeLines.get(index).getLabel(false));
 							includeLines.remove(index);
 						} else {
 							System.out.println("No Include Line to delete");
@@ -597,8 +619,8 @@ public class UseCaseCanvaBox2 extends Pane {
 
 		}
 	}
-	
-	public void isNewOREditExtend(MouseEvent e,Point2D point){
+
+	public void isNewOREditExtend(MouseEvent e, Point2D point) {
 
 		for (int i = 0; i < extendLines.size(); i++) {
 
@@ -633,7 +655,7 @@ public class UseCaseCanvaBox2 extends Pane {
 					if (key.getCode() == KeyCode.DELETE) {
 						if (extendLines.size() > 0) {
 							getChildren().removeAll(extendLines.get(index), extendLines.get(index).getTop(),
-									extendLines.get(index).getBot(),extendLines.get(index).getLabel(false));
+									extendLines.get(index).getBot(), extendLines.get(index).getLabel(false));
 							extendLines.remove(index);
 						} else {
 							System.out.println("No Extend Line to delete");
@@ -651,22 +673,51 @@ public class UseCaseCanvaBox2 extends Pane {
 			}
 
 		}
-	
+
 	}
-	
-	public void drawGridLines() {
+
+	public void setGridLines() {
 		int i = 10;
 		while (i < 800) {
 			MyGridLine l = new MyGridLine(10, i, 1340, i);
-			getChildren().add(l);
+			gridLine.getChildren().add(l);
 			i = i + 20;
 		}
 		int k = 10;
 		while (k < 1340) {
 			MyGridLine l = new MyGridLine(k, 10, k, 690);
-			getChildren().add(l);
+			gridLine.getChildren().add(l);
 			k = k + 20;
 		}
+		getChildren().add(gridLine);
+		gridLine.toBack();
+	}
+
+	private void PrintNode(Node node, PageLayout pageLayout) {
+		System.out.println("call print job");
+		PrinterJob job = PrinterJob.createPrinterJob();
+		JobSettings jobSettings = job.getJobSettings();
+		jobSettings.setPageLayout(pageLayout);
+
+		boolean proceed = job.showPrintDialog(null);
+		if (proceed) {
+			double scaleX = pageLayout.getPrintableWidth() / node.getLayoutBounds().getWidth();
+			double scaleY = pageLayout.getPrintableHeight() / node.getLayoutBounds().getHeight();
+			double minimumScale = Math.min(scaleX, scaleY);
+			Scale scale = new Scale(minimumScale, minimumScale);
+			try {
+				node.getTransforms().add(scale);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			job.printPage(node);
+			job.endJob();
+			node.getTransforms().remove(scale);
+			System.out.println("***Print Success");
+
+		}
+
 	}
 
 	public Scene getOwner() {
