@@ -19,7 +19,7 @@ import org.w3c.dom.Element;
 public class BuildCanvaXML {
 	private Document document;
 
-	public BuildCanvaXML(File path, String name) {
+	public BuildCanvaXML(File path, String name, int type) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -34,7 +34,25 @@ public class BuildCanvaXML {
 		nameNode.appendChild(document.createTextNode(name));
 
 		Element dataNode = document.createElement("Data"); // Draw Data
-															// Information
+
+		switch (type) {
+		case 1: // UseCase
+			Element actors = document.createElement("Actors");
+			Element actions = document.createElement("Actions");
+			Element box = document.createElement("Boxs");
+			Element process = document.createElement("Processes");
+			Element ext = document.createElement("Extends");
+			Element inc = document.createElement("Includes");
+			Element typ = document.createElement("Types");
+			dataNode.appendChild(actors);
+			dataNode.appendChild(actions);
+			dataNode.appendChild(box);
+			dataNode.appendChild(process);
+			dataNode.appendChild(ext);
+			dataNode.appendChild(inc);
+			dataNode.appendChild(typ);
+			break;
+		}
 
 		document.appendChild(root);
 		root.appendChild(nameNode);

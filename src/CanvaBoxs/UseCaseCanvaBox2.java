@@ -267,6 +267,7 @@ public class UseCaseCanvaBox2 extends Pane {
 				}
 				if (actors.size() > 0) {
 					save.addActorCanva(actors);
+					save.addActionCanva(actionLines);
 				}
 			}
 		});
@@ -278,20 +279,19 @@ public class UseCaseCanvaBox2 extends Pane {
 		shape.setOffsetY(5);
 		shape.setRadius(15);
 
+		actors = new ArrayList<UC_Actor>();
+		actionLines = new ArrayList<UC_ActionLine>();
+		boxs = new ArrayList<UC_Box>();
+		processCycles = new ArrayList<UC_ProcessCycle>();
+		extendLines = new ArrayList<UC_ExtendLine>();
+		includeLines = new ArrayList<UC_IncludeLine>();
+		typeofLines = new ArrayList<UC_TypeOfLine>();
+
 		if (isLoad) {
-			actors = new ArrayList<UC_Actor>();
 			System.out.println(" Load Actor data From XML");
 			loadXMLData("Actors");
-		} else {
-			actors = new ArrayList<UC_Actor>();
-			actionLines = new ArrayList<UC_ActionLine>();
-			boxs = new ArrayList<UC_Box>();
-			processCycles = new ArrayList<UC_ProcessCycle>();
-			extendLines = new ArrayList<UC_ExtendLine>();
-			includeLines = new ArrayList<UC_IncludeLine>();
-			typeofLines = new ArrayList<UC_TypeOfLine>();
+			loadXMLData("Action");
 		}
-
 	}
 
 	public void isNewOrEdit(MouseEvent e) {
@@ -369,22 +369,19 @@ public class UseCaseCanvaBox2 extends Pane {
 			}
 
 			// Linked
-			/*
-			 * for (int k = 0; k < actionLines.size(); k++) { Rectangle rc = new
-			 * Rectangle(actors.get(i).getCenterX() - 30,
-			 * actors.get(i).getCenterY() - 30, 60, 100); Point2D p = new
-			 * Point2D(actionLines.get(k).getStartX(),
-			 * actionLines.get(k).getStartY()); if (rc.contains(p)) { double
-			 * difx = actors.get(i).getCenterX() -
-			 * actionLines.get(k).getStartX(); double dify =
-			 * actors.get(i).getCenterY() - actionLines.get(k).getStartY();
-			 * actionLines.get(k).startXProperty().bind(actors.get(i).
-			 * centerXProperty().add(difx + 30));
-			 * actionLines.get(k).startYProperty().bind(actors.get(i).
-			 * centerYProperty()); actors.get(i).toFront(); }
-			 * 
-			 * }
-			 */
+
+			for (int k = 0; k < actionLines.size(); k++) {
+				Rectangle rc = new Rectangle(actors.get(i).getCenterX() - 30, actors.get(i).getCenterY() - 30, 60, 100);
+				Point2D p = new Point2D(actionLines.get(k).getStartX(), actionLines.get(k).getStartY());
+				if (rc.contains(p)) {
+					double difx = actors.get(i).getCenterX() - actionLines.get(k).getStartX();
+					double dify = actors.get(i).getCenterY() - actionLines.get(k).getStartY();
+					actionLines.get(k).startXProperty().bind(actors.get(i).centerXProperty().add(difx + 30));
+					actionLines.get(k).startYProperty().bind(actors.get(i).centerYProperty());
+					actors.get(i).toFront();
+				}
+
+			}
 
 		}
 	}
@@ -765,36 +762,58 @@ public class UseCaseCanvaBox2 extends Pane {
 			dbFactory = DocumentBuilderFactory.newInstance();
 			dBuilder = dbFactory.newDocumentBuilder();
 			doc = dBuilder.parse(path);
-			org.w3c.dom.Node node = doc.getElementsByTagName(tagName).item(0);
-			NodeList nodes = node.getChildNodes();
-			for (int i = 0; i < nodes.getLength(); i++) {
-				org.w3c.dom.Node data = nodes.item(i);
-				System.out.println(" Node :" + data.getTextContent());
-				// Create Actor
-				NodeList datas = data.getChildNodes();
-				double x = 0, y = 0;
-				Color color = null;
-				for (int k = 0; k < datas.getLength(); k++) {
-					
-					org.w3c.dom.Node element = datas.item(k);
-					if ("x".equals(element.getNodeName())) {
-						System.out.println(" Center X Value : " + element.getTextContent());
-						x = Double.parseDouble(element.getTextContent());
-					}
-					if ("y".equals(element.getNodeName())) {
-						System.out.println(" Center Y Value : " + element.getTextContent());
-						y = Double.parseDouble(element.getTextContent());
-					}
-					if ("color".equals(element.getNodeName())) {
-						System.out.println(" color : " + element.getTextContent());
-						color=Color.web(element.getTextContent());
-					}
 
+			switch (tagName) {
+			case "Actors":
+				org.w3c.dom.Node node = doc.getElementsByTagName("Actors").item(0);
+				NodeList nodes = node.getChildNodes();
+				for (int i = 0; i < nodes.getLength(); i++) {
+					org.w3c.dom.Node data = nodes.item(i);
+					NodeList datas = data.getChildNodes();
+					double x = 0, y = 0;
+					Color color = null;
+					for (int k = 0; k < datas.getLength(); k++) {
+						org.w3c.dom.Node element = datas.item(k);
+						if ("x".equals(element.getNodeName())) {
+							System.out.println(" Center X Value : " + element.getTextContent());
+							x = Double.parseDouble(element.getTextContent());
+						}
+						if ("y".equals(element.getNodeName())) {
+							System.out.println(" Center Y Value : " + element.getTextContent());
+							y = Double.parseDouble(element.getTextContent());
+						}
+						if ("color".equals(element.getNodeName())) {
+							System.out.println(" color : " + element.getTextContent());
+							color = Color.web(element.getTextContent());
+						}
+
+					}
+					UC_Actor actor = new UC_Actor(x, y, 20, color, Color.LIGHTGRAY);
+					actors.add(actor);
+					getChildren().addAll(actor, actor.getBody(), actor.getLeg(), actor.getLeg2(), actor.getLeg3(),
+							actor.getLeg4(),actor.getLabel());
 				}
-				UC_Actor actor = new UC_Actor(x, y, 20,color,Color.LIGHTGRAY);
-				actors.add(actor);
-				getChildren().addAll(actor, actor.getBody());
 
+				break;
+			case "Action":
+				org.w3c.dom.Node action = doc.getElementsByTagName("Actions").item(0);
+				NodeList actions = action.getChildNodes();
+				for (int i = 0; i < actions.getLength(); i++) {
+					org.w3c.dom.Node data = actions.item(i);
+					NodeList datas = data.getChildNodes();
+					double x = 0, y = 0;
+					Color color = null;
+					for (int k = 0; k < datas.getLength(); k++) {
+						org.w3c.dom.Node element = datas.item(k);
+					
+					}
+					UC_Actor actor = new UC_Actor(x, y, 20, color, Color.LIGHTGRAY);
+					actors.add(actor);
+					getChildren().addAll(actor, actor.getBody(), actor.getLeg(), actor.getLeg2(), actor.getLeg3(),
+							actor.getLeg4(),actor.getLabel());
+				}
+				
+				break;
 			}
 
 		} catch (Exception e) {

@@ -279,7 +279,7 @@ public class Window extends Application {
 		// Create File (Filename.xml)
 		File file = new File(path + "\\" + name + ".xml");
 		try {
-			new BuildCanvaXML(file, name); // Build XML file
+			new BuildCanvaXML(file, name,type); // Build XML file
 			Tab tab = new Tab();
 			tab.setText(name);
 			workspace = new WorkSpace2(type, file, scene,false);

@@ -35,6 +35,7 @@ public class Box_OFile extends Stage {
 		initModality(Modality.WINDOW_MODAL);
 		initOwner(owner);
 		setTitle("Open UML Diagram");
+		value="";
 
 		BorderPane pane = new BorderPane();
 

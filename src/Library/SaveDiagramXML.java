@@ -17,6 +17,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import Canvas.UC_ActionLine;
 import Canvas.UC_Actor;
 
 public class SaveDiagramXML {
@@ -96,6 +97,81 @@ public class SaveDiagramXML {
 		}
 
 	}
+	
+	public void addActionCanva(ArrayList<UC_ActionLine> actions){
+
+		try {
+			Node root = doc.getElementsByTagName("Data").item(0);
+
+			String check = "/UseCase/Data";
+			String isCheck = read.compile(check).evaluate(doc);
+			if (isCheck.equals("")) {
+				Element list = doc.createElement("Action");
+				root.appendChild(list);
+				for (int i = 0; i < actions.size(); i++) {
+					Element data = doc.createElement("Actor");
+					Element x1 = doc.createElement("x1");
+					Element y1 = doc.createElement("y1");
+					Element x2 = doc.createElement("x2");
+					Element y2 = doc.createElement("y2");
+					Element color = doc.createElement("color");
+
+					x1.appendChild(doc.createTextNode(""+actions.get(i).getStartX()));
+					y1.appendChild(doc.createTextNode(""+actions.get(i).getStartY()));
+					x2.appendChild(doc.createTextNode(""+actions.get(i).getEndX()));
+					y2.appendChild(doc.createTextNode(""+actions.get(i).getEndY()));
+					color.appendChild(doc.createTextNode(""+actions.get(i).getFill()));
+					
+					data.appendChild(x1);
+					data.appendChild(y1);
+					data.appendChild(x2);
+					data.appendChild(y2);
+					data.appendChild(color);
+					list.appendChild(data);
+				}
+			} else {
+				Node node = doc.getElementsByTagName("Action").item(0);
+				root.appendChild(node);
+				removeChilds(node);
+				for (int i = 0; i < actions.size(); i++) {
+					Element data = doc.createElement("Actor");
+					Element x1 = doc.createElement("x1");
+					Element y1 = doc.createElement("y1");
+					Element x2 = doc.createElement("x2");
+					Element y2 = doc.createElement("y2");
+					Element color = doc.createElement("color");
+
+					x1.appendChild(doc.createTextNode(""+actions.get(i).getStartX()));
+					y1.appendChild(doc.createTextNode(""+actions.get(i).getStartY()));
+					x2.appendChild(doc.createTextNode(""+actions.get(i).getEndX()));
+					y2.appendChild(doc.createTextNode(""+actions.get(i).getEndY()));
+					color.appendChild(doc.createTextNode(""+actions.get(i).getFill()));
+					
+					data.appendChild(x1);
+					data.appendChild(y1);
+					data.appendChild(x2);
+					data.appendChild(y2);
+					data.appendChild(color);					
+					node.appendChild(data);
+				}
+			}
+
+			save();
+			System.out.println("Succss Save Action Line");
+
+		} catch (
+
+		Exception e)
+
+		{
+			e.printStackTrace();
+		}
+
+	
+	}
+	
+	
+	
 
 	public void save() {
 		try {
