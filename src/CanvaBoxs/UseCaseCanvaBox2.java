@@ -2,10 +2,9 @@ package CanvaBoxs;
 
 import java.io.File;
 import java.util.ArrayList;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -21,6 +20,9 @@ import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
 import Library.MyGridLine;
 import Library.SaveDiagramXML;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
@@ -45,6 +47,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
+import javafx.util.Duration;
 
 public class UseCaseCanvaBox2 extends Pane {
 
@@ -266,11 +269,9 @@ public class UseCaseCanvaBox2 extends Pane {
 				if (save == null) {
 					save = new SaveDiagramXML(path);
 				}
-				if (actors.size() > 0) {
-					save.saveUseCaseCanvaBox(actors, actionLines, boxs, processCycles, extendLines, includeLines,
-							typeofLines);
-
-				}
+				save.saveUseCaseCanvaBox(actors, actionLines, boxs, processCycles, extendLines, includeLines,
+						typeofLines);
+				System.out.println("****Save*****");
 			}
 		});
 	}
@@ -836,20 +837,164 @@ public class UseCaseCanvaBox2 extends Pane {
 				break;
 
 			case "Boxs":
-				org.w3c.dom.Node box = doc.getElementsByTagName("Boxs").item(0);
-				NodeList boxs = box.getChildNodes();
-				for (int i = 0; i < boxs.getLength(); i++) {
-					org.w3c.dom.Node data = boxs.item(i);
+				org.w3c.dom.Node ubox = doc.getElementsByTagName("Boxs").item(0);
+				NodeList uboxs = ubox.getChildNodes();
+				for (int i = 0; i < uboxs.getLength(); i++) {
+					org.w3c.dom.Node data = uboxs.item(i);
+					NodeList datas = data.getChildNodes();
+					double x = 0, y = 0, h = 0, w = 0;
+					Color color = null;
+					for (int k = 0; k < datas.getLength(); k++) {
+						org.w3c.dom.Node element = datas.item(k);
+						if ("x".equals(element.getNodeName())) {
+							x = Double.parseDouble(element.getTextContent());
+						}
+						if ("y".equals(element.getNodeName())) {
+							y = Double.parseDouble(element.getTextContent());
+						}
+						if ("width".equals(element.getNodeName())) {
+							w = Double.parseDouble(element.getTextContent());
+						}
+						if ("height".equals(element.getNodeName())) {
+							h = Double.parseDouble(element.getTextContent());
+						}
+						if ("color".equals(element.getNodeName())) {
+							color = Color.web(element.getTextContent());
+						}
+
+					}
+					UC_Box uboxd = new UC_Box(x, y, w, h, color, Color.LIGHTGRAY);
+					boxs.add(uboxd);
+					getChildren().addAll(uboxd,uboxd.getLabel());
+				}
+				break;
+
+			case "Processes":
+				org.w3c.dom.Node uprocess = doc.getElementsByTagName("Processes").item(0);
+				NodeList uprocesses = uprocess.getChildNodes();
+				for (int i = 0; i < uprocesses.getLength(); i++) {
+					org.w3c.dom.Node data = uprocesses.item(i);
+					NodeList datas = data.getChildNodes();
+					double x = 0, y = 0, h = 0, w = 0;
+					Color color = null;
+					for (int k = 0; k < datas.getLength(); k++) {
+						org.w3c.dom.Node element = datas.item(k);
+						if ("x".equals(element.getNodeName())) {
+							x = Double.parseDouble(element.getTextContent());
+						}
+						if ("y".equals(element.getNodeName())) {
+							y = Double.parseDouble(element.getTextContent());
+						}
+						if ("color".equals(element.getNodeName())) {
+							color = Color.web(element.getTextContent());
+						}
+
+					}
+					UC_ProcessCycle up = new UC_ProcessCycle(x, y, 60, 30, color, Color.LIGHTGRAY);
+					processCycles.add(up);
+					getChildren().addAll(up, up.getLabel());
+				}
+				break;
+
+			case "Extends":
+				org.w3c.dom.Node ext = doc.getElementsByTagName("Extends").item(0);
+				NodeList exts = ext.getChildNodes();
+				for (int i = 0; i < exts.getLength(); i++) {
+					org.w3c.dom.Node data = exts.item(i);
 					NodeList datas = data.getChildNodes();
 					double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 					Color color = null;
 					for (int k = 0; k < datas.getLength(); k++) {
 						org.w3c.dom.Node element = datas.item(k);
+						if ("x1".equals(element.getNodeName())) {
+							x1 = Double.parseDouble(element.getTextContent());
+						}
+						if ("y1".equals(element.getNodeName())) {
+							y1 = Double.parseDouble(element.getTextContent());
+						}
+						if ("x2".equals(element.getNodeName())) {
+							x2 = Double.parseDouble(element.getTextContent());
+						}
+						if ("y2".equals(element.getNodeName())) {
+							y2 = Double.parseDouble(element.getTextContent());
+						}
+						if ("color".equals(element.getNodeName())) {
+							color = Color.web(element.getTextContent());
+						}
 
 					}
-					UC_ActionLine actionLine = new UC_ActionLine(x1, y1, x2, y2, color);
-					actionLines.add(actionLine);
-					getChildren().addAll(actionLine);
+					UC_ExtendLine up = new UC_ExtendLine(x1, y1, x2, y2, color);
+					extendLines.add(up);
+					up.recalculatePoint();
+					getChildren().addAll(up,up.getLabel(true),up.getTop(),up.getBot());
+				}
+				break;
+				
+			case "Includes":
+				org.w3c.dom.Node inc = doc.getElementsByTagName("Includes").item(0);
+				NodeList incs = inc.getChildNodes();
+				for (int i = 0; i < incs.getLength(); i++) {
+					org.w3c.dom.Node data = incs.item(i);
+					NodeList datas = data.getChildNodes();
+					double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+					Color color = null;
+					for (int k = 0; k < datas.getLength(); k++) {
+						org.w3c.dom.Node element = datas.item(k);
+						if ("x1".equals(element.getNodeName())) {
+							x1 = Double.parseDouble(element.getTextContent());
+						}
+						if ("y1".equals(element.getNodeName())) {
+							y1 = Double.parseDouble(element.getTextContent());
+						}
+						if ("x2".equals(element.getNodeName())) {
+							x2 = Double.parseDouble(element.getTextContent());
+						}
+						if ("y2".equals(element.getNodeName())) {
+							y2 = Double.parseDouble(element.getTextContent());
+						}
+						if ("color".equals(element.getNodeName())) {
+							color = Color.web(element.getTextContent());
+						}
+
+					}
+					UC_IncludeLine up = new UC_IncludeLine(x1, y1, x2, y2, color);
+					includeLines.add(up);
+					up.recalculatePoint();
+					getChildren().addAll(up,up.getLabel(true),up.getTop(),up.getBot());
+				}
+				break;
+				
+			case "Types":
+				org.w3c.dom.Node typ = doc.getElementsByTagName("Types").item(0);
+				NodeList typs = typ.getChildNodes();
+				for (int i = 0; i < typs.getLength(); i++) {
+					org.w3c.dom.Node data = typs.item(i);
+					NodeList datas = data.getChildNodes();
+					double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+					Color color = null;
+					for (int k = 0; k < datas.getLength(); k++) {
+						org.w3c.dom.Node element = datas.item(k);
+						if ("x1".equals(element.getNodeName())) {
+							x1 = Double.parseDouble(element.getTextContent());
+						}
+						if ("y1".equals(element.getNodeName())) {
+							y1 = Double.parseDouble(element.getTextContent());
+						}
+						if ("x2".equals(element.getNodeName())) {
+							x2 = Double.parseDouble(element.getTextContent());
+						}
+						if ("y2".equals(element.getNodeName())) {
+							y2 = Double.parseDouble(element.getTextContent());
+						}
+						if ("color".equals(element.getNodeName())) {
+							color = Color.web(element.getTextContent());
+						}
+
+					}
+					UC_TypeOfLine up = new UC_TypeOfLine(x1, y1, x2, y2, color);
+					typeofLines.add(up);
+					up.calculateTri();
+					getChildren().addAll(up,up.getTri());
 				}
 				break;
 
