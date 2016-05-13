@@ -24,9 +24,6 @@ public class C_Class extends Rectangle {
 		setStroke(scolor);
 		name = new SimpleStringProperty("Class Name");
 
-		dataBox = new Rectangle(x, y, width, height);
-		funBox = new Rectangle(x, y, width, height);
-
 		dataBox = new Rectangle(x, y + getHeight(), 100, 20);
 		dataBox.setFill(Color.WHITE);
 		dataBox.setStroke(scolor);

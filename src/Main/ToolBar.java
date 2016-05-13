@@ -39,6 +39,11 @@ public class ToolBar extends VBox {
 	MyImageView typeV;
 	///////////////////////
 
+	// Object Image View
+	MyImageView objectV;
+	MyImageView linkV;
+	//////////////////////
+
 	public ToolBar(int type) {
 		shape = new DropShadow();
 		shape.setOffsetX(5);
@@ -249,21 +254,38 @@ public class ToolBar extends VBox {
 		VBox btnP = new VBox();
 		btnP.setSpacing(10);
 		btnP.setAlignment(Pos.CENTER_LEFT);
-		ToggleButton object = new ToggleButton("Object"); // Object Box
-		ToggleButton link = new ToggleButton("Link"); // Link
 
-		ToggleGroup group = new ToggleGroup();
-		object.setToggleGroup(group);
-		link.setToggleGroup(group);
+		Image object, link;
+		objectV = new MyImageView();
+		linkV = new MyImageView();
+		try {
+			object = new Image(new FileInputStream("Resources/Icons/Object/Object.png"));
+			link = new Image(new FileInputStream("Resources/Icons/Object/Link.png"));
+			objectV.setImage(object);
+			linkV.setImage(link);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		object.setOnAction(e -> {
-			toolHandler.setTool("ObjectD_Object");
+		objectV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("ObjectD_Object");
+				ClearObjectToolShape();
+				objectV.setEffect(shape);
+			}
 		});
-		link.setOnAction(e -> {
-			toolHandler.setTool("ObjectD_link");
+
+		linkV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("ObjectD_link");
+				ClearObjectToolShape();
+				linkV.setEffect(shape);
+			}
 		});
 
-		btnP.getChildren().addAll(object, link);
+		btnP.getChildren().addAll(objectV, linkV, color);
 		return btnP;
 	}
 
@@ -538,5 +560,10 @@ public class ToolBar extends VBox {
 		extendV.setEffect(null);
 		includeV.setEffect(null);
 		typeV.setEffect(null);
+	}
+
+	public void ClearObjectToolShape() {
+		objectV.setEffect(null);
+		linkV.setEffect(null);
 	}
 }

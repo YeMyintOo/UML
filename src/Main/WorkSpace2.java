@@ -66,7 +66,7 @@ public class WorkSpace2 extends BorderPane {
 			boderPane.setCenter(new UseCaseCanvaBox2(owner,path,isLoad));
 			break;
 		case 2:// Object
-			boderPane.setCenter(new ObjectCanvaBox());
+			boderPane.setCenter(new ObjectCanvaBox(owner,path,isLoad));
 			break;
 		case 3:// Sequence
 			boderPane.setCenter(new SequenceCanvaBox());
