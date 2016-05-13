@@ -111,7 +111,6 @@ public class BuildCanvaXML {
 			dataNode.appendChild(document.createElement("Systems"));
 			break;
 		}
-
 		document.appendChild(root);
 		root.appendChild(nameNode);
 		root.appendChild(dataNode);

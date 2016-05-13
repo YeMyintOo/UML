@@ -88,7 +88,7 @@ public class Box_OFile extends Stage {
 		browseB.setOnAction(e -> {
 			FileChooser wsChooser = new FileChooser();
 			wsChooser.setTitle("Select New Workspace");
-			File selectedDirectory = wsChooser.showOpenDialog(owner);
+			File selectedDirectory = wsChooser.showOpenDialog(this);
 			pathF.setText(selectedDirectory.toString());
 		});
 	}

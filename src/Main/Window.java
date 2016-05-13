@@ -279,10 +279,10 @@ public class Window extends Application {
 		// Create File (Filename.xml)
 		File file = new File(path + "\\" + name + ".xml");
 		try {
-			new BuildCanvaXML(file, name,type); // Build XML file
+			new BuildCanvaXML(file, name, type); // Build XML file
 			Tab tab = new Tab();
 			tab.setText(name);
-			workspace = new WorkSpace2(type, file, scene,false);
+			workspace = new WorkSpace2(type, file, scene, false);
 			tab.setContent(workspace);
 			tabPane.getTabs().add(tab);
 		} catch (Exception e) {
@@ -300,9 +300,33 @@ public class Window extends Application {
 			case "UseCase":
 				type = 1;
 				break;
+			case "Object":
+				type = 2;
+				break;
+			case "Sequence":
+				type = 3;
+				break;
+			case "Collaboration":
+				type = 4;
+				break;
+			case "Class":
+				type = 5;
+				break;
+			case "StateChart":
+				type = 6;
+				break;
+			case "Activity":
+				type = 7;
+				break;
+			case "Component":
+				type = 8;
+				break;
+			case "Deployment":
+				type = 9;
+				break;
 			}
 			Tab tab = new Tab();
-			workspace = new WorkSpace2(type, file, scene,true);
+			workspace = new WorkSpace2(type, file, scene, true);
 			tab.setContent(workspace);
 			tabPane.getTabs().add(tab);
 			tab.setText(xml.getName());

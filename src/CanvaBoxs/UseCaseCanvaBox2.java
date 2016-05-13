@@ -126,12 +126,12 @@ public class UseCaseCanvaBox2 extends Pane {
 						isActor = true;
 						getChildren().addAll(actor, actor.getBody(), actor.getLeg(), actor.getLeg2(), actor.getLeg3(),
 								actor.getLeg4(), actor.getLabel());
-						requestFocus();
 						break;
 					case "UseCase_Action":
 						actionLine = new UC_ActionLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
 						isActionLine = true;
 						getChildren().addAll(actionLine);
+
 						break;
 					case "UseCase_Box":
 						box = new UC_Box(key.getX(), key.getY(), 300, 400, color, Color.GRAY);
@@ -161,6 +161,7 @@ public class UseCaseCanvaBox2 extends Pane {
 					default:
 						break;
 					}
+					requestFocus();
 				} // End of New
 			}
 		});
@@ -238,7 +239,7 @@ public class UseCaseCanvaBox2 extends Pane {
 					typeofLines.add(typeofLine);
 					isTypeofLine = false;
 				}
-
+				requestFocus();
 			}
 		});
 
@@ -266,8 +267,9 @@ public class UseCaseCanvaBox2 extends Pane {
 					save = new SaveDiagramXML(path);
 				}
 				if (actors.size() > 0) {
-					save.addActorCanva(actors);
-					save.addActionCanva(actionLines);
+					save.saveUseCaseCanvaBox(actors, actionLines, boxs, processCycles, extendLines, includeLines,
+							typeofLines);
+
 				}
 			}
 		});
@@ -290,7 +292,13 @@ public class UseCaseCanvaBox2 extends Pane {
 		if (isLoad) {
 			System.out.println(" Load Actor data From XML");
 			loadXMLData("Actors");
-			loadXMLData("Action");
+			loadXMLData("Actions");
+			loadXMLData("Boxs");
+			loadXMLData("Processes");
+			loadXMLData("Extends");
+			loadXMLData("Includes");
+			loadXMLData("Types");
+
 		}
 	}
 
@@ -791,29 +799,60 @@ public class UseCaseCanvaBox2 extends Pane {
 					UC_Actor actor = new UC_Actor(x, y, 20, color, Color.LIGHTGRAY);
 					actors.add(actor);
 					getChildren().addAll(actor, actor.getBody(), actor.getLeg(), actor.getLeg2(), actor.getLeg3(),
-							actor.getLeg4(),actor.getLabel());
+							actor.getLeg4(), actor.getLabel());
 				}
 
 				break;
-			case "Action":
+			case "Actions":
 				org.w3c.dom.Node action = doc.getElementsByTagName("Actions").item(0);
 				NodeList actions = action.getChildNodes();
 				for (int i = 0; i < actions.getLength(); i++) {
 					org.w3c.dom.Node data = actions.item(i);
 					NodeList datas = data.getChildNodes();
-					double x = 0, y = 0;
+					double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 					Color color = null;
 					for (int k = 0; k < datas.getLength(); k++) {
 						org.w3c.dom.Node element = datas.item(k);
-					
+						if ("x1".equals(element.getNodeName())) {
+							x1 = Double.parseDouble(element.getTextContent());
+						}
+						if ("y1".equals(element.getNodeName())) {
+							y1 = Double.parseDouble(element.getTextContent());
+						}
+						if ("x2".equals(element.getNodeName())) {
+							x2 = Double.parseDouble(element.getTextContent());
+						}
+						if ("y2".equals(element.getNodeName())) {
+							y2 = Double.parseDouble(element.getTextContent());
+						}
+						if ("color".equals(element.getNodeName())) {
+							color = Color.web(element.getTextContent());
+						}
 					}
-					UC_Actor actor = new UC_Actor(x, y, 20, color, Color.LIGHTGRAY);
-					actors.add(actor);
-					getChildren().addAll(actor, actor.getBody(), actor.getLeg(), actor.getLeg2(), actor.getLeg3(),
-							actor.getLeg4(),actor.getLabel());
+					UC_ActionLine actionLine = new UC_ActionLine(x1, y1, x2, y2, color);
+					actionLines.add(actionLine);
+					getChildren().addAll(actionLine);
 				}
-				
 				break;
+
+			case "Boxs":
+				org.w3c.dom.Node box = doc.getElementsByTagName("Boxs").item(0);
+				NodeList boxs = box.getChildNodes();
+				for (int i = 0; i < boxs.getLength(); i++) {
+					org.w3c.dom.Node data = boxs.item(i);
+					NodeList datas = data.getChildNodes();
+					double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+					Color color = null;
+					for (int k = 0; k < datas.getLength(); k++) {
+						org.w3c.dom.Node element = datas.item(k);
+
+					}
+					UC_ActionLine actionLine = new UC_ActionLine(x1, y1, x2, y2, color);
+					actionLines.add(actionLine);
+					getChildren().addAll(actionLine);
+				}
+				break;
+
 			}
 
 		} catch (Exception e) {

@@ -5,6 +5,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -26,8 +27,10 @@ public class LoadCanvaXML {
 
 	public String getDiagram() {
 		String name = null;
-		Element node = doc.getDocumentElement();
-		name = node.getTagName();
+		Node node = doc.getElementsByTagName("Diagram").item(0);
+		NamedNodeMap att = node.getAttributes();
+		Node data = att.getNamedItem("type");
+		name=data.getNodeValue();
 		return name;
 	}
 
