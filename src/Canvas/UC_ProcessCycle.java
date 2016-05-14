@@ -31,6 +31,7 @@ public class UC_ProcessCycle extends Ellipse {
 		text = new TextField(data.get());
 		text.layoutXProperty().bind(centerXProperty().subtract(70));
 		text.layoutYProperty().bind(centerYProperty().subtract(15));
+		
 
 		labelProperty().bindBidirectional(getTextData().textProperty());
 

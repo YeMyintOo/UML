@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -13,6 +14,7 @@ public class O_Object extends Rectangle {
 	private Rectangle dataBox; // Data area box
 	private StringProperty oname; // Object name
 	private Text label;
+	private TextField text;
 
 	private ArrayList<StringProperty> datas;
 
@@ -20,7 +22,7 @@ public class O_Object extends Rectangle {
 		super(x, y, 100, 40);
 		setFill(bgcolor);
 		setStroke(scolor);
-		
+
 		datas = new ArrayList<StringProperty>();
 		oname = new SimpleStringProperty("Oject :Class ");
 
@@ -36,16 +38,38 @@ public class O_Object extends Rectangle {
 				.subtract(label.layoutBoundsProperty().getValue().getWidth() / 2));
 		label.yProperty().bind(yProperty().add(20));
 
-		widthProperty().bindBidirectional(dataBox.widthProperty());
+		text = new TextField(oname.get());
+		text.layoutXProperty().bind(xProperty().subtract(25));
+		text.layoutYProperty().bind(yProperty().add(10));
+		text.textProperty().bindBidirectional(labelProperty());
 
-		
+		widthProperty().bindBidirectional(dataBox.widthProperty());
+		labelProperty().bindBidirectional(getTextData().textProperty());
 
 	}
 
-	public Text getText(){
+	public Text getLabel() {
 		return label;
 	}
-	
+
+	public TextField getTextData() {
+		return text;
+	}
+
+	public TextField getText(boolean isShow) {
+		text.setText(labelProperty().get());
+		if (isShow) {
+			text.setVisible(isShow);
+		} else {
+			text.setVisible(false);
+		}
+		return text;
+	}
+
+	public void setTextInVisible() {
+		text.setVisible(false);
+	}
+
 	public final StringProperty labelProperty() {
 		return oname;
 	}

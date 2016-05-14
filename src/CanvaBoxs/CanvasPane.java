@@ -17,6 +17,7 @@ public class CanvasPane extends Pane {
 	private File path;
 	private BorderPane gridLine;
 	private DropShadow shape;
+	public boolean isNew;
 
 	public CanvasPane() {
 		toolHandler = new ToolHandler();
