@@ -19,7 +19,7 @@ public class O_Object extends Rectangle {
 	private ArrayList<StringProperty> datas;
 
 	public O_Object(double x, double y, double width, double height, Color bgcolor, Color scolor) {
-		super(x, y, 100, 40);
+		super(x, y, width, height);
 		setFill(bgcolor);
 		setStroke(scolor);
 
@@ -75,7 +75,7 @@ public class O_Object extends Rectangle {
 	}
 
 	public void addData(String data) {
-		StringProperty d = new SimpleStringProperty("variable='value'");
+		StringProperty d = new SimpleStringProperty("var=value");
 		datas.add(d);
 	}
 
