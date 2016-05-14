@@ -43,6 +43,7 @@ public class SE_Role extends Rectangle {
 		line.startYProperty().bind(yProperty().add(getHeight()));
 		line.endXProperty().bind(xProperty().add(getWidth() / 2));
 		line.endYProperty().bind(lifeProperty().add(10).add(yProperty()));
+		
 
 		field = new TextField(labelProperty().get());
 		field.layoutXProperty().bind(xProperty().subtract(25));

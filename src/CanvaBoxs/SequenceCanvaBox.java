@@ -47,7 +47,6 @@ public class SequenceCanvaBox extends CanvasPane {
 	private ArrayList<SE_Activation> anormals;
 	private SE_Activation anormal;
 	private boolean isActivation;
-	private Line l1;
 
 	// New Object Activation
 	private ArrayList<SE_NewActivation> anews;
@@ -70,7 +69,7 @@ public class SequenceCanvaBox extends CanvasPane {
 		setPath(path);
 		roles = new ArrayList<SE_Role>();
 		anormals = new ArrayList<SE_Activation>();
-		dnews=new ArrayList<SE_DestroyActivation>();
+		dnews = new ArrayList<SE_DestroyActivation>();
 		anews = new ArrayList<SE_NewActivation>();
 		snews = new ArrayList<SE_SelfActivation>();
 
@@ -100,14 +99,8 @@ public class SequenceCanvaBox extends CanvasPane {
 						break;
 					case "Sequence_ANormal":
 						anormal = new SE_Activation(e.getX(), e.getY(), e.getX(), e.getY(), color);
-						l1 = new Line();
 						isActivation = true;
-						l1.setStroke(Color.LIGHTGRAY);
-						l1.startXProperty().bind(anormal.endXProperty());
-						l1.startYProperty().bind(anormal.endYProperty());
-						l1.endXProperty().bind(anormal.endXProperty().add(500));
-						l1.endYProperty().bind(anormal.endYProperty());
-						getChildren().addAll(anormal, l1);
+						getChildren().addAll(anormal);
 						break;
 					case "Sequence_ANObject":
 						anew = new SE_NewActivation(e.getX(), e.getY(), e.getX(), e.getY(), color);
@@ -137,12 +130,6 @@ public class SequenceCanvaBox extends CanvasPane {
 					role.setY(e.getY());
 				}
 				if (isActivation) {
-					// Helper
-					if (anormal.getStartY() == anormal.getEndY()) {
-						l1.setStroke(Color.LIGHTGREEN);
-					} else {
-						l1.setStroke(Color.PINK);
-					}
 					anormal.setEndX(e.getX());
 					anormal.setEndY(e.getY());
 				}
@@ -166,10 +153,16 @@ public class SequenceCanvaBox extends CanvasPane {
 					isRole = false;
 				}
 				if (isActivation) {
-					l1.setVisible(false);
-					drawNormalActivation(anormal);
-					anormals.add(anormal);
+					if (anormal.getStartX() < anormal.getEndX()) {
+						getChildren().addAll(anormal.getTop(), anormal.getBot(), anormal.getRect(), anormal.getRLine(),
+								anormal.getRTop(), anormal.getRBot());
+						anormals.add(anormal);
+					}else{
+						getChildren().remove(anormal);
+						System.out.println(" This Type of Activation is not allowed");
+					}
 					isActivation = false;
+
 				}
 				if (isNewActivation) {
 					drawNewActivation(anew);
@@ -194,59 +187,6 @@ public class SequenceCanvaBox extends CanvasPane {
 		isNewOREditNormalActivation(e, point);
 		isNewOREditNewActivation(e, point);
 		isNewOREditSelfActivation(e, point);
-	}
-
-	public void drawNormalActivation(SE_Activation anormal) {
-
-		// Head
-		double startx = anormal.getStartX();
-		double starty = anormal.getStartY();
-		double endx = anormal.getEndX();
-		double endy = anormal.getEndY();
-		// Arrow Head
-		Line top = new Line();
-		top.startXProperty().bind(anormal.endXProperty());
-		top.startYProperty().bind(anormal.endYProperty());
-		top.endXProperty().bind(anormal.endXProperty().subtract(10));
-		top.endYProperty().bind(anormal.endYProperty().subtract(5));
-		Line bot = new Line();
-		bot.startXProperty().bind(anormal.endXProperty());
-		bot.startYProperty().bind(anormal.endYProperty());
-		bot.endXProperty().bind(anormal.endXProperty().subtract(10));
-		bot.endYProperty().bind(anormal.endYProperty().add(5));
-
-		// Life Line
-		Rectangle life = anormal.getRect();
-		life.setX(anormal.getEndX());
-		life.setY(anormal.getEndY());
-		life.setWidth(20);
-		life.setHeight(100);
-		life.setFill(Color.LIGHTGRAY);
-		life.setStroke(Color.BLACK);
-
-		anormal.endXProperty().bind(life.xProperty());
-		anormal.endYProperty().bind(life.yProperty());
-		life.heightProperty().bind(anormal.lifeProperty());
-
-		// Return Line
-		Line line = new Line(endx, endy + life.getHeight(), startx, starty + life.getHeight());
-		line.getStrokeDashArray().addAll(10d, 5d);
-		line.startXProperty().bind(anormal.getRect().xProperty());
-		line.startYProperty().bind(anormal.getRect().yProperty().add(anormal.lifeProperty()));
-		line.endYProperty().bind(anormal.getRect().yProperty().add(anormal.lifeProperty()));
-		Line rtop = new Line();
-		rtop.startXProperty().bind(line.endXProperty());
-		rtop.startYProperty().bind(line.endYProperty());
-		rtop.endXProperty().bind(line.endXProperty().add(10));
-		rtop.endYProperty().bind(line.endYProperty().subtract(5));
-		Line rbot = new Line();
-		rbot.startXProperty().bind(line.endXProperty());
-		rbot.startYProperty().bind(line.endYProperty());
-		rbot.endXProperty().bind(line.endXProperty().add(10));
-		rbot.endYProperty().bind(line.endYProperty().add(5));
-
-		getChildren().addAll(top, bot, life, line, rtop, rbot);
-
 	}
 
 	public void drawNewActivation(SE_NewActivation anew) {
@@ -439,10 +379,10 @@ public class SequenceCanvaBox extends CanvasPane {
 				// Delete
 				roles.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
 				roles.get(i).setOnKeyPressed(key -> {
-					//Delete
+					// Delete
 					if (key.getCode() == KeyCode.DELETE) {
 						if (roles.size() > 0) {
-							getChildren().removeAll(roles.get(index),roles.get(index).getLabel());
+							getChildren().removeAll(roles.get(index), roles.get(index).getLabel());
 							roles.remove(index);
 						} else {
 							System.out.println("No Object to delete");
@@ -466,7 +406,7 @@ public class SequenceCanvaBox extends CanvasPane {
 						if (save == null) {
 							save = new SaveDiagramXML(path);
 						}
-						save.saveSequenceCavaBox(roles, anormals, anews, snews,dnews);
+						save.saveSequenceCavaBox(roles, anormals, anews, snews, dnews);
 						System.out.println("****Save*****");
 					}
 				});
