@@ -43,6 +43,7 @@ public class ObjectCanvaBox extends CanvasPane {
 	private O_Object object;
 	private boolean isObject;
 
+
 	// Link
 	private ArrayList<O_Link> links;
 	private O_Link link;
@@ -57,6 +58,7 @@ public class ObjectCanvaBox extends CanvasPane {
 		if (isLoad) {
 			System.out.println(" Load Object data From XML");
 			loadXMLData("Objects");
+			loadXMLData("Links");
 		}
 
 		if (toolHandler.getGrid().equals("Show")) {
@@ -84,6 +86,7 @@ public class ObjectCanvaBox extends CanvasPane {
 						getChildren().addAll(link);
 						break;
 					}
+					requestFocus();
 				}
 			}
 		});
@@ -99,6 +102,7 @@ public class ObjectCanvaBox extends CanvasPane {
 					link.setEndX(e.getX());
 					link.setEndY(e.getY());
 				}
+				requestFocus();
 			}
 		});
 
@@ -115,12 +119,13 @@ public class ObjectCanvaBox extends CanvasPane {
 					links.add(link);
 					isLink = false;
 				}
+				requestFocus();
 			}
 		});
 
 		this.onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
 		this.setOnKeyPressed(e -> {
-
+			System.out.println(" Key Press On Pane");
 			// Print
 			if (e.getCode() == KeyCode.PRINTSCREEN) {
 				if (defaultprinter == null) {
@@ -154,6 +159,7 @@ public class ObjectCanvaBox extends CanvasPane {
 		for (int i = 0; i < objects.size(); i++) {
 			if (objects.get(i).contains(point) || objects.get(i).getdataBox().contains(point)) {
 				int index = i;
+				
 				isNew = false;
 				objects.get(i).addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
 					@Override
@@ -208,6 +214,23 @@ public class ObjectCanvaBox extends CanvasPane {
 								getChildren().remove(add);
 							}
 						});
+
+					}
+				});
+
+				// Delete
+				objects.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				objects.get(i).setOnKeyPressed(key -> {
+					System.out.println(" Key Press On Object Box");
+					if (key.getCode() == KeyCode.DELETE) {
+						if (objects.size() > 0) {
+							getChildren().removeAll(objects.get(index), objects.get(index).getdataBox(),
+									objects.get(index).getLabel());
+							objects.remove(index);
+
+						} else {
+							System.out.println("No Object to delete");
+						}
 
 					}
 				});
