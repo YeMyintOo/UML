@@ -44,6 +44,14 @@ public class ToolBar extends VBox {
 	MyImageView linkV;
 	//////////////////////
 
+	// Sequence Image View
+	MyImageView roleV;
+	MyImageView actV;
+	MyImageView actNV;
+	MyImageView actDV;
+	MyImageView actSV;
+	//////////////////////
+
 	public ToolBar(int type) {
 		shape = new DropShadow();
 		shape.setOffsetX(5);
@@ -293,36 +301,71 @@ public class ToolBar extends VBox {
 		VBox btnP = new VBox();
 		btnP.setSpacing(10);
 		btnP.setAlignment(Pos.CENTER_LEFT);
-		ToggleButton role = new ToggleButton("Classifier Role"); // Classifier_Role
-		ToggleButton process = new ToggleButton("Activation"); // Activation(Normal)
-		ToggleButton processC = new ToggleButton("Activation (New Object)"); // Activation
-		ToggleButton processD = new ToggleButton("Activation (Object Destroy)");
-		ToggleButton processS = new ToggleButton("Activation (Self Loop)");
+		Image crole, act, actN, actD, actS;
+		roleV = new MyImageView();
+		actV = new MyImageView();
+		actNV = new MyImageView();
+		actDV = new MyImageView();
+		actSV = new MyImageView();
+		try {
+			crole = new Image(new FileInputStream("Resources/Icons/Sequence/Role.png"));
+			act = new Image(new FileInputStream("Resources/Icons/Sequence/Activation.png"));
+			actN = new Image(new FileInputStream("Resources/Icons/Sequence/NActivation.png"));
+			actD = new Image(new FileInputStream("Resources/Icons/Sequence/DActivation.png"));
+			actS = new Image(new FileInputStream("Resources/Icons/Sequence/SActivation.png"));
+			roleV.setImage(crole);
+			actV.setImage(act);
+			actNV.setImage(actN);
+			actDV.setImage(actD);
+			actSV.setImage(actS);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		ToggleGroup group = new ToggleGroup();
-		role.setToggleGroup(group);
-		process.setToggleGroup(group);
-		processC.setToggleGroup(group);
-		processD.setToggleGroup(group);
-		processS.setToggleGroup(group);
+		roleV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Sequence_Role");
+				ClearSequenceToolShape();
+				roleV.setEffect(shape);
+			}
+		});
+		actV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Sequence_ANormal");
+				ClearSequenceToolShape();
+				actV.setEffect(shape);
+			}
+		});
+		actNV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Sequence_ANObject");
+				ClearSequenceToolShape();
+				actNV.setEffect(shape);
+			}
+		});
 
-		role.setOnAction(e -> {
-			toolHandler.setTool("Sequence_Role");
-		});
-		process.setOnAction(e -> {
-			toolHandler.setTool("Sequence_ANormal");
-		});
-		processC.setOnAction(e -> {
-			toolHandler.setTool("Sequence_ANObject");
-		});
-		processD.setOnAction(e -> {
-			toolHandler.setTool("Sequence_ADObject");
-		});
-		processS.setOnAction(e -> {
-			toolHandler.setTool("Sequence_ASLoop");
+		actDV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Sequence_ADObject");
+				ClearSequenceToolShape();
+				actDV.setEffect(shape);
+			}
 		});
 
-		btnP.getChildren().addAll(role, process, processC, processD, processS);
+		actSV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Sequence_ASLoop");
+				ClearSequenceToolShape();
+				actSV.setEffect(shape);
+			}
+		});
+
+		btnP.getChildren().addAll(roleV, actV, actNV, actDV, actSV, color);
 		return btnP;
 	}
 
@@ -565,5 +608,13 @@ public class ToolBar extends VBox {
 	public void ClearObjectToolShape() {
 		objectV.setEffect(null);
 		linkV.setEffect(null);
+	}
+
+	public void ClearSequenceToolShape() {
+		roleV.setEffect(null);
+		actV.setEffect(null);
+		actNV.setEffect(null);
+		actDV.setEffect(null);
+		actSV.setEffect(null);
 	}
 }

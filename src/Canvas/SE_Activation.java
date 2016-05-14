@@ -2,12 +2,9 @@ package Canvas;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.geometry.Point2D;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 
 public class SE_Activation extends Line {
@@ -20,6 +17,7 @@ public class SE_Activation extends Line {
 	private Line rLine; //Return Line
 	private Line rtop;
 	private Line rbot;
+	private TextField text;
 
 	public SE_Activation(double startx, double starty, double endx, double endy, Color color) {
 		super(startx, starty, endx, endy);

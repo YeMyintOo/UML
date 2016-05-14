@@ -105,7 +105,7 @@ public class SequenceCanvaBox extends CanvasPane {
 					case "Sequence_ANObject":
 						anew = new SE_NewActivation(e.getX(), e.getY(), e.getX(), e.getY(), color);
 						isNewActivation = true;
-						getChildren().add(anew);
+						getChildren().addAll(anew);
 						break;
 
 					case "Sequence_ADObject":
@@ -157,7 +157,7 @@ public class SequenceCanvaBox extends CanvasPane {
 						getChildren().addAll(anormal.getTop(), anormal.getBot(), anormal.getRect(), anormal.getRLine(),
 								anormal.getRTop(), anormal.getRBot());
 						anormals.add(anormal);
-					}else{
+					} else {
 						getChildren().remove(anormal);
 						System.out.println(" This Type of Activation is not allowed");
 					}
@@ -165,7 +165,9 @@ public class SequenceCanvaBox extends CanvasPane {
 
 				}
 				if (isNewActivation) {
-					drawNewActivation(anew);
+					getChildren().addAll(anew.getTop(), anew.getBot(), anew.getNewOb(), anew.getNLine(),
+							anew.getLabel(), anew.getLifeBox(), anew.getRLine(), anew.getRTop(), anew.getRBot(),
+							anew.getText(false));
 					anews.add(anew);
 					isNewActivation = false;
 				}
@@ -187,83 +189,6 @@ public class SequenceCanvaBox extends CanvasPane {
 		isNewOREditNormalActivation(e, point);
 		isNewOREditNewActivation(e, point);
 		isNewOREditSelfActivation(e, point);
-	}
-
-	public void drawNewActivation(SE_NewActivation anew) {
-		Line top = new Line();
-		top.startXProperty().bind(anew.endXProperty());
-		top.startYProperty().bind(anew.endYProperty());
-		top.endXProperty().bind(anew.endXProperty().subtract(10));
-		top.endYProperty().bind(anew.endYProperty().subtract(5));
-		Line bot = new Line();
-		bot.startXProperty().bind(anew.endXProperty());
-		bot.startYProperty().bind(anew.endYProperty());
-		bot.endXProperty().bind(anew.endXProperty().subtract(10));
-		bot.endYProperty().bind(anew.endYProperty().add(5));
-
-		// Role
-		Rectangle newOb = anew.getNewOb();
-		newOb.setX(anew.getEndX());
-		newOb.setY(anew.getEndY() - 20);
-		newOb.setWidth(100);
-		newOb.setHeight(40);
-
-		anew.endXProperty().bind(newOb.xProperty());
-		anew.endYProperty().bind(newOb.yProperty().add(20));
-
-		// Role Label
-		Text label = new Text(anew.labelProperty().get());
-		label.setFont(Font.font("Arial", FontWeight.BLACK, 14));
-		label.textProperty().bind(anew.labelProperty());
-		label.layoutXProperty()
-				.bind(anew.getNewOb().xProperty().add(label.layoutBoundsProperty().getValue().getWidth() / 2));
-		label.layoutYProperty().bind(anew.getNewOb().yProperty().add(20));
-
-		// Life
-		Rectangle life = anew.getRect();
-		life.setX(anew.getEndX() + (newOb.getWidth() / 2) - 10);
-		life.setY(anew.getEndY() + 20);
-		life.setWidth(20);
-		life.setHeight(100);
-
-		life.xProperty().bind(newOb.xProperty().add(newOb.getWidth() / 2).subtract(10));
-		life.yProperty().bind(newOb.yProperty().add(newOb.getHeight()));
-		life.heightProperty().bind(anew.lifeProperty());
-
-		// Life Line
-
-		DoubleProperty length = new SimpleDoubleProperty();
-		length.bind(anew.newlifeProperty().add(10));
-		Line rline = new Line(anew.getNewOb().getX() + (anew.getNewOb().getWidth() / 2),
-				anew.getNewOb().getY() + anew.getNewOb().getHeight(),
-				anew.getNewOb().getX() + (anew.getNewOb().getWidth() / 2),
-				anew.getNewOb().getY() + length.doubleValue());
-		rline.setStroke(color);
-		rline.getStrokeDashArray().addAll(10d, 10d);
-		rline.startXProperty().bind(anew.getNewOb().xProperty().add(anew.getNewOb().getWidth() / 2));
-		rline.startYProperty().bind(anew.getNewOb().yProperty().add(anew.getNewOb().getHeight()));
-		rline.endXProperty().bind(anew.getNewOb().xProperty().add(anew.getNewOb().getWidth() / 2));
-		rline.endYProperty().bind(length.add(anew.getNewOb().yProperty()));
-
-		// Return line
-		Line line = new Line(anew.getEndX(), anew.getEndY() + life.getHeight(), anew.getStartX(),
-				anew.getStartY() + life.getHeight());
-		line.getStrokeDashArray().addAll(10d, 5d);
-		line.startXProperty().bind(anew.getRect().xProperty());
-		line.startYProperty().bind(anew.getRect().yProperty().add(anew.lifeProperty()));
-		line.endYProperty().bind(anew.getRect().yProperty().add(anew.lifeProperty()));
-		Line rtop = new Line();
-		rtop.startXProperty().bind(line.endXProperty());
-		rtop.startYProperty().bind(line.endYProperty());
-		rtop.endXProperty().bind(line.endXProperty().add(10));
-		rtop.endYProperty().bind(line.endYProperty().subtract(5));
-		Line rbot = new Line();
-		rbot.startXProperty().bind(line.endXProperty());
-		rbot.startYProperty().bind(line.endYProperty());
-		rbot.endXProperty().bind(line.endXProperty().add(10));
-		rbot.endYProperty().bind(line.endYProperty().add(5));
-
-		getChildren().addAll(top, bot, newOb, rline, life, label, line, rtop, rbot);
 	}
 
 	public void drawDestroyActivation(SE_DestroyActivation dnew) {
@@ -471,10 +396,11 @@ public class SequenceCanvaBox extends CanvasPane {
 	public void isNewOREditNewActivation(MouseEvent e, Point2D point) {
 		for (int i = 0; i < anews.size(); i++) {
 			int index = i;
-			if (anews.get(i).getRect().contains(point)) {
+			//////////////////////
+			if (anews.get(i).getLifeBox().contains(point)) {
 				isNew = false;
 
-				anews.get(i).getRect().setOnScroll(new EventHandler<ScrollEvent>() {
+				anews.get(i).getLifeBox().setOnScroll(new EventHandler<ScrollEvent>() {
 					@Override
 					public void handle(ScrollEvent s) {
 						if (s.getDeltaY() == 40) {
@@ -485,9 +411,9 @@ public class SequenceCanvaBox extends CanvasPane {
 					}
 				});
 
-				anews.get(i).getRect().setEffect(shape);
+				anews.get(i).getLifeBox().setEffect(shape);
 			} else {
-				anews.get(i).getRect().setEffect(null);
+				anews.get(i).getLifeBox().setEffect(null);
 			}
 
 			if (anews.get(i).getNewOb().contains(point)) {
@@ -505,34 +431,33 @@ public class SequenceCanvaBox extends CanvasPane {
 					@Override
 					public void handle(ScrollEvent s) {
 						if (s.getDeltaY() == 40) {
-							anews.get(index).newlifeProperty().set(anews.get(index).newlifeProperty().get() + 10);
+							anews.get(index).lifepProperty().set(anews.get(index).lifepProperty().get() + 10);
 						} else {
-							anews.get(index).newlifeProperty().set(anews.get(index).newlifeProperty().get() - 10);
+							anews.get(index).lifepProperty().set(anews.get(index).lifepProperty().get() - 10);
 						}
 					}
 				});
 
-				anews.get(i).getNewOb().addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				anews.get(i).getLabel().addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent key) {
 						Button x = null;
 						if (key.getClickCount() == 2) {
 							// Edit Actor Label
-							TextField data = new TextField();
-							data.layoutXProperty().bind(anews.get(index).getNewOb().xProperty().add(60));
-							data.layoutYProperty().bind(anews.get(index).getNewOb().yProperty().add(60));
-							getChildren().add(data);
-							data.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+							anews.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED,
+									new EventHandler<KeyEvent>() {
 								@Override
 								public void handle(KeyEvent e) {
+									DoubleProperty width = new SimpleDoubleProperty();
+									width.set(anews.get(index).getLabel().layoutBoundsProperty().getValue().getWidth());
+									anews.get(index).getLabel().xProperty()
+											.bind(anews.get(index).getNewOb().xProperty()
+													.add(anews.get(index).getNewOb().widthProperty().getValue() / 2)
+													.subtract(anews.get(index).getLabel().layoutBoundsProperty()
+															.getValue().getWidth() / 2));
+									anews.get(index).getNewOb().widthProperty().bind(width.add(30));
 									if (e.getCode() == KeyCode.ENTER) {
-										if (!data.getText().equals("")) {
-											anews.get(index).labelProperty().set(data.getText().trim());
-											Text w = new Text(data.getText().trim());
-											anews.get(index).getNewOb().widthProperty().bind(new SimpleDoubleProperty(
-													w.layoutBoundsProperty().getValue().getWidth()).add(60));
-										}
-										data.setVisible(!data.isVisible());
+										anews.get(index).setTextInVisible();
 									}
 								}
 							});
