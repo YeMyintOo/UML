@@ -83,7 +83,7 @@ public class WorkSpace extends BorderPane {
 			tool.setCenter(ObjectToolBox());
 			break;
 		case 3:// Sequence
-			work.setCenter(new SequenceCanvaBox());
+			work.setCenter(new SequenceCanvaBox(owner,path,false));
 			tool.setCenter(SequenceToolBox());
 			break;
 		case 4:// Collaboration

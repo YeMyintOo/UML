@@ -15,10 +15,10 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import Canvas.O_Link;
 import Canvas.O_Object;
+import Canvas.SE_Role;
 import Canvas.UC_ActionLine;
 import Canvas.UC_Actor;
 import Canvas.UC_Box;
@@ -269,6 +269,9 @@ public class SaveDiagramXML {
 		save();
 	}
 	
+	public void saveSequenceCavaBox(ArrayList<SE_Role> roles){
+		
+	}
 	
 	public void save() {
 		try {

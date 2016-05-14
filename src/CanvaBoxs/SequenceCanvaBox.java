@@ -1,5 +1,6 @@
 package CanvaBoxs;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import Canvas.SE_Activation;
@@ -8,12 +9,17 @@ import Canvas.SE_NewActivation;
 import Canvas.SE_Role;
 import Canvas.SE_SelfActivation;
 import Database.ToolHandler;
+import Library.SaveDiagramXML;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.print.PageOrientation;
+import javafx.print.Paper;
+import javafx.print.Printer;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
@@ -30,13 +36,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-public class SequenceCanvaBox extends Pane {
-	// Only Sequence Components Can Draw
-	private boolean isNew;
-
-	private ToolHandler toolHandler;
-	private Color color;
-	private DropShadow shape;
+public class SequenceCanvaBox extends CanvasPane {
 
 	// Role
 	private ArrayList<SE_Role> roles;
@@ -65,8 +65,21 @@ public class SequenceCanvaBox extends Pane {
 	private boolean isSelfActivation;
 	private boolean callSelf;
 
-	public SequenceCanvaBox() {
-		init();
+	public SequenceCanvaBox(Scene owner, File path, boolean isLoad) {
+		setOwner(owner);
+		setPath(path);
+		roles = new ArrayList<SE_Role>();
+		anormals = new ArrayList<SE_Activation>();
+		anews = new ArrayList<SE_NewActivation>();
+		snews = new ArrayList<SE_SelfActivation>();
+
+		if (isLoad) {
+
+		}
+
+		if (toolHandler.getGrid().equals("Show")) {
+			setGridLine();
+		}
 
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
@@ -171,17 +184,6 @@ public class SequenceCanvaBox extends Pane {
 			}
 		});
 
-	}
-
-	public void init() {
-		shape = new DropShadow();
-		shape.setOffsetX(5);
-		shape.setOffsetY(5);
-		shape.setRadius(15);
-		roles = new ArrayList<SE_Role>();
-		anormals = new ArrayList<SE_Activation>();
-		anews = new ArrayList<SE_NewActivation>();
-		snews = new ArrayList<SE_SelfActivation>();
 	}
 
 	public void isNewOrEdit(MouseEvent e) {
@@ -419,7 +421,8 @@ public class SequenceCanvaBox extends Pane {
 									DoubleProperty width = new SimpleDoubleProperty();
 									width.set(roles.get(index).getLabel().layoutBoundsProperty().getValue().getWidth());
 									roles.get(index).getLabel().xProperty()
-											.bind(roles.get(index).xProperty().add(roles.get(index).widthProperty().getValue() / 2)
+											.bind(roles.get(index).xProperty()
+													.add(roles.get(index).widthProperty().getValue() / 2)
 													.subtract(roles.get(index).getLabel().layoutBoundsProperty()
 															.getValue().getWidth() / 2));
 									roles.get(index).widthProperty().bind(width.add(30));
@@ -431,6 +434,42 @@ public class SequenceCanvaBox extends Pane {
 						}
 					}
 				});
+
+				// Delete
+				roles.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				roles.get(i).setOnKeyPressed(key -> {
+					//Delete
+					if (key.getCode() == KeyCode.DELETE) {
+						if (roles.size() > 0) {
+							getChildren().removeAll(roles.get(index),roles.get(index).getLabel());
+							roles.remove(index);
+						} else {
+							System.out.println("No Object to delete");
+						}
+					}
+					// Print
+					if (key.getCode() == KeyCode.PRINTSCREEN) {
+						if (defaultprinter == null) {
+							defaultprinter = Printer.getDefaultPrinter();
+							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
+									Printer.MarginType.HARDWARE_MINIMUM);
+						}
+						roles.get(index).setEffect(null);
+						getChildren().remove(gridLine);
+						PrintNode(this, pageLayout);
+						getChildren().add(gridLine);
+						gridLine.toBack();
+					}
+					// Save
+					if (key.getCode() == KeyCode.F1) {
+						if (save == null) {
+							save = new SaveDiagramXML(path);
+						}
+						save.saveSequenceCavaBox(roles);
+						System.out.println("****Save*****");
+					}
+				});
+
 				roles.get(i).setEffect(shape);
 			} else {
 				roles.get(i).setEffect(null);

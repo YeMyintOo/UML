@@ -4,6 +4,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -42,11 +44,21 @@ public class SE_Role extends Rectangle {
 		line.startYProperty().bind(yProperty().add(getHeight()));
 		line.endXProperty().bind(xProperty().add(getWidth() / 2));
 		line.endYProperty().bind(lifeProperty().add(10).add(yProperty()));
-		
-		field=new TextField(labelProperty().get());
-		field.layoutXProperty().bind(xProperty().add(60));
-		field.layoutYProperty().bind(yProperty().add(20));
+
+		field = new TextField(labelProperty().get());
+		field.layoutXProperty().bind(xProperty().subtract(25));
+		field.layoutYProperty().bind(yProperty().add(10));
 		field.textProperty().bindBidirectional(labelProperty());
+
+		widthProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				line.startXProperty().bind(xProperty().add(getWidth() / 2));
+				line.startYProperty().bind(yProperty().add(getHeight()));
+				line.endXProperty().bind(xProperty().add(getWidth() / 2));
+				line.endYProperty().bind(lifeProperty().add(10).add(yProperty()));
+			}
+		});
 
 	}
 
