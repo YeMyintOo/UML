@@ -17,6 +17,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import Canvas.O_Link;
+import Canvas.O_Object;
 import Canvas.UC_ActionLine;
 import Canvas.UC_Actor;
 import Canvas.UC_Box;
@@ -212,7 +214,62 @@ public class SaveDiagramXML {
 		
 		save();
 	}
+	
+	public void saveObjectCanvaBox(ArrayList<O_Object> objects,ArrayList<O_Link> links){
 
+		// Object
+		Node objNode = doc.getElementsByTagName("Objects").item(0);
+		removeChilds(objNode);
+		for (int i = 0; i < objects.size(); i++) {
+			Element data = doc.createElement("Object");
+			Element x = doc.createElement("x");
+			Element y = doc.createElement("y");
+			Element width = doc.createElement("width");
+			Element height = doc.createElement("height");
+			Element color = doc.createElement("color");
+
+			x.appendChild(doc.createTextNode("" + objects.get(i).getX()));
+			y.appendChild(doc.createTextNode("" + objects.get(i).getY()));
+			width.appendChild(doc.createTextNode("" + objects.get(i).getWidth()));
+			height.appendChild(doc.createTextNode("" + objects.get(i).getHeight()));
+			color.appendChild(doc.createTextNode("" + objects.get(i).getFill()));
+
+			data.appendChild(x);
+			data.appendChild(y);
+			data.appendChild(width);
+			data.appendChild(height);
+			data.appendChild(color);
+			objNode.appendChild(data);
+		}
+		
+		//Link
+		Node linkNode = doc.getElementsByTagName("Links").item(0);
+		removeChilds(linkNode);
+		for (int i = 0; i < links.size(); i++) {
+			Element data = doc.createElement("Link");
+			Element x1 = doc.createElement("x1");
+			Element y1 = doc.createElement("y1");
+			Element x2 = doc.createElement("x2");
+			Element y2 = doc.createElement("y2");
+			Element color = doc.createElement("color");
+
+			x1.appendChild(doc.createTextNode("" + links.get(i).getStartX()));
+			y1.appendChild(doc.createTextNode("" + links.get(i).getStartY()));
+			x2.appendChild(doc.createTextNode("" + links.get(i).getEndX()));
+			y2.appendChild(doc.createTextNode("" + links.get(i).getEndY()));
+			color.appendChild(doc.createTextNode("" + links.get(i).getStroke()));
+
+			data.appendChild(x1);
+			data.appendChild(y1);
+			data.appendChild(x2);
+			data.appendChild(y2);
+			data.appendChild(color);
+			linkNode.appendChild(data);
+		}
+		save();
+	}
+	
+	
 	public void save() {
 		try {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();

@@ -3,9 +3,21 @@ package CanvaBoxs;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.NodeList;
+
 import Canvas.O_Link;
 import Canvas.O_Object;
+import Canvas.UC_ActionLine;
+import Canvas.UC_Actor;
+import Canvas.UC_Box;
+import Canvas.UC_ExtendLine;
+import Canvas.UC_IncludeLine;
+import Canvas.UC_ProcessCycle;
+import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
+import Library.SaveDiagramXML;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
@@ -44,6 +56,7 @@ public class ObjectCanvaBox extends CanvasPane {
 
 		if (isLoad) {
 			System.out.println(" Load Object data From XML");
+			loadXMLData("Objects");
 		}
 
 		if (toolHandler.getGrid().equals("Show")) {
@@ -114,7 +127,6 @@ public class ObjectCanvaBox extends CanvasPane {
 					defaultprinter = Printer.getDefaultPrinter();
 					pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
 							Printer.MarginType.HARDWARE_MINIMUM);
-					System.out.println("Printer is created");
 				}
 				getChildren().remove(gridLine);
 				PrintNode(this, pageLayout);
@@ -123,7 +135,11 @@ public class ObjectCanvaBox extends CanvasPane {
 			}
 			// Save
 			if (e.getCode() == KeyCode.F1) {
-
+				if (save == null) {
+					save = new SaveDiagramXML(path);
+				}
+				save.saveObjectCanvaBox(objects, links);
+				System.out.println("****Save*****");
 			}
 		});
 	}
@@ -258,6 +274,84 @@ public class ObjectCanvaBox extends CanvasPane {
 				//
 			}
 		});
+	}
 
+	private void loadXMLData(String tagName) {
+		try {
+			dbFactory = DocumentBuilderFactory.newInstance();
+			dBuilder = dbFactory.newDocumentBuilder();
+			doc = dBuilder.parse(path);
+
+			switch (tagName) {
+			case "Links":
+				org.w3c.dom.Node action = doc.getElementsByTagName("Links").item(0);
+				NodeList actions = action.getChildNodes();
+				for (int i = 0; i < actions.getLength(); i++) {
+					org.w3c.dom.Node data = actions.item(i);
+					NodeList datas = data.getChildNodes();
+					double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+					Color color = null;
+					for (int k = 0; k < datas.getLength(); k++) {
+						org.w3c.dom.Node element = datas.item(k);
+						if ("x1".equals(element.getNodeName())) {
+							x1 = Double.parseDouble(element.getTextContent());
+						}
+						if ("y1".equals(element.getNodeName())) {
+							y1 = Double.parseDouble(element.getTextContent());
+						}
+						if ("x2".equals(element.getNodeName())) {
+							x2 = Double.parseDouble(element.getTextContent());
+						}
+						if ("y2".equals(element.getNodeName())) {
+							y2 = Double.parseDouble(element.getTextContent());
+						}
+						if ("color".equals(element.getNodeName())) {
+							color = Color.web(element.getTextContent());
+						}
+					}
+					O_Link link = new O_Link(x1, y1, x2, y2, color);
+					links.add(link);
+					getChildren().addAll(link);
+				}
+				break;
+
+			case "Objects":
+				org.w3c.dom.Node ubox = doc.getElementsByTagName("Objects").item(0);
+				NodeList uboxs = ubox.getChildNodes();
+				for (int i = 0; i < uboxs.getLength(); i++) {
+					org.w3c.dom.Node data = uboxs.item(i);
+					NodeList datas = data.getChildNodes();
+					double x = 0, y = 0, h = 0, w = 0;
+					Color color = null;
+					for (int k = 0; k < datas.getLength(); k++) {
+						org.w3c.dom.Node element = datas.item(k);
+						if ("x".equals(element.getNodeName())) {
+							x = Double.parseDouble(element.getTextContent());
+						}
+						if ("y".equals(element.getNodeName())) {
+							y = Double.parseDouble(element.getTextContent());
+						}
+						if ("width".equals(element.getNodeName())) {
+							w = Double.parseDouble(element.getTextContent());
+						}
+						if ("height".equals(element.getNodeName())) {
+							h = Double.parseDouble(element.getTextContent());
+						}
+						if ("color".equals(element.getNodeName())) {
+							color = Color.web(element.getTextContent());
+						}
+
+					}
+					O_Object obj = new O_Object(x, y, w, h, color, Color.LIGHTGRAY);
+					objects.add(obj);
+					getChildren().addAll(obj, obj.getLabel(), obj.getdataBox());
+				}
+				break;
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

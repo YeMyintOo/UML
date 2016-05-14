@@ -2,8 +2,14 @@ package CanvaBoxs;
 
 import java.io.File;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+
 import Database.ToolHandler;
 import Library.MyGridLine;
+import Library.SaveDiagramXML;
 import javafx.print.JobSettings;
 import javafx.print.PageLayout;
 import javafx.print.Printer;
@@ -17,10 +23,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 
 public class CanvasPane extends Pane {
+	
+	protected DocumentBuilderFactory dbFactory;
+	protected DocumentBuilder dBuilder;
+	protected Document doc;
 	public ToolHandler toolHandler;
 	public Color color;
 	public Scene owner;
 	public File path;
+	public SaveDiagramXML save;
 	public BorderPane gridLine;
 	public DropShadow shape;
 	public Printer defaultprinter;
