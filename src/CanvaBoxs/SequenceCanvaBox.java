@@ -172,7 +172,7 @@ public class SequenceCanvaBox extends CanvasPane {
 					isNewActivation = false;
 				}
 				if (isDestroyActivation) {
-					drawDestroyActivation(dnew);
+					getChildren().addAll(dnew.getTop(), dnew.getBot(), dnew.getC1(), dnew.getC2());
 					dnews.add(dnew);
 					isDestroyActivation = false;
 				}
@@ -188,65 +188,8 @@ public class SequenceCanvaBox extends CanvasPane {
 		isNewOREditRole(e, point);
 		isNewOREditNormalActivation(e, point);
 		isNewOREditNewActivation(e, point);
+		isNewOREditDelActivation(e, point);
 		isNewOREditSelfActivation(e, point);
-	}
-
-	public void drawDestroyActivation(SE_DestroyActivation dnew) {
-		double endx = dnew.getEndX();
-		double endy = dnew.getEndY();
-
-		// Arrow Head
-		Line top = new Line();
-		top.setStroke(color);
-		top.startXProperty().bind(dnew.endXProperty());
-		top.startYProperty().bind(dnew.endYProperty());
-		top.endXProperty().bind(dnew.endXProperty().subtract(10));
-		top.endYProperty().bind(dnew.endYProperty().subtract(5));
-		Line bot = new Line();
-		bot.setStroke(color);
-		bot.startXProperty().bind(dnew.endXProperty());
-		bot.startYProperty().bind(dnew.endYProperty());
-		bot.endXProperty().bind(dnew.endXProperty().subtract(10));
-		bot.endYProperty().bind(dnew.endYProperty().add(5));
-
-		Line c1 = new Line(endx - 20, endy - 20, endx + 20, endy + 20);
-		c1.setStrokeWidth(3);
-		Line c2 = new Line(endx - 20, endy + 20, endx + 20, endy - 20);
-		c2.setStrokeWidth(3);
-
-		getChildren().addAll(top, bot, c1, c2);
-	}
-
-	public void drawSelfActivation(SE_SelfActivation snew) {
-		double startx = snew.getX();
-		double centery = snew.getY();
-
-		Arc arc1 = new Arc(startx + 10, centery - 10, 60, 10, 270, 180);
-		arc1.setFill(Color.TRANSPARENT);
-		arc1.setStroke(Color.BLACK);
-
-		Arc arc2 = new Arc(startx + 10, centery + snew.getHeight() + 10, 60, 10, 270, 180);
-		arc2.getStrokeDashArray().addAll(5d, 5d);
-		arc2.setFill(Color.TRANSPARENT);
-		arc2.setStroke(Color.BLACK);
-
-		arc1.centerYProperty().bind(snew.yProperty().subtract(10));
-
-		snew.yProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				arc2.centerYProperty().bind(snew.yProperty().add(snew.getHeight()).add(10));
-			}
-		});
-		snew.heightProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				System.out.println("Change due to Height Property");
-				arc2.centerYProperty().bind(snew.heightProperty().add(snew.getY()).add(10));
-			}
-		});
-
-		getChildren().addAll(arc1, arc2);
 	}
 
 	public void isNewOREditRole(MouseEvent e, Point2D point) {
@@ -307,7 +250,8 @@ public class SequenceCanvaBox extends CanvasPane {
 					// Delete
 					if (key.getCode() == KeyCode.DELETE) {
 						if (roles.size() > 0) {
-							getChildren().removeAll(roles.get(index), roles.get(index).getLabel());
+							getChildren().removeAll(roles.get(index), roles.get(index).getLabel(),
+									roles.get(index).getLife());
 							roles.remove(index);
 						} else {
 							System.out.println("No Object to delete");
@@ -359,9 +303,9 @@ public class SequenceCanvaBox extends CanvasPane {
 							snew = new SE_SelfActivation(Color.LIGHTGRAY);
 							snew.setY(e.getY());
 							snew.xProperty().bind(anormals.get(index).getRect().xProperty().add(10));
-							drawSelfActivation(snew);
 							snews.add(snew);
-							getChildren().add(snew);
+							getChildren().addAll(snew, snew.getArc1(), snew.getArc2(), snew.getTop1(), snew.getTop2(),
+									snew.getBot1(), snew.getBot2());
 						}
 
 					}
@@ -465,9 +409,113 @@ public class SequenceCanvaBox extends CanvasPane {
 					}
 				});
 
+				// Delete
+				anews.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				anews.get(i).setOnKeyPressed(key -> {
+					// Delete
+					if (key.getCode() == KeyCode.DELETE) {
+						if (anews.size() > 0) {
+							getChildren().removeAll(anews.get(index), roles.get(index).getLabel());
+							anews.remove(index);
+						} else {
+							System.out.println("No New Object to delete");
+						}
+					}
+					// Print
+					if (key.getCode() == KeyCode.PRINTSCREEN) {
+						if (defaultprinter == null) {
+							defaultprinter = Printer.getDefaultPrinter();
+							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
+									Printer.MarginType.HARDWARE_MINIMUM);
+						}
+						anews.get(index).setEffect(null);
+						getChildren().remove(gridLine);
+						PrintNode(this, pageLayout);
+						getChildren().add(gridLine);
+						gridLine.toBack();
+					}
+					// Save
+					if (key.getCode() == KeyCode.F1) {
+						if (save == null) {
+							save = new SaveDiagramXML(path);
+						}
+						save.saveSequenceCavaBox(roles, anormals, anews, snews, dnews);
+						System.out.println("****Save*****");
+					}
+				});
+
 				anews.get(i).getNewOb().setEffect(shape);
 			} else {
 				anews.get(i).getNewOb().setEffect(null);
+			}
+		}
+	}
+
+	public void isNewOREditDelActivation(MouseEvent e, Point2D point) {
+		for (int i = 0; i < dnews.size(); i++) {
+			int index = i;
+			boolean isclick = dnews.get(i).contains(point.getX(), point.getY())
+					|| dnews.get(i).contains(point.getX() - 1, point.getY())
+					|| dnews.get(i).contains(point.getX() - 2, point.getY())
+					|| dnews.get(i).contains(point.getX() - 3, point.getY())
+					|| dnews.get(i).contains(point.getX() - 4, point.getY())
+					|| dnews.get(i).contains(point.getX() - 5, point.getY())
+					|| dnews.get(i).contains(point.getX() + 1, point.getY())
+					|| dnews.get(i).contains(point.getX() + 2, point.getY())
+					|| dnews.get(i).contains(point.getX() + 3, point.getY())
+					|| dnews.get(i).contains(point.getX() + 4, point.getY())
+					|| dnews.get(i).contains(point.getX() + 5, point.getY())
+					|| dnews.get(i).contains(point.getX(), point.getY() - 1)
+					|| dnews.get(i).contains(point.getX(), point.getY() - 2)
+					|| dnews.get(i).contains(point.getX(), point.getY() - 3)
+					|| dnews.get(i).contains(point.getX(), point.getY() - 4)
+					|| dnews.get(i).contains(point.getX(), point.getY() - 5)
+					|| dnews.get(i).contains(point.getX(), point.getY() + 1)
+					|| dnews.get(i).contains(point.getX(), point.getY() + 2)
+					|| dnews.get(i).contains(point.getX(), point.getY() + 3)
+					|| dnews.get(i).contains(point.getX(), point.getY() + 4)
+					|| dnews.get(i).contains(point.getX(), point.getY() + 5);
+			if (isclick) {
+				isNew = false;
+				// Delete
+				dnews.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				dnews.get(i).setOnKeyPressed(key -> {
+					// Delete
+					if (key.getCode() == KeyCode.DELETE) {
+						if (dnews.size() > 0) {
+							getChildren().removeAll(dnews.get(index), dnews.get(index).getTop(),
+									dnews.get(index).getBot(), dnews.get(index).getC1(), dnews.get(index).getC2());
+							dnews.remove(index);
+						} else {
+							System.out.println("No Delete Object to delete");
+						}
+					}
+					// Print
+					if (key.getCode() == KeyCode.PRINTSCREEN) {
+						if (defaultprinter == null) {
+							defaultprinter = Printer.getDefaultPrinter();
+							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
+									Printer.MarginType.HARDWARE_MINIMUM);
+						}
+						dnews.get(index).setEffect(null);
+						getChildren().remove(gridLine);
+						PrintNode(this, pageLayout);
+						getChildren().add(gridLine);
+						gridLine.toBack();
+					}
+					// Save
+					if (key.getCode() == KeyCode.F1) {
+						if (save == null) {
+							save = new SaveDiagramXML(path);
+						}
+						save.saveSequenceCavaBox(roles, anormals, anews, snews, dnews);
+						System.out.println("****Save*****");
+					}
+				});
+
+				dnews.get(i).setEffect(shape);
+			} else {
+				dnews.get(i).setEffect(null);
 			}
 		}
 	}
