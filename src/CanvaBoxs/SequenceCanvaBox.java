@@ -67,12 +67,12 @@ public class SequenceCanvaBox extends Pane {
 
 	public SequenceCanvaBox() {
 		init();
-		
+
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
 				isNewOrEdit(e);
-				
+
 				if (isNew) {
 					toolHandler = new ToolHandler();
 					color = Color.web(toolHandler.getColor());
@@ -82,7 +82,7 @@ public class SequenceCanvaBox extends Pane {
 					case "Sequence_Role":
 						role = new SE_Role(e.getX(), e.getY(), color);
 						isRole = true;
-						getChildren().add(role);
+						getChildren().addAll(role, role.getLabel(), role.getLife(), role.getText(false));
 						break;
 					case "Sequence_ANormal":
 						anormal = new SE_Activation(e.getX(), e.getY(), e.getX(), e.getY(), color);
@@ -148,7 +148,6 @@ public class SequenceCanvaBox extends Pane {
 			@Override
 			public void handle(MouseEvent e) {
 				if (isRole) {
-					drawRoleLabel(role);
 					roles.add(role);
 					isRole = false;
 				}
@@ -192,29 +191,6 @@ public class SequenceCanvaBox extends Pane {
 		isNewOREditNormalActivation(e, point);
 		isNewOREditNewActivation(e, point);
 		isNewOREditSelfActivation(e, point);
-	}
-
-	public void drawRoleLabel(SE_Role role) {
-		Text label = new Text(role.labelProperty().getValue());
-		label.setFont(Font.font("Arial", FontWeight.BLACK, 14));
-		label.textProperty().bind(role.labelProperty());
-
-		DoubleProperty length = new SimpleDoubleProperty();
-		length.bind(role.lifeProperty().add(10));
-
-		Line line = new Line(role.getX() + (role.getWidth() / 2), role.getY() + role.getHeight(),
-				role.getX() + (role.getWidth() / 2), role.getY() + length.doubleValue());
-		line.setStroke(color);
-		line.getStrokeDashArray().addAll(10d, 10d);
-		line.startXProperty().bind(role.xProperty().add(role.getWidth() / 2));
-		line.startYProperty().bind(role.yProperty().add(role.getHeight()));
-		line.endXProperty().bind(role.xProperty().add(role.getWidth() / 2));
-		line.endYProperty().bind(length.add(role.yProperty()));
-
-		label.layoutXProperty().bind(role.xProperty().add(label.layoutBoundsProperty().getValue().getWidth() / 2));
-		label.layoutYProperty().bind(role.yProperty().add(role.heightProperty().divide(2)));
-
-		getChildren().addAll(label, line);
 	}
 
 	public void drawNormalActivation(SE_Activation anormal) {
@@ -381,27 +357,26 @@ public class SequenceCanvaBox extends Pane {
 		arc1.setFill(Color.TRANSPARENT);
 		arc1.setStroke(Color.BLACK);
 
-		Arc arc2 = new Arc(startx + 10, centery + snew.getHeight()+10, 60, 10, 270, 180);
+		Arc arc2 = new Arc(startx + 10, centery + snew.getHeight() + 10, 60, 10, 270, 180);
 		arc2.getStrokeDashArray().addAll(5d, 5d);
 		arc2.setFill(Color.TRANSPARENT);
 		arc2.setStroke(Color.BLACK);
 
 		arc1.centerYProperty().bind(snew.yProperty().subtract(10));
-		
-		snew.yProperty().addListener(new ChangeListener<Number>(){
+
+		snew.yProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-					arc2.centerYProperty().bind(snew.yProperty().add(snew.getHeight()).add(10));
+				arc2.centerYProperty().bind(snew.yProperty().add(snew.getHeight()).add(10));
 			}
 		});
-		snew.heightProperty().addListener(new ChangeListener<Number>(){
+		snew.heightProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-					System.out.println("Change due to Height Property");
-					arc2.centerYProperty().bind(snew.heightProperty().add(snew.getY()).add(10));
+				System.out.println("Change due to Height Property");
+				arc2.centerYProperty().bind(snew.heightProperty().add(snew.getY()).add(10));
 			}
 		});
-		
 
 		getChildren().addAll(arc1, arc2);
 	}
@@ -431,34 +406,31 @@ public class SequenceCanvaBox extends Pane {
 					}
 				});
 
-				roles.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				roles.get(i).getLabel().addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent key) {
 						Button x = null;
 						if (key.getClickCount() == 2) {
 							// Edit Actor Label
-							TextField data = new TextField();
-							data.layoutXProperty().bind(roles.get(index).xProperty().add(60));
-							data.layoutYProperty().bind(roles.get(index).yProperty().add(60));
-							getChildren().add(data);
-							data.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+							roles.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED,
+									new EventHandler<KeyEvent>() {
 								@Override
 								public void handle(KeyEvent e) {
+									DoubleProperty width = new SimpleDoubleProperty();
+									width.set(roles.get(index).getLabel().layoutBoundsProperty().getValue().getWidth());
+									roles.get(index).getLabel().xProperty()
+											.bind(roles.get(index).xProperty().add(roles.get(index).widthProperty().getValue() / 2)
+													.subtract(roles.get(index).getLabel().layoutBoundsProperty()
+															.getValue().getWidth() / 2));
+									roles.get(index).widthProperty().bind(width.add(30));
 									if (e.getCode() == KeyCode.ENTER) {
-										if (!data.getText().equals("")) {
-											roles.get(index).labelProperty().set(data.getText().trim());
-											Text w = new Text(data.getText().trim());
-											roles.get(index).widthProperty().bind(new SimpleDoubleProperty(
-													w.layoutBoundsProperty().getValue().getWidth()).add(60));
-										}
-										data.setVisible(!data.isVisible());
+										roles.get(index).setTextInVisible();
 									}
 								}
 							});
 						}
 					}
 				});
-
 				roles.get(i).setEffect(shape);
 			} else {
 				roles.get(i).setEffect(null);

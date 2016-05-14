@@ -7,6 +7,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 
+import com.sun.glass.ui.Window;
+
 import Database.ToolHandler;
 import Library.MyGridLine;
 import Library.SaveDiagramXML;

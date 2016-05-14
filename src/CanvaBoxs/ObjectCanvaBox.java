@@ -129,6 +129,7 @@ public class ObjectCanvaBox extends CanvasPane {
 
 		Point2D point = new Point2D(e.getX(), e.getY());
 		isNewOREditObject(e, point);
+		isNewOREditLink(e, point);
 	}
 
 	public void isNewOREditObject(MouseEvent e, Point2D point) {
@@ -203,11 +204,9 @@ public class ObjectCanvaBox extends CanvasPane {
 							getChildren().removeAll(objects.get(index), objects.get(index).getdataBox(),
 									objects.get(index).getLabel());
 							objects.remove(index);
-
 						} else {
 							System.out.println("No Object to delete");
 						}
-
 					}
 					// Print
 					if (key.getCode() == KeyCode.PRINTSCREEN) {
@@ -235,6 +234,73 @@ public class ObjectCanvaBox extends CanvasPane {
 			} else {
 				objects.get(i).setEffect(null);
 
+			}
+		}
+	}
+
+	public void isNewOREditLink(MouseEvent e, Point2D point) {
+		for (int i = 0; i < links.size(); i++) {
+			int index = i;
+			boolean isclick = links.get(i).contains(point.getX(), point.getY())
+					|| links.get(i).contains(point.getX() - 1, point.getY())
+					|| links.get(i).contains(point.getX() - 2, point.getY())
+					|| links.get(i).contains(point.getX() - 3, point.getY())
+					|| links.get(i).contains(point.getX() - 4, point.getY())
+					|| links.get(i).contains(point.getX() - 5, point.getY())
+					|| links.get(i).contains(point.getX() + 1, point.getY())
+					|| links.get(i).contains(point.getX() + 2, point.getY())
+					|| links.get(i).contains(point.getX() + 3, point.getY())
+					|| links.get(i).contains(point.getX() + 4, point.getY())
+					|| links.get(i).contains(point.getX() + 5, point.getY())
+					|| links.get(i).contains(point.getX(), point.getY() - 1)
+					|| links.get(i).contains(point.getX(), point.getY() - 2)
+					|| links.get(i).contains(point.getX(), point.getY() - 3)
+					|| links.get(i).contains(point.getX(), point.getY() - 4)
+					|| links.get(i).contains(point.getX(), point.getY() - 5)
+					|| links.get(i).contains(point.getX(), point.getY() + 1)
+					|| links.get(i).contains(point.getX(), point.getY() + 2)
+					|| links.get(i).contains(point.getX(), point.getY() + 3)
+					|| links.get(i).contains(point.getX(), point.getY() + 4)
+					|| links.get(i).contains(point.getX(), point.getY() + 5);
+			if (isclick) {
+				isNew = false;
+				// Delete
+				links.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				links.get(i).setOnKeyPressed(key -> {
+					if (key.getCode() == KeyCode.DELETE) {
+						if (links.size() > 0) {
+							getChildren().removeAll(links.get(index), links.get(index).getTop(),
+									links.get(index).getBot());
+							links.remove(index);
+						} else {
+							System.out.println("No Link to delete");
+						}
+					}
+					// Print
+					if (key.getCode() == KeyCode.PRINTSCREEN) {
+						if (defaultprinter == null) {
+							defaultprinter = Printer.getDefaultPrinter();
+							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
+									Printer.MarginType.HARDWARE_MINIMUM);
+						}
+						links.get(index).setEffect(null);
+						getChildren().remove(gridLine);
+						PrintNode(this, pageLayout);
+						getChildren().add(gridLine);
+						gridLine.toBack();
+					}
+					// Save
+					if (key.getCode() == KeyCode.F1) {
+						if (save == null) {
+							save = new SaveDiagramXML(path);
+						}
+						save.saveObjectCanvaBox(objects, links);
+						System.out.println("****Save*****");
+					}
+				});
+				links.get(i).setEffect(shape);
+			} else {
+				links.get(i).setEffect(null);
 			}
 		}
 	}
@@ -331,7 +397,8 @@ public class ObjectCanvaBox extends CanvasPane {
 					}
 					O_Link link = new O_Link(x1, y1, x2, y2, color);
 					links.add(link);
-					getChildren().addAll(link);
+					link.recalculatePoint();
+					getChildren().addAll(link, link.getTop(), link.getBot());
 				}
 				break;
 
