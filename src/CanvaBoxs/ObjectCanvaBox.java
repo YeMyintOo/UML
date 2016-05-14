@@ -43,7 +43,6 @@ public class ObjectCanvaBox extends CanvasPane {
 	private O_Object object;
 	private boolean isObject;
 
-
 	// Link
 	private ArrayList<O_Link> links;
 	private O_Link link;
@@ -86,7 +85,7 @@ public class ObjectCanvaBox extends CanvasPane {
 						getChildren().addAll(link);
 						break;
 					}
-					requestFocus();
+
 				}
 			}
 		});
@@ -102,7 +101,7 @@ public class ObjectCanvaBox extends CanvasPane {
 					link.setEndX(e.getX());
 					link.setEndY(e.getY());
 				}
-				requestFocus();
+
 			}
 		});
 
@@ -123,34 +122,11 @@ public class ObjectCanvaBox extends CanvasPane {
 			}
 		});
 
-		this.onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
-		this.setOnKeyPressed(e -> {
-			System.out.println(" Key Press On Pane");
-			// Print
-			if (e.getCode() == KeyCode.PRINTSCREEN) {
-				if (defaultprinter == null) {
-					defaultprinter = Printer.getDefaultPrinter();
-					pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
-							Printer.MarginType.HARDWARE_MINIMUM);
-				}
-				getChildren().remove(gridLine);
-				PrintNode(this, pageLayout);
-				getChildren().add(gridLine);
-				gridLine.toBack();
-			}
-			// Save
-			if (e.getCode() == KeyCode.F1) {
-				if (save == null) {
-					save = new SaveDiagramXML(path);
-				}
-				save.saveObjectCanvaBox(objects, links);
-				System.out.println("****Save*****");
-			}
-		});
 	}
 
 	public void isEditOrNew(MouseEvent e) {
 		isNew = true;
+
 		Point2D point = new Point2D(e.getX(), e.getY());
 		isNewOREditObject(e, point);
 	}
@@ -159,7 +135,7 @@ public class ObjectCanvaBox extends CanvasPane {
 		for (int i = 0; i < objects.size(); i++) {
 			if (objects.get(i).contains(point) || objects.get(i).getdataBox().contains(point)) {
 				int index = i;
-				
+
 				isNew = false;
 				objects.get(i).addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
 					@Override
@@ -233,11 +209,32 @@ public class ObjectCanvaBox extends CanvasPane {
 						}
 
 					}
+					// Print
+					if (key.getCode() == KeyCode.PRINTSCREEN) {
+						if (defaultprinter == null) {
+							defaultprinter = Printer.getDefaultPrinter();
+							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
+									Printer.MarginType.HARDWARE_MINIMUM);
+						}
+						getChildren().remove(gridLine);
+						PrintNode(this, pageLayout);
+						getChildren().add(gridLine);
+						gridLine.toBack();
+					}
+					// Save
+					if (key.getCode() == KeyCode.F1) {
+						if (save == null) {
+							save = new SaveDiagramXML(path);
+						}
+						save.saveObjectCanvaBox(objects, links);
+						System.out.println("****Save*****");
+					}
 				});
 
 				objects.get(i).setEffect(shape);
 			} else {
 				objects.get(i).setEffect(null);
+
 			}
 		}
 	}
