@@ -18,7 +18,11 @@ import org.w3c.dom.Node;
 
 import Canvas.O_Link;
 import Canvas.O_Object;
+import Canvas.SE_Activation;
+import Canvas.SE_DestroyActivation;
+import Canvas.SE_NewActivation;
 import Canvas.SE_Role;
+import Canvas.SE_SelfActivation;
 import Canvas.UC_ActionLine;
 import Canvas.UC_Actor;
 import Canvas.UC_Box;
@@ -136,8 +140,8 @@ public class SaveDiagramXML {
 			data.appendChild(color);
 			processNode.appendChild(data);
 		}
-		
-		//ExtendLines
+
+		// ExtendLines
 		Node extNode = doc.getElementsByTagName("Extends").item(0);
 		removeChilds(extNode);
 		for (int i = 0; i < extendLines.size(); i++) {
@@ -161,8 +165,8 @@ public class SaveDiagramXML {
 			data.appendChild(color);
 			extNode.appendChild(data);
 		}
-		
-		//IncludeLines
+
+		// IncludeLines
 		Node incNode = doc.getElementsByTagName("Includes").item(0);
 		removeChilds(incNode);
 		for (int i = 0; i < includeLines.size(); i++) {
@@ -186,8 +190,8 @@ public class SaveDiagramXML {
 			data.appendChild(color);
 			incNode.appendChild(data);
 		}
-		
-		//TypeofLines
+
+		// TypeofLines
 		Node typNode = doc.getElementsByTagName("Types").item(0);
 		removeChilds(typNode);
 		for (int i = 0; i < typeofLines.size(); i++) {
@@ -211,11 +215,11 @@ public class SaveDiagramXML {
 			data.appendChild(color);
 			incNode.appendChild(data);
 		}
-		
+
 		save();
 	}
-	
-	public void saveObjectCanvaBox(ArrayList<O_Object> objects,ArrayList<O_Link> links){
+
+	public void saveObjectCanvaBox(ArrayList<O_Object> objects, ArrayList<O_Link> links) {
 
 		// Object
 		Node objNode = doc.getElementsByTagName("Objects").item(0);
@@ -241,8 +245,8 @@ public class SaveDiagramXML {
 			data.appendChild(color);
 			objNode.appendChild(data);
 		}
-		
-		//Link
+
+		// Link
 		Node linkNode = doc.getElementsByTagName("Links").item(0);
 		removeChilds(linkNode);
 		for (int i = 0; i < links.size(); i++) {
@@ -268,11 +272,45 @@ public class SaveDiagramXML {
 		}
 		save();
 	}
-	
-	public void saveSequenceCavaBox(ArrayList<SE_Role> roles){
-		
+
+	public void saveSequenceCavaBox(ArrayList<SE_Role> roles, ArrayList<SE_Activation> anormals,
+			ArrayList<SE_NewActivation> anews, ArrayList<SE_SelfActivation> snews,
+			ArrayList<SE_DestroyActivation> dnews) {
+
+		// Role
+		Node roleNode = doc.getElementsByTagName("Roles").item(0);
+		removeChilds(roleNode);
+		for (int i = 0; i < roles.size(); i++) {
+			Element data = doc.createElement("Role");
+			Element x = doc.createElement("x");
+			Element y = doc.createElement("y");
+			Element width = doc.createElement("width");
+			Element height = doc.createElement("height");
+			Element color = doc.createElement("color");
+			Element label = doc.createElement("label");
+			Element life = doc.createElement("life");
+
+			x.appendChild(doc.createTextNode("" + roles.get(i).getX()));
+			y.appendChild(doc.createTextNode("" + roles.get(i).getY()));
+			width.appendChild(doc.createTextNode("" + roles.get(i).getWidth()));
+			height.appendChild(doc.createTextNode("" + roles.get(i).getHeight()));
+			color.appendChild(doc.createTextNode("" + roles.get(i).getFill()));
+			label.appendChild(doc.createTextNode("" + roles.get(i).labelProperty().get()));
+			life.appendChild(doc.createTextNode("" + roles.get(i).lifeProperty().get()));
+
+			data.appendChild(x);
+			data.appendChild(y);
+			data.appendChild(width);
+			data.appendChild(height);
+			data.appendChild(color);
+			data.appendChild(label);
+			data.appendChild(life);
+			roleNode.appendChild(data);
+		}
+		save();
+
 	}
-	
+
 	public void save() {
 		try {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();

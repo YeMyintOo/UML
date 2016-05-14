@@ -16,7 +16,6 @@ import javafx.scene.text.Text;
 
 public class SE_Role extends Rectangle {
 
-	private Color bgColor;
 	private StringProperty data;
 	private DoubleProperty life;
 	private Text label;
@@ -60,6 +59,8 @@ public class SE_Role extends Rectangle {
 			}
 		});
 
+		
+
 	}
 
 	public TextField getText(boolean isShow) {
@@ -84,11 +85,19 @@ public class SE_Role extends Rectangle {
 		return label;
 	}
 
-	public final StringProperty labelProperty() {
+	public StringProperty labelProperty() {
 		return data;
 	}
 
-	public final DoubleProperty lifeProperty() {
+	public DoubleProperty lifeProperty() {
 		return life;
+	}
+
+	public void setLabelProperty(String label) {
+		data.set(label);
+	}
+
+	public void setLifeProperty(double val) {
+		life.set(val);
 	}
 }

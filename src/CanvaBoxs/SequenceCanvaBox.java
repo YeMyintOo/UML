@@ -70,6 +70,7 @@ public class SequenceCanvaBox extends CanvasPane {
 		setPath(path);
 		roles = new ArrayList<SE_Role>();
 		anormals = new ArrayList<SE_Activation>();
+		dnews=new ArrayList<SE_DestroyActivation>();
 		anews = new ArrayList<SE_NewActivation>();
 		snews = new ArrayList<SE_SelfActivation>();
 
@@ -465,7 +466,7 @@ public class SequenceCanvaBox extends CanvasPane {
 						if (save == null) {
 							save = new SaveDiagramXML(path);
 						}
-						save.saveSequenceCavaBox(roles);
+						save.saveSequenceCavaBox(roles, anormals, anews, snews,dnews);
 						System.out.println("****Save*****");
 					}
 				});
