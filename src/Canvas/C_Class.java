@@ -55,10 +55,7 @@ public class C_Class extends Rectangle {
 		field.layoutYProperty().bind(yProperty().add(10));
 		field.textProperty().bindBidirectional(labelProperty());
 		
-		
-		funBox.widthProperty().bind(widthProperty());
-		dataBox.widthProperty().bind(widthProperty());
-		
+			
 		dataBox.heightProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
@@ -66,31 +63,10 @@ public class C_Class extends Rectangle {
 			}
 		});
 		
+		funBox.widthProperty().bindBidirectional(widthProperty());
+		dataBox.widthProperty().bindBidirectional(widthProperty());
 		
 		
-		widthProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				funBox.widthProperty().bind(widthProperty());
-				dataBox.widthProperty().bind(widthProperty());
-			}
-		});
-		
-		dataBox.widthProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				widthProperty().bind(dataBox.widthProperty());
-				funBox.widthProperty().bind(dataBox.widthProperty());
-			}
-		});
-		
-		funBox.widthProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				widthProperty().bind(funBox.widthProperty());
-				dataBox.widthProperty().bind(funBox.widthProperty());
-			}
-		});
 
 		datas = new ArrayList<StringProperty>();
 		functions = new ArrayList<StringProperty>();

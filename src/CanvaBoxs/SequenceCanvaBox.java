@@ -247,7 +247,6 @@ public class SequenceCanvaBox extends CanvasPane {
 				roles.get(i).getLabel().addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent key) {
-						Button x = null;
 						if (key.getClickCount() == 2) {
 							// Edit Actor Label
 							roles.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED,

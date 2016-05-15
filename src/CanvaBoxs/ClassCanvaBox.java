@@ -12,6 +12,7 @@ import Canvas.C_Class;
 import Canvas.C_Interface;
 import Database.ToolHandler;
 import Library.SaveDiagramXML;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -68,7 +69,7 @@ public class ClassCanvaBox extends CanvasPane {
 		acboxs = new ArrayList<C_AbstractClass>();
 		icboxs = new ArrayList<C_Interface>();
 		aggs = new ArrayList<C_Aggregation>();
-		
+
 		if (isLoad) {
 			try {
 				dbFactory = DocumentBuilderFactory.newInstance();
@@ -77,7 +78,7 @@ public class ClassCanvaBox extends CanvasPane {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 		}
 
 		if (toolHandler.getGrid().equals("Show")) {
@@ -104,14 +105,16 @@ public class ClassCanvaBox extends CanvasPane {
 					if (isNew) {
 						switch (toolHandler.getTool()) {
 						case "Class_Class":
-							cbox = new C_Class(e.getX(), e.getY(),color, Color.LIGHTGRAY);
+							cbox = new C_Class(e.getX(), e.getY(), color, Color.LIGHTGRAY);
 							isClass = true;
-							getChildren().addAll(cbox, cbox.getdataBox(), cbox.getfunctionBox(),cbox.getLabel(),cbox.getText(false));
+							getChildren().addAll(cbox, cbox.getdataBox(), cbox.getfunctionBox(), cbox.getLabel(),
+									cbox.getText(false));
 							break;
 						case "Class_AbstractClass":
 							acbox = new C_AbstractClass(e.getX(), e.getY(), 100, 100, color, Color.LIGHTGRAY);
 							isAbstractClass = true;
-							getChildren().addAll(acbox, acbox.getdataBox(), acbox.getfunctionBox(),acbox.getlabel(),acbox.getText(false));
+							getChildren().addAll(acbox, acbox.getdataBox(), acbox.getfunctionBox(), acbox.getlabel(),
+									acbox.getText(false));
 							break;
 
 						case "Class_InterfaceClass":
@@ -172,7 +175,7 @@ public class ClassCanvaBox extends CanvasPane {
 					isInterFace = false;
 				}
 				if (isAssociation) {
-					//getChildren().remove(asso);
+					// getChildren().remove(asso);
 					drawAssociationLine(asso);
 					isAssociation = false;
 				}
@@ -191,11 +194,8 @@ public class ClassCanvaBox extends CanvasPane {
 		Point2D point = new Point2D(e.getX(), e.getY());
 		isNew = true;
 		isNewOrEditClass(e, point);
-		isNewOrEditAClass(e,point);
+		isNewOrEditAClass(e, point);
 	}
-
-	
-
 
 	public void drawInterfaceClassLabel(C_Interface icbox) {
 		Text head = new Text("<<interface>>");
@@ -354,9 +354,9 @@ public class ClassCanvaBox extends CanvasPane {
 			if (slope < 2) {
 				Line l1 = new Line(startx, starty, startx + mid, starty);
 				l1.setStroke(color);
-				Line l3 = new Line(endx, endy, endx-mid, endy);
+				Line l3 = new Line(endx, endy, endx - mid, endy);
 				l3.setStroke(color);
-				Line l2 = new Line(l1.getEndX(),l1.getEndY(),l3.getEndX(), l3.getEndY());
+				Line l2 = new Line(l1.getEndX(), l1.getEndY(), l3.getEndX(), l3.getEndY());
 				l2.setStroke(color);
 
 				Rectangle node1 = new Rectangle();
@@ -850,11 +850,11 @@ public class ClassCanvaBox extends CanvasPane {
 				Rectangle node3 = new Rectangle();
 				node3.setFill(Color.LIGHTBLUE);
 				node3.setRotate(45);
-				node3.setX(l3.getEndX()-20);
-				node3.setY(l3.getEndY()-10);
+				node3.setX(l3.getEndX() - 20);
+				node3.setY(l3.getEndY() - 10);
 				node3.setWidth(20);
 				node3.setHeight(20);
-				
+
 				node3.xProperty().bind(l3.endXProperty().subtract(20));
 				node3.yProperty().bind(l3.endYProperty().subtract(10));
 
@@ -943,16 +943,16 @@ public class ClassCanvaBox extends CanvasPane {
 				node2.setY(endy - 5);
 				node2.setWidth(10);
 				node2.setHeight(10);
-				
+
 				// Aggregation Node
 				Rectangle node3 = new Rectangle();
 				node3.setFill(Color.LIGHTBLUE);
 				node3.setRotate(45);
 				node3.setX(l3.getEndX());
-				node3.setY(l3.getEndY()-10);
+				node3.setY(l3.getEndY() - 10);
 				node3.setWidth(20);
 				node3.setHeight(20);
-				
+
 				node3.xProperty().bind(l3.endXProperty());
 				node3.yProperty().bind(l3.endYProperty().subtract(10));
 
@@ -995,7 +995,7 @@ public class ClassCanvaBox extends CanvasPane {
 				endL.xProperty().bind(l3.endXProperty().add(20));
 				endL.yProperty().bind(l3.endYProperty().subtract(10));
 
-				getChildren().addAll(l1, l2, l3, node1, node2,node3, startL, endL);
+				getChildren().addAll(l1, l2, l3, node1, node2, node3, startL, endL);
 
 				// Linked
 				for (int i = 0; i < cboxs.size(); i++) {
@@ -1307,7 +1307,7 @@ public class ClassCanvaBox extends CanvasPane {
 					|| cboxs.get(i).getfunctionBox().contains(point)) {
 				isNew = false;
 				int index = i;
-				
+
 				cboxs.get(i).addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent key) {
@@ -1372,13 +1372,40 @@ public class ClassCanvaBox extends CanvasPane {
 								});
 							}
 						});
-			
+
+				cboxs.get(i).getLabel().addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent key) {
+						if (key.getClickCount() == 2) {
+							// Edit Actor Label
+							cboxs.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED,
+									new EventHandler<KeyEvent>() {
+								@Override
+								public void handle(KeyEvent e) {
+									DoubleProperty width = new SimpleDoubleProperty();
+									width.set(cboxs.get(index).getLabel().layoutBoundsProperty().getValue().getWidth());
+									cboxs.get(index).getLabel().xProperty()
+											.bind(cboxs.get(index).xProperty()
+													.add(cboxs.get(index).widthProperty().getValue() / 2)
+													.subtract(cboxs.get(index).getLabel().layoutBoundsProperty()
+															.getValue().getWidth() / 2));
+									cboxs.get(index).widthProperty().bind(width.add(30));
+									if (e.getCode() == KeyCode.ENTER) {
+										cboxs.get(index).setTextInVisible();
+									}
+								}
+							});
+						}
+
+					}
+				});
+
 				cboxs.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
 				cboxs.get(i).setOnKeyPressed(key -> {
 					// Delete
 					if (key.getCode() == KeyCode.DELETE) {
 						if (cboxs.size() > 0) {
-							
+
 							cboxs.remove(index);
 						} else {
 							System.out.println("No Self Activation to delete");
@@ -1406,7 +1433,7 @@ public class ClassCanvaBox extends CanvasPane {
 						System.out.println("****Save*****");
 					}
 				});
-				
+
 				cboxs.get(i).setEffect(shape);
 				cboxs.get(i).getfunctionBox().setEffect(shape);
 				cboxs.get(i).getdataBox().setEffect(shape);
@@ -1422,7 +1449,7 @@ public class ClassCanvaBox extends CanvasPane {
 
 	}
 
-	public void isNewOrEditAClass(MouseEvent e,Point2D point){
-		
+	public void isNewOrEditAClass(MouseEvent e, Point2D point) {
+
 	}
 }
