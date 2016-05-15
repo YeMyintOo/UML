@@ -307,6 +307,116 @@ public class SaveDiagramXML {
 			data.appendChild(life);
 			roleNode.appendChild(data);
 		}
+
+		// Normal Activation
+		Node anNode = doc.getElementsByTagName("ANormals").item(0);
+		removeChilds(anNode);
+		for (int i = 0; i < anormals.size(); i++) {
+
+			Element data = doc.createElement("Normal");
+			Element x1 = doc.createElement("x1");
+			Element y1 = doc.createElement("y1");
+			Element x2 = doc.createElement("x2");
+			Element y2 = doc.createElement("y2");
+			Element color = doc.createElement("color");
+			Element life = doc.createElement("life");
+
+			x1.appendChild(doc.createTextNode("" + anormals.get(i).getStartX()));
+			y1.appendChild(doc.createTextNode("" + anormals.get(i).getStartY()));
+			x2.appendChild(doc.createTextNode("" + anormals.get(i).getEndX()));
+			y2.appendChild(doc.createTextNode("" + anormals.get(i).getEndY()));
+			color.appendChild(doc.createTextNode("" + anormals.get(i).getFill()));
+			life.appendChild(doc.createTextNode("" + anormals.get(i).lifeProperty().get()));
+
+			data.appendChild(x1);
+			data.appendChild(y1);
+			data.appendChild(x2);
+			data.appendChild(y2);
+			data.appendChild(color);
+			data.appendChild(life);
+			anNode.appendChild(data);
+
+		}
+
+		// New Object Activation
+		Node anewNode = doc.getElementsByTagName("ANObjects").item(0);
+		removeChilds(anewNode);
+		for (int i = 0; i < anews.size(); i++) {
+			Element data = doc.createElement("NewObject");
+			Element x1 = doc.createElement("x1");
+			Element y1 = doc.createElement("y1");
+			Element x2 = doc.createElement("x2");
+			Element y2 = doc.createElement("y2");
+			Element color = doc.createElement("color");
+			Element life = doc.createElement("life");
+			Element lifep = doc.createElement("lifep");
+			Element label = doc.createElement("label");
+
+			x1.appendChild(doc.createTextNode("" + anews.get(i).getStartX()));
+			y1.appendChild(doc.createTextNode("" + anews.get(i).getStartY()));
+			x2.appendChild(doc.createTextNode("" + anews.get(i).getEndX()));
+			y2.appendChild(doc.createTextNode("" + anews.get(i).getEndY()));
+			color.appendChild(doc.createTextNode("" + anews.get(i).getNewOb().getFill()));
+			life.appendChild(doc.createTextNode("" + anews.get(i).lifeProperty().get()));
+			lifep.appendChild(doc.createTextNode("" + anews.get(i).lifepProperty().get()));
+			label.appendChild(doc.createTextNode("" + anews.get(i).labelProperty().get()));
+
+			data.appendChild(x1);
+			data.appendChild(y1);
+			data.appendChild(x2);
+			data.appendChild(y2);
+			data.appendChild(color);
+			data.appendChild(life);
+			data.appendChild(lifep);
+			data.appendChild(label);
+			anewNode.appendChild(data);
+
+		}
+
+		// Destroy Activation
+		Node dNode = doc.getElementsByTagName("ADObjects").item(0);
+		removeChilds(dNode);
+		for (int i = 0; i < dnews.size(); i++) {
+			Element data = doc.createElement("DestoryObject");
+			Element x1 = doc.createElement("x1");
+			Element y1 = doc.createElement("y1");
+			Element x2 = doc.createElement("x2");
+			Element y2 = doc.createElement("y2");
+			Element color = doc.createElement("color");
+
+			x1.appendChild(doc.createTextNode("" + dnews.get(i).getStartX()));
+			y1.appendChild(doc.createTextNode("" + dnews.get(i).getStartY()));
+			x2.appendChild(doc.createTextNode("" + dnews.get(i).getEndX()));
+			y2.appendChild(doc.createTextNode("" + dnews.get(i).getEndY()));
+			color.appendChild(doc.createTextNode("" + dnews.get(i).getStroke()));
+
+			data.appendChild(x1);
+			data.appendChild(y1);
+			data.appendChild(x2);
+			data.appendChild(y2);
+			data.appendChild(color);
+			dNode.appendChild(data);
+		}
+		
+		//Self Loop Activation
+		Node sLNode = doc.getElementsByTagName("ASLoops").item(0);
+		removeChilds(sLNode);
+		for(int i=0; i<snews.size(); i++){
+			Element data = doc.createElement("SelfLoop");
+			Element x = doc.createElement("x");
+			Element y = doc.createElement("y");
+			Element h = doc.createElement("height");
+			
+			x.appendChild(doc.createTextNode("" + snews.get(i).getX()));
+			y.appendChild(doc.createTextNode("" + snews.get(i).getY()));
+			h.appendChild(doc.createTextNode("" + snews.get(i).getHeight()));
+			
+			data.appendChild(x);
+			data.appendChild(y);
+			data.appendChild(h);
+			sLNode.appendChild(data);
+		}
+
 		save();
 
 	}
