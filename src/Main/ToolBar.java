@@ -52,6 +52,17 @@ public class ToolBar extends VBox {
 	MyImageView actSV;
 	//////////////////////
 
+	// Class Image View
+	MyImageView classV;
+	MyImageView aclassV;
+	MyImageView iclassV;
+	MyImageView depenV;
+	MyImageView assoV;
+	MyImageView aggV;
+	MyImageView comV;
+	MyImageView ihnV;
+	//////////////////////
+
 	public ToolBar(int type) {
 		shape = new DropShadow();
 		shape.setOffsetX(5);
@@ -395,34 +406,110 @@ public class ToolBar extends VBox {
 		VBox btnP = new VBox();
 		btnP.setSpacing(10);
 		btnP.setAlignment(Pos.CENTER_LEFT);
-		ToggleButton classD = new ToggleButton("Class");
-		ToggleButton aclassD = new ToggleButton("Abstract Class");
-		ToggleButton iclassD = new ToggleButton("Interface Class");
-		ToggleButton asso = new ToggleButton("Association");
-		ToggleButton agg = new ToggleButton("Aggregation");
 
-		ToggleGroup group = new ToggleGroup();
-		classD.setToggleGroup(group);
-		asso.setToggleGroup(group);
+		Image cls, acls, icls, asso, agg, com, inh, depen;
+		classV = new MyImageView();
+		aclassV = new MyImageView();
+		iclassV = new MyImageView();
+		depenV = new MyImageView();
+		assoV = new MyImageView();
+		aggV = new MyImageView();
+		comV = new MyImageView();
+		ihnV = new MyImageView();
+		try {
+			cls = new Image(new FileInputStream("Resources/Icons/Class/Class.png"));
+			acls = new Image(new FileInputStream("Resources/Icons/Class/AClass.png"));
+			icls = new Image(new FileInputStream("Resources/Icons/Class/IClass.png"));
+			asso = new Image(new FileInputStream("Resources/Icons/Class/Association.png"));
+			agg = new Image(new FileInputStream("Resources/Icons/Class/Aggregation.png"));
+			com = new Image(new FileInputStream("Resources/Icons/Class/Composition.png"));
+			inh = new Image(new FileInputStream("Resources/Icons/Class/Inheritance.png"));
+			depen = new Image(new FileInputStream("Resources/Icons/Class/Dependency.png"));
+			classV.setImage(cls);
+			aclassV.setImage(acls);
+			iclassV.setImage(icls);
+			assoV.setImage(asso);
+			aggV.setImage(agg);
+			comV.setImage(com);
+			ihnV.setImage(inh);
+			depenV.setImage(depen);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		classD.setOnAction(e -> {
-			toolHandler.setTool("Class_Class");
-		});
-		aclassD.setOnAction(e -> {
-			toolHandler.setTool("Class_AbstractClass");
-		});
-		iclassD.setOnAction(e -> {
-			toolHandler.setTool("Class_InterfaceClass");
-		});
+		
 
-		asso.setOnAction(e -> {
-			toolHandler.setTool("Class_Association");
+		classV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Class_Class");
+				ClearClassToolShape();
+				classV.setEffect(shape);
+			}
 		});
-		agg.setOnAction(e -> {
-			toolHandler.setTool("Class_Aggregation");
+		aclassV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Class_AbstractClass");
+				ClearClassToolShape();
+				aclassV.setEffect(shape);
+			}
 		});
-
-		btnP.getChildren().addAll(classD, aclassD, iclassD, asso, agg);
+		iclassV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Class_InterfaceClass");
+				ClearClassToolShape();
+				iclassV.setEffect(shape);
+			}
+		});
+		
+		assoV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Class_Association");
+				ClearClassToolShape();
+				assoV.setEffect(shape);
+			}
+		});
+		
+		aggV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Class_Aggregation");
+				ClearClassToolShape();
+				aggV.setEffect(shape);
+			}
+		});
+		
+		comV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Class_Composition");
+				ClearClassToolShape();
+				comV.setEffect(shape);
+			}
+		});
+		
+		ihnV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Class_Inheritance");
+				ClearClassToolShape();
+				ihnV.setEffect(shape);
+			}
+		});
+		
+		depenV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Class_Dependency");
+				ClearClassToolShape();
+				depenV.setEffect(shape);
+			}
+		});
+		
+		btnP.getChildren().addAll(classV, aclassV, iclassV, assoV, aggV, comV, ihnV, depenV, color);
 		return btnP;
 	}
 
@@ -616,5 +703,16 @@ public class ToolBar extends VBox {
 		actNV.setEffect(null);
 		actDV.setEffect(null);
 		actSV.setEffect(null);
+	}
+
+	public void ClearClassToolShape() {
+		classV.setEffect(null);
+		aclassV.setEffect(null);
+		iclassV.setEffect(null);
+		assoV.setEffect(null);
+		aggV.setEffect(null);
+		comV.setEffect(null);
+		ihnV.setEffect(null);
+		depenV.setEffect(null);
 	}
 }

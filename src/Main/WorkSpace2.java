@@ -75,7 +75,7 @@ public class WorkSpace2 extends BorderPane {
 			boderPane.setCenter(new CollaborationCanvaBox());
 			break;
 		case 5:// Class
-			boderPane.setCenter(new ClassCanvaBox());
+			boderPane.setCenter(new ClassCanvaBox(owner,path,isLoad));
 			break;
 		case 6:// State Chart
 			boderPane.setCenter(new StatechartCanvaBox());

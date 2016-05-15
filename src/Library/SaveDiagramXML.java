@@ -16,6 +16,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import Canvas.C_Class;
 import Canvas.O_Link;
 import Canvas.O_Object;
 import Canvas.SE_Activation;
@@ -397,20 +398,20 @@ public class SaveDiagramXML {
 			data.appendChild(color);
 			dNode.appendChild(data);
 		}
-		
-		//Self Loop Activation
+
+		// Self Loop Activation
 		Node sLNode = doc.getElementsByTagName("ASLoops").item(0);
 		removeChilds(sLNode);
-		for(int i=0; i<snews.size(); i++){
+		for (int i = 0; i < snews.size(); i++) {
 			Element data = doc.createElement("SelfLoop");
 			Element x = doc.createElement("x");
 			Element y = doc.createElement("y");
 			Element h = doc.createElement("height");
-			
+
 			x.appendChild(doc.createTextNode("" + snews.get(i).getX()));
 			y.appendChild(doc.createTextNode("" + snews.get(i).getY()));
 			h.appendChild(doc.createTextNode("" + snews.get(i).getHeight()));
-			
+
 			data.appendChild(x);
 			data.appendChild(y);
 			data.appendChild(h);
@@ -419,6 +420,66 @@ public class SaveDiagramXML {
 
 		save();
 
+	}
+
+	public void saveClassCavaBox(ArrayList<C_Class> cboxs) {
+
+		// Class
+		Node clsNode = doc.getElementsByTagName("Classes").item(0);
+		removeChilds(clsNode);
+		for (int i = 0; i < cboxs.size(); i++) {
+			Element data = doc.createElement("Class");
+			Element x = doc.createElement("x");
+			Element y = doc.createElement("y");
+			Element width = doc.createElement("width");
+			Element height = doc.createElement("height");
+			Element color = doc.createElement("color");
+			Element label = doc.createElement("label");
+			Element var = doc.createElement("datas");
+			Element fun = doc.createElement("function");
+
+			x.appendChild(doc.createTextNode("" + cboxs.get(i).getX()));
+			y.appendChild(doc.createTextNode("" + cboxs.get(i).getY()));
+			width.appendChild(doc.createTextNode("" + cboxs.get(i).getWidth()));
+			height.appendChild(doc.createTextNode("" + cboxs.get(i).getHeight()));
+			color.appendChild(doc.createTextNode("" + cboxs.get(i).getFill()));
+			label.appendChild(doc.createTextNode("" + cboxs.get(i).labelProperty().get()));
+			
+			//Data
+			String varD = "";
+			for(int d=0;d<cboxs.get(i).getDatas().size(); d++){
+				if(varD.equals("")){
+					varD=cboxs.get(i).getDatas().get(d).get();
+				}else{
+					varD=varD+"-"+cboxs.get(i).getDatas().get(d).get();
+				}
+				
+			}
+			var.appendChild(doc.createTextNode(varD));
+			
+			//Function
+			String funD = "";
+			for(int d=0;d<cboxs.get(i).getFunctions().size(); d++){
+				if(funD.equals("")){
+					funD=cboxs.get(i).getFunctions().get(d).get();
+				}else{
+					funD=funD+"-"+cboxs.get(i).getFunctions().get(d).get();
+				}
+				
+			}
+			fun.appendChild(doc.createTextNode(funD));
+
+			data.appendChild(x);
+			data.appendChild(y);
+			data.appendChild(width);
+			data.appendChild(height);
+			data.appendChild(color);
+			data.appendChild(label);
+			data.appendChild(var);
+			data.appendChild(fun);
+			clsNode.appendChild(data);
+		}
+		save();
 	}
 
 	public void save() {

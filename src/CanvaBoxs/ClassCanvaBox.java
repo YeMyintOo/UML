@@ -1,6 +1,9 @@
 package CanvaBoxs;
 
+import java.io.File;
 import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import Canvas.C_AbstractClass;
 import Canvas.C_Aggregation;
@@ -8,9 +11,14 @@ import Canvas.C_Association;
 import Canvas.C_Class;
 import Canvas.C_Interface;
 import Database.ToolHandler;
+import Library.SaveDiagramXML;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.print.PageOrientation;
+import javafx.print.Paper;
+import javafx.print.Printer;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
@@ -26,13 +34,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-public class ClassCanvaBox extends Pane {
-	// Only Class Components Can Draw
-	private ToolHandler toolHandler;
-	private Color color;
-	private DropShadow shape;
-	private boolean isNew;
-
+public class ClassCanvaBox extends CanvasPane {
 	// Class
 	private ArrayList<C_Class> cboxs;
 	private C_Class cbox;
@@ -58,8 +60,29 @@ public class ClassCanvaBox extends Pane {
 	private C_Aggregation agg;
 	private boolean isAggregation;
 
-	public ClassCanvaBox() {
-		init();
+	public ClassCanvaBox(Scene owner, File path, boolean isLoad) {
+		setOwner(owner);
+		setPath(path);
+		cboxs = new ArrayList<C_Class>();
+		assos = new ArrayList<C_Association>();
+		acboxs = new ArrayList<C_AbstractClass>();
+		icboxs = new ArrayList<C_Interface>();
+		aggs = new ArrayList<C_Aggregation>();
+		
+		if (isLoad) {
+			try {
+				dbFactory = DocumentBuilderFactory.newInstance();
+				dBuilder = dbFactory.newDocumentBuilder();
+				doc = dBuilder.parse(path);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+
+		if (toolHandler.getGrid().equals("Show")) {
+			setGridLine();
+		}
 
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
@@ -81,16 +104,14 @@ public class ClassCanvaBox extends Pane {
 					if (isNew) {
 						switch (toolHandler.getTool()) {
 						case "Class_Class":
-							cbox = new C_Class(e.getX(), e.getY(), 100, 100, color, Color.LIGHTGRAY);
+							cbox = new C_Class(e.getX(), e.getY(),color, Color.LIGHTGRAY);
 							isClass = true;
-							getChildren().addAll(cbox, cbox.getdataBox(), cbox.getfunctionBox());
-							drawClassLabel(cbox);
+							getChildren().addAll(cbox, cbox.getdataBox(), cbox.getfunctionBox(),cbox.getLabel(),cbox.getText(false));
 							break;
 						case "Class_AbstractClass":
 							acbox = new C_AbstractClass(e.getX(), e.getY(), 100, 100, color, Color.LIGHTGRAY);
 							isAbstractClass = true;
-							getChildren().addAll(acbox, acbox.getdataBox(), acbox.getfunctionBox());
-							drawAbstractClassLabel(acbox);
+							getChildren().addAll(acbox, acbox.getdataBox(), acbox.getfunctionBox(),acbox.getlabel(),acbox.getText(false));
 							break;
 
 						case "Class_InterfaceClass":
@@ -166,46 +187,15 @@ public class ClassCanvaBox extends Pane {
 
 	}
 
-	public void init() {
-		shape = new DropShadow();
-		shape.setOffsetX(5);
-		shape.setOffsetY(5);
-		shape.setRadius(15);
-
-		cboxs = new ArrayList<C_Class>();
-		assos = new ArrayList<C_Association>();
-		acboxs = new ArrayList<C_AbstractClass>();
-		icboxs = new ArrayList<C_Interface>();
-		aggs = new ArrayList<C_Aggregation>();
-	}
-
 	public void isNewOREdit(MouseEvent e) {
 		Point2D point = new Point2D(e.getX(), e.getY());
 		isNew = true;
 		isNewOrEditClass(e, point);
+		isNewOrEditAClass(e,point);
 	}
 
-	public void drawClassLabel(C_Class cbox) {
-		Text label = new Text(cbox.labelProperty().get());
-		label.setFont(Font.font("Arial", FontWeight.BLACK, 14));
-		label.textProperty().bind(cbox.labelProperty());
-		label.layoutXProperty().bind(cbox.xProperty().add(label.layoutBoundsProperty().getValue().getWidth() / 3));
-		label.layoutYProperty().bind(cbox.yProperty().add(20));
-		cbox.widthProperty().bind(new SimpleDoubleProperty(label.layoutBoundsProperty().getValue().getWidth()).add(60));
-		getChildren().add(label);
+	
 
-	}
-
-	public void drawAbstractClassLabel(C_AbstractClass acbox) {
-		Text label = new Text(acbox.labelProperty().get());
-		label.setFont(Font.font("Arial", FontWeight.BLACK, FontPosture.ITALIC, 14));
-		label.textProperty().bind(acbox.labelProperty());
-		label.layoutXProperty().bind(acbox.xProperty().add(label.layoutBoundsProperty().getValue().getWidth() / 3));
-		label.layoutYProperty().bind(acbox.yProperty().add(20));
-		acbox.widthProperty()
-				.bind(new SimpleDoubleProperty(label.layoutBoundsProperty().getValue().getWidth()).add(60));
-		getChildren().add(label);
-	}
 
 	public void drawInterfaceClassLabel(C_Interface icbox) {
 		Text head = new Text("<<interface>>");
@@ -1317,7 +1307,7 @@ public class ClassCanvaBox extends Pane {
 					|| cboxs.get(i).getfunctionBox().contains(point)) {
 				isNew = false;
 				int index = i;
-				// Mouse Class Diagram
+				
 				cboxs.get(i).addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent key) {
@@ -1331,8 +1321,6 @@ public class ClassCanvaBox extends Pane {
 
 					}
 				});
-
-				// Data/////////////////////////////////////////////////
 
 				cboxs.get(i).getdataBox().addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET,
 						new EventHandler<MouseEvent>() {
@@ -1360,11 +1348,6 @@ public class ClassCanvaBox extends Pane {
 								});
 							}
 						});
-
-				//////////////////////////////////////////////////////
-
-				// Function////////////////////////////////////////////
-
 				cboxs.get(i).getfunctionBox().addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET,
 						new EventHandler<MouseEvent>() {
 							@Override
@@ -1389,8 +1372,41 @@ public class ClassCanvaBox extends Pane {
 								});
 							}
 						});
-				//////////////////////////////////////////////////////
-
+			
+				cboxs.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				cboxs.get(i).setOnKeyPressed(key -> {
+					// Delete
+					if (key.getCode() == KeyCode.DELETE) {
+						if (cboxs.size() > 0) {
+							
+							cboxs.remove(index);
+						} else {
+							System.out.println("No Self Activation to delete");
+						}
+					}
+					// Print
+					if (key.getCode() == KeyCode.PRINTSCREEN) {
+						if (defaultprinter == null) {
+							defaultprinter = Printer.getDefaultPrinter();
+							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
+									Printer.MarginType.HARDWARE_MINIMUM);
+						}
+						cboxs.get(index).setEffect(null);
+						getChildren().remove(gridLine);
+						PrintNode(this, pageLayout);
+						getChildren().add(gridLine);
+						gridLine.toBack();
+					}
+					// Save
+					if (key.getCode() == KeyCode.F1) {
+						if (save == null) {
+							save = new SaveDiagramXML(path);
+						}
+						save.saveClassCavaBox(cboxs);
+						System.out.println("****Save*****");
+					}
+				});
+				
 				cboxs.get(i).setEffect(shape);
 				cboxs.get(i).getfunctionBox().setEffect(shape);
 				cboxs.get(i).getdataBox().setEffect(shape);
@@ -1404,5 +1420,9 @@ public class ClassCanvaBox extends Pane {
 
 		}
 
+	}
+
+	public void isNewOrEditAClass(MouseEvent e,Point2D point){
+		
 	}
 }

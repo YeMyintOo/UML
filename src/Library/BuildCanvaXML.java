@@ -66,11 +66,14 @@ public class BuildCanvaXML {
 			break;
 		case 5:// Class
 			root.setAttribute("type", "Class");
-			dataNode.appendChild(document.createElement("Class"));
-			dataNode.appendChild(document.createElement("AbstractClass"));
-			dataNode.appendChild(document.createElement("InterfaceClass"));
-			dataNode.appendChild(document.createElement("Association"));
-			dataNode.appendChild(document.createElement("Aggregation"));
+			dataNode.appendChild(document.createElement("Classes"));
+			dataNode.appendChild(document.createElement("AbstractClasses"));
+			dataNode.appendChild(document.createElement("InterfaceClasses"));
+			dataNode.appendChild(document.createElement("Associations"));
+			dataNode.appendChild(document.createElement("Aggregations"));
+			dataNode.appendChild(document.createElement("Compositions"));
+			dataNode.appendChild(document.createElement("Inheritances"));
+			dataNode.appendChild(document.createElement("Dependencys"));
 			break;
 		case 6:// State Chart
 			root.setAttribute("type", "StateChart");

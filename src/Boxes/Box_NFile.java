@@ -94,6 +94,7 @@ public class Box_NFile extends Stage {
 		r2 = new RadioButton("Object Diagram");
 		r3 = new RadioButton("Sequence Diagram");
 		r4 = new RadioButton("Collaboration Diagram");
+		r4.setDisable(true);
 		r5 = new RadioButton("Class Diagram");
 		r6 = new RadioButton("StateChart Diagram");
 		r7 = new RadioButton("Activity Diagram");
