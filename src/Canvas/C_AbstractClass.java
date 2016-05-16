@@ -2,11 +2,11 @@ package Canvas;
 
 import java.util.ArrayList;
 
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -65,33 +65,8 @@ public class C_AbstractClass extends Rectangle {
 				funBox.yProperty().bind(dataBox.heightProperty().add(dataBox.yProperty()));
 			}
 		});
-
 		dataBox.widthProperty().bind(widthProperty());
 		funBox.widthProperty().bind(widthProperty());
-
-		widthProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				funBox.widthProperty().bind(widthProperty());
-				dataBox.widthProperty().bind(widthProperty());
-			}
-		});
-
-		dataBox.widthProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				widthProperty().bind(dataBox.widthProperty());
-				funBox.widthProperty().bind(dataBox.widthProperty());
-			}
-		});
-
-		funBox.widthProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				widthProperty().bind(funBox.widthProperty());
-				dataBox.widthProperty().bind(funBox.widthProperty());
-			}
-		});
 
 		datas = new ArrayList<StringProperty>();
 		functions = new ArrayList<StringProperty>();
@@ -111,7 +86,7 @@ public class C_AbstractClass extends Rectangle {
 		field.setVisible(false);
 	}
 
-	public Text getlabel() {
+	public Text getLabel() {
 		return label;
 	}
 

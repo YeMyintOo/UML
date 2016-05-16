@@ -22,16 +22,13 @@ import javafx.print.Printer;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
@@ -113,7 +110,7 @@ public class ClassCanvaBox extends CanvasPane {
 						case "Class_AbstractClass":
 							acbox = new C_AbstractClass(e.getX(), e.getY(), 100, 100, color, Color.LIGHTGRAY);
 							isAbstractClass = true;
-							getChildren().addAll(acbox, acbox.getdataBox(), acbox.getfunctionBox(), acbox.getlabel(),
+							getChildren().addAll(acbox, acbox.getdataBox(), acbox.getfunctionBox(), acbox.getLabel(),
 									acbox.getText(false));
 							break;
 
@@ -214,7 +211,7 @@ public class ClassCanvaBox extends CanvasPane {
 		getChildren().addAll(label, head);
 	}
 
-	public void addDataLabel(int index) {
+	public void addClassDataLabel(int index) {
 		Text data = new Text("data");
 		int size = cboxs.get(index).getDatas().size();
 		data.textProperty().bindBidirectional(cboxs.get(index).getDatas().get(--size));
@@ -273,7 +270,7 @@ public class ClassCanvaBox extends CanvasPane {
 		});
 	}
 
-	public void addFunctionLabel(int index) {
+	public void addClassFunctionLabel(int index) {
 		Text data = new Text("data");
 		int size = cboxs.get(index).getFunctions().size();
 		data.textProperty().bindBidirectional(cboxs.get(index).getFunctions().get(--size));
@@ -318,6 +315,123 @@ public class ClassCanvaBox extends CanvasPane {
 							if (cboxs.get(index).getfunctionBox().getWidth() < data.layoutBoundsProperty().getValue()
 									.getWidth()) {
 								cboxs.get(index).widthProperty().bind(
+										new SimpleDoubleProperty(data.layoutBoundsProperty().getValue().getWidth())
+												.add(20));
+							}
+							getChildren().remove(text);
+						}
+					}
+				});
+				//
+			}
+		});
+
+	}
+
+	public void addAClassDataLabel(int index) {
+
+		Text data = new Text("data");
+		int size = acboxs.get(index).getDatas().size();
+		data.textProperty().bindBidirectional(acboxs.get(index).getDatas().get(--size));
+		data.setFont(Font.font("Arial", FontWeight.BLACK, 12));
+		data.setLayoutX(acboxs.get(index).getdataBox().getX() + 10);
+		data.setLayoutY(acboxs.get(index).getdataBox().getY() + acboxs.get(index).getdataBox().getHeight());
+		data.layoutXProperty().bind(acboxs.get(index).getdataBox().xProperty().add(10));
+		data.layoutYProperty()
+				.bind(acboxs.get(index).getdataBox().yProperty().add(acboxs.get(index).getdataBox().getHeight()));
+		acboxs.get(index).getdataBox().setHeight(acboxs.get(index).getdataBox().getHeight() + 20);
+		getChildren().add(data);
+
+		// Label Listener
+		data.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				data.setFill(Color.BLUE);
+			}
+		});
+		data.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				data.setFill(Color.BLACK);
+			}
+		});
+
+		data.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				// Edit
+				TextField text = new TextField();
+				text.layoutXProperty().bind(data.layoutXProperty().subtract(15));
+				text.layoutYProperty().bind(data.layoutYProperty().subtract(15));
+				getChildren().add(text);
+
+				text.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+					@Override
+					public void handle(KeyEvent e) {
+						if (e.getCode() == KeyCode.ENTER) {
+							data.setText(text.getText().trim());
+							if (acboxs.get(index).getdataBox().getWidth() < data.layoutBoundsProperty().getValue()
+									.getWidth()) {
+								acboxs.get(index).widthProperty().bind(
+										new SimpleDoubleProperty(data.layoutBoundsProperty().getValue().getWidth())
+												.add(20));
+							}
+							getChildren().remove(text);
+						}
+					}
+				});
+				//
+			}
+		});
+
+	}
+
+	public void addAClassFunctionLabel(int index) {
+
+		Text data = new Text("data");
+		int size = acboxs.get(index).getFunctions().size();
+		data.textProperty().bindBidirectional(acboxs.get(index).getFunctions().get(--size));
+		data.setFont(Font.font("Arial", FontWeight.BLACK, 12));
+		data.setLayoutX(acboxs.get(index).getfunctionBox().getX() + 10);
+		data.setLayoutY(acboxs.get(index).getfunctionBox().getY() + acboxs.get(index).getfunctionBox().getHeight());
+		data.layoutXProperty().bind(acboxs.get(index).getfunctionBox().xProperty().add(10));
+		data.layoutYProperty().bind(
+				acboxs.get(index).getfunctionBox().yProperty().add(acboxs.get(index).getfunctionBox().getHeight()));
+		acboxs.get(index).getfunctionBox().setHeight(acboxs.get(index).getfunctionBox().getHeight() + 20);
+		getChildren().add(data);
+
+		// Label Listener
+		data.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				data.setFill(Color.BLUE);
+			}
+		});
+		data.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				data.setFill(Color.BLACK);
+			}
+		});
+
+		data.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				// Edit
+				System.out.println("Clikc");
+				TextField text = new TextField();
+				text.layoutXProperty().bind(data.layoutXProperty().subtract(15));
+				text.layoutYProperty().bind(data.layoutYProperty().subtract(15));
+				getChildren().add(text);
+
+				text.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+					@Override
+					public void handle(KeyEvent e) {
+						if (e.getCode() == KeyCode.ENTER) {
+							data.setText(text.getText().trim());
+							if (acboxs.get(index).getfunctionBox().getWidth() < data.layoutBoundsProperty().getValue()
+									.getWidth()) {
+								acboxs.get(index).widthProperty().bind(
 										new SimpleDoubleProperty(data.layoutBoundsProperty().getValue().getWidth())
 												.add(20));
 							}
@@ -1336,7 +1450,7 @@ public class ClassCanvaBox extends CanvasPane {
 									public void handle(MouseEvent e) {
 										// Text
 										cboxs.get(index).addData("data");
-										addDataLabel(index);
+										addClassDataLabel(index);
 										//
 									}
 								});
@@ -1361,7 +1475,7 @@ public class ClassCanvaBox extends CanvasPane {
 									@Override
 									public void handle(MouseEvent e) {
 										cboxs.get(index).addFunction("data");
-										addFunctionLabel(index);
+										addClassFunctionLabel(index);
 									}
 								});
 								addf.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
@@ -1450,6 +1564,103 @@ public class ClassCanvaBox extends CanvasPane {
 	}
 
 	public void isNewOrEditAClass(MouseEvent e, Point2D point) {
+		for (int i = 0; i < acboxs.size(); i++) {
+			if (acboxs.get(i).contains(point) || acboxs.get(i).getdataBox().contains(point)
+					|| acboxs.get(i).getfunctionBox().contains(point)) {
+				isNew = false;
+				int index = i;
+				acboxs.get(i).addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						acboxs.get(index).setX(e.getX());
+						acboxs.get(index).setY(e.getY());
+					}
+				});
 
+				acboxs.get(i).getdataBox().addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET,
+						new EventHandler<MouseEvent>() {
+							@Override
+							public void handle(MouseEvent e) {
+								Button add = new Button("+");
+								getChildren().remove(add);
+								add.layoutXProperty().bind(acboxs.get(index).getdataBox().xProperty().subtract(30));
+								add.layoutYProperty().bind(acboxs.get(index).getdataBox().yProperty());
+								getChildren().add(add);
+								add.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+									@Override
+									public void handle(MouseEvent e) {
+										// Text
+										acboxs.get(index).addData("data");
+										addAClassDataLabel(index);
+										//
+									}
+								});
+								add.addEventFilter(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
+									@Override
+									public void handle(MouseEvent e) {
+										getChildren().remove(add);
+									}
+								});
+							}
+						});
+
+				acboxs.get(i).getfunctionBox().addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET,
+						new EventHandler<MouseEvent>() {
+							@Override
+							public void handle(MouseEvent e) {
+								Button addf = new Button("+");
+								getChildren().remove(addf);
+								addf.layoutXProperty().bind(acboxs.get(index).getfunctionBox().xProperty().subtract(30));
+								addf.layoutYProperty().bind(acboxs.get(index).getfunctionBox().yProperty());
+								getChildren().add(addf);
+								addf.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+									@Override
+									public void handle(MouseEvent e) {
+										acboxs.get(index).addFunction("data");
+										addAClassFunctionLabel(index);
+									}
+								});
+								addf.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
+									@Override
+									public void handle(MouseEvent e) {
+										getChildren().remove(addf);
+									}
+								});
+							}
+						});
+
+				
+				acboxs.get(i).getLabel().addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent key) {
+						if (key.getClickCount() == 2) {
+							// Edit Actor Label
+							acboxs.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED,
+									new EventHandler<KeyEvent>() {
+								@Override
+								public void handle(KeyEvent e) {
+									DoubleProperty width = new SimpleDoubleProperty();
+									width.set(acboxs.get(index).getLabel().layoutBoundsProperty().getValue().getWidth());
+									acboxs.get(index).getLabel().xProperty()
+											.bind(acboxs.get(index).xProperty()
+													.add(acboxs.get(index).widthProperty().getValue() / 2)
+													.subtract(acboxs.get(index).getLabel().layoutBoundsProperty()
+															.getValue().getWidth() / 2));
+									acboxs.get(index).widthProperty().bind(width.add(30));
+									if (e.getCode() == KeyCode.ENTER) {
+										acboxs.get(index).setTextInVisible();
+									}
+								}
+							});
+						}
+
+					}
+				});
+				
+				acboxs.get(i).setEffect(shape);
+			} else {
+				acboxs.get(i).setEffect(null);
+			}
+		}
 	}
 }
