@@ -29,6 +29,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -113,7 +114,7 @@ public class ClassCanvaBox extends CanvasPane {
 						break;
 
 					case "Class_Association":
-						asso = new C_Association(e.getX(), e.getY(), e.getX(), e.getY(), Color.LIGHTGRAY);
+						asso = new C_Association(e.getX(), e.getY(), e.getX(), e.getY(), color);
 						isAssociation = true;
 						getChildren().addAll(asso);
 						break;
@@ -172,14 +173,14 @@ public class ClassCanvaBox extends CanvasPane {
 				}
 				if (isAssociation) {
 					getChildren().remove(asso);
-					asso.filterLine();
-					getChildren().addAll(asso.getL1(), asso.getL2(), asso.getL3(), asso.getNode1(), asso.getNode2(),
-							asso.getStartNode(), asso.getEndNode());
-					assos.add(asso);
+					if (asso.filterLine()) {
+						getChildren().addAll(asso.getL1(), asso.getL2(), asso.getL3(), asso.getNode1(), asso.getNode2(),
+								asso.getStartNode(), asso.getEndNode());
+						assos.add(asso);
+					}
 					isAssociation = false;
 				}
 				if (isAggregation) {
-					// drawAggregationLine(agg);
 					aggs.add(agg);
 					isAggregation = false;
 
@@ -714,6 +715,16 @@ public class ClassCanvaBox extends CanvasPane {
 
 			}
 
+			// Link
+			for (int k = 0; k < assos.size(); k++) {
+				Shape intersect = Shape.intersect(assos.get(k).getStartNode(), cboxs.get(i));
+				boolean intersects = intersect.getBoundsInLocal().getWidth() >= 0
+						|| intersect.getBoundsInLocal().getHeight() >= 0;
+				if (intersects) {
+					assos.get(k).getStartNode().xProperty().bind(cboxs.get(i).xProperty().add(cboxs.get(i).getWidth()));
+				}
+			}
+
 		}
 	}
 
@@ -931,8 +942,8 @@ public class ClassCanvaBox extends CanvasPane {
 			if (assos.get(i).getNode1().contains(point) || assos.get(i).getNode2().contains(point)
 					|| assos.get(i).getStartNode().contains(point) || assos.get(i).getEndNode().contains(point)) {
 				isNew = false;
+				assos.get(i).getStartNode().xProperty().unbind();
 			}
-
 		}
 	}
 }

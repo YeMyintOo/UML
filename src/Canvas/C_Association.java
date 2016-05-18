@@ -24,6 +24,8 @@ public class C_Association extends Line {
 	private Rectangle startNode;
 	private Rectangle endNode;
 
+	private boolean isdrawable;
+
 	public C_Association(double startx, double starty, double endx, double endy, Color color) {
 		super(startx, starty, endx, endy);
 		setStroke(color);
@@ -76,15 +78,15 @@ public class C_Association extends Line {
 			}
 		});
 	}
-	
-	public Rectangle getStartNode(){
+
+	public Rectangle getStartNode() {
 		return startNode;
 	}
 
-	public Rectangle getEndNode(){
+	public Rectangle getEndNode() {
 		return endNode;
 	}
-	
+
 	public Rectangle getNode1() {
 		return node1;
 	}
@@ -93,7 +95,8 @@ public class C_Association extends Line {
 		return node2;
 	}
 
-	public void filterLine() {
+	public boolean filterLine() {
+		isdrawable = true;
 		double d = Math.sqrt((Math.pow(getEndX() - getStartX(), 2)) + (Math.pow(getEndY() - getStartY(), 2)));
 		double mid = d / 2;
 		double slope = (getStartY() - getEndY()) / (getStartX() - getEndX());
@@ -106,10 +109,10 @@ public class C_Association extends Line {
 
 				node2.setX(getStartX() + mid - 5);
 				node2.setY(getEndY() - 5);
-				
+
 				startNode.setX(getStartX() - 5);
 				startNode.setY(getStartY() - 5);
-				
+
 				endNode.setX(getEndX() - 5);
 				endNode.setY(getEndY() - 5);
 
@@ -129,74 +132,86 @@ public class C_Association extends Line {
 				l3.setEndY(getEndY());
 
 			} else {
+				isdrawable = false;
 				System.out.println("You cann't daraw This Line");
 			}
 		}
 
-		// Figure2
-		if (getStartX() < getEndX() && getStartY() < getEndY()) {
+		else if (getStartX() < getEndX() && getStartY() < getEndY()) {
+			// Figure2
 			if (slope < 2) {
 
 			} else {
+				isdrawable = false;
 				System.out.println("You cann't daraw This Line");
 			}
 		}
 
-		// Figure3
-		if (getStartX() > getEndX() && getStartY() < getEndY()) {
+		else if (getStartX() > getEndX() && getStartY() < getEndY()) {
+			// Figure3
 			if (slope > -1.5) {
 
 			} else {
+				isdrawable = false;
 				System.out.println("You cann't daraw This Line");
 			}
 		}
 
-		// Figure4
-		if (getStartX() < getEndX() && getStartY() > getEndY()) {
+		
+		else if (getStartX() < getEndX() && getStartY() > getEndY()) {
+			// Figure4
 			if (slope > -1.5) {
 
 			} else {
+				isdrawable = false;
 				System.out.println("You cann't daraw This Line");
 			}
 		}
 
-		// Figure5
-		if (getStartX() < getEndX() && getStartY() == getEndY()) {
-			if (slope == -0.0) {
-
-			} else {
-				System.out.println("You cann't daraw This Line");
-			}
-		}
-
-		// Figure6
-		if (getStartX() > getEndX() && getStartY() == getEndY()) {
-			if (slope == -0.0) {
-
-			} else {
-				System.out.println("You cann't daraw This Line");
-			}
-		}
-
-		// Figure7
-		if (getStartX() == getEndX() && getStartY() < getEndY()) {
-			if (slope == -0.0) {
-
-			} else {
-				System.out.println("You cann't daraw This Line");
-			}
-		}
-
-		// Figure8
-		if (getStartX() == getEndX() && getStartY() > getEndY()) {
-			if (slope == -0.0) {
-
-			} else {
-				System.out.println("You cann't daraw This Line");
-			}
-		}
 		
+		else if (getStartX() < getEndX() && getStartY() == getEndY()) {
+			// Figure5
+			if (slope == -0.0) {
+
+			} else {
+				isdrawable = false;
+				System.out.println("You cann't daraw This Line");
+			}
+		}
+
 		
+		else if (getStartX() > getEndX() && getStartY() == getEndY()) {
+			// Figure6
+			if (slope == -0.0) {
+
+			} else {
+				isdrawable = false;
+				System.out.println("You cann't daraw This Line");
+			}
+		}
+
+		
+		else if (getStartX() == getEndX() && getStartY() < getEndY()) {
+			// Figure7
+			if (slope == -0.0) {
+
+			} else {
+				isdrawable = false;
+				System.out.println("You cann't daraw This Line");
+			}
+		}
+
+		
+		else if (getStartX() == getEndX() && getStartY() > getEndY()) {
+			// Figure8
+			if (slope == -0.0) {
+
+			} else {
+				isdrawable = false;
+				System.out.println("You cann't daraw This Line");
+			}
+		}
+
 		l1.startXProperty().bind(startNode.xProperty().add(5));
 		l3.endXProperty().bind(endNode.xProperty().add(5));
 		l1.endXProperty().bind(node1.xProperty().add(5));
@@ -214,6 +229,7 @@ public class C_Association extends Line {
 		startYProperty().bind(l1.endYProperty());
 		endXProperty().bind(l3.endXProperty());
 		endYProperty().bind(l3.endYProperty());
+		return isdrawable;
 	}
 
 	public StringProperty startMultiplicity() {
