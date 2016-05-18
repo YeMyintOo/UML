@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -24,12 +25,15 @@ public class C_Class extends Rectangle {
 	private ArrayList<StringProperty> functions;
 	private Text label;
 	private TextField field;
+	private Rectangle bound;
 
 	public C_Class(double x, double y,Color bgcolor, Color scolor) {
 		super(x, y, 120, 40);
 		setFill(bgcolor);
 		setStroke(scolor);
 		name = new SimpleStringProperty("Class Name");
+		
+		bound=new Rectangle();
 
 		dataBox = new Rectangle(x, y + getHeight(), 100, 20);
 		dataBox.setFill(Color.WHITE);
@@ -69,6 +73,15 @@ public class C_Class extends Rectangle {
 		
 		datas = new ArrayList<StringProperty>();
 		functions = new ArrayList<StringProperty>();
+	}
+	
+	public Rectangle getLinkBound(){
+		Bounds d = getBoundsInParent();
+		bound.setX(d.getMinX()-10);
+		bound.setY(d.getMinY()-10);
+		bound.setHeight(d.getHeight()+10);
+		bound.setWidth(d.getWidth()+20);
+		return bound;
 	}
 
 	public TextField getText(boolean isShow) {

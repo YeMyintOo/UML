@@ -10,6 +10,8 @@ public class C_Aggregation extends Line{
 	private StringProperty data1; // Start Point Multiplicity
 	private StringProperty data2; // End Point Multiplicity
 
+	
+	
 	public C_Aggregation(double startx, double starty, double endx, double endy, Color color) {
 		super(startx, starty, endx, endy);
 		setStroke(color);
