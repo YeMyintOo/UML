@@ -101,7 +101,6 @@ public class C_Association extends Line {
 		double mid = d / 2;
 		double slope = (getStartY() - getEndY()) / (getStartX() - getEndX());
 
-		// Figure1
 		if (getStartX() < getEndX() && getStartY() < getEndY()) {
 			if (slope < 2) {
 				node1.setX(getStartX() + mid - 5);
@@ -137,9 +136,34 @@ public class C_Association extends Line {
 			}
 		}
 
-		else if (getStartX() < getEndX() && getStartY() < getEndY()) {
-			// Figure2
+		if (getStartX() > getEndX() && getStartY() > getEndY()) {
 			if (slope < 2) {
+				node1.setX(getStartX() - mid - 5);
+				node1.setY(getStartY() - 5);
+
+				node2.setX(getStartX() - mid - 5);
+				node2.setY(getEndY() - 5);
+
+				startNode.setX(getStartX() - 5);
+				startNode.setY(getStartY() - 5);
+
+				endNode.setX(getEndX() - 5);
+				endNode.setY(getEndY() - 5);
+
+				l1.setStartX(getStartX());
+				l1.setStartY(getStartY());
+				l1.setEndX(getStartX() - mid);
+				l1.setEndY(getStartY());
+
+				l2.setStartX(getStartX() - mid);
+				l2.setStartY(getStartY());
+				l2.setEndX(getStartX() - mid);
+				l2.setEndY(getEndY());
+
+				l3.setStartX(getStartX() - mid);
+				l3.setStartY(getEndY());
+				l3.setEndX(getEndX());
+				l3.setEndY(getEndY());
 
 			} else {
 				isdrawable = false;
@@ -147,42 +171,136 @@ public class C_Association extends Line {
 			}
 		}
 
-		else if (getStartX() > getEndX() && getStartY() < getEndY()) {
-			// Figure3
+		if (getStartX() > getEndX() && getStartY() < getEndY()) {
 			if (slope > -1.5) {
+				node1.setX(getStartX() - mid - 5);
+				node1.setY(getStartY() - 5);
 
+				node2.setX(getStartX() - mid - 5);
+				node2.setY(getEndY() - 5);
+
+				startNode.setX(getStartX() - 5);
+				startNode.setY(getStartY() - 5);
+
+				endNode.setX(getEndX() - 5);
+				endNode.setY(getEndY() - 5);
+
+				l1.setStartX(getStartX());
+				l1.setStartY(getStartY());
+				l1.setEndX(getStartX() - mid);
+				l1.setEndY(getStartY());
+
+				l2.setStartX(getStartX() - mid);
+				l2.setStartY(getStartY());
+				l2.setEndX(getStartX() - mid);
+				l2.setEndY(getEndY());
+
+				l3.setStartX(getStartX() - mid);
+				l3.setStartY(getEndY());
+				l3.setEndX(getEndX());
+				l3.setEndY(getEndY());
 			} else {
 				isdrawable = false;
 				System.out.println("You cann't daraw This Line");
 			}
 		}
 
-		
-		else if (getStartX() < getEndX() && getStartY() > getEndY()) {
-			// Figure4
+		if (getStartX() < getEndX() && getStartY() > getEndY()) {
 			if (slope > -1.5) {
+				node1.setX(getStartX() + mid - 5);
+				node1.setY(getStartY() - 5);
 
+				node2.setX(getStartX() + mid - 5);
+				node2.setY(getEndY() - 5);
+
+				startNode.setX(getStartX() - 5);
+				startNode.setY(getStartY() - 5);
+
+				endNode.setX(getEndX() - 5);
+				endNode.setY(getEndY() - 5);
+
+				l1.setStartX(getStartX());
+				l1.setStartY(getStartY());
+				l1.setEndX(getStartX() + mid);
+				l1.setEndY(getStartY());
+
+				l2.setStartX(getStartX() + mid);
+				l2.setStartY(getStartY());
+				l2.setEndX(getStartX() + mid);
+				l2.setEndY(getEndY());
+
+				l3.setStartX(getStartX() + mid);
+				l3.setStartY(getEndY());
+				l3.setEndX(getEndX());
+				l3.setEndY(getEndY());
 			} else {
 				isdrawable = false;
 				System.out.println("You cann't daraw This Line");
 			}
 		}
 
-		
-		else if (getStartX() < getEndX() && getStartY() == getEndY()) {
-			// Figure5
+		if (getStartX() < getEndX() && getStartY() == getEndY()) {
 			if (slope == -0.0) {
+				node1.setX(getStartX() + mid - 5);
+				node1.setY(getStartY() - 5);
 
+				node2.setX(getStartX() + mid - 5);
+				node2.setY(getEndY() - 5);
+
+				startNode.setX(getStartX() - 5);
+				startNode.setY(getStartY() - 5);
+
+				endNode.setX(getEndX() - 5);
+				endNode.setY(getEndY() - 5);
+
+				l1.setStartX(getStartX());
+				l1.setStartY(getStartY());
+				l1.setEndX(getStartX() + mid);
+				l1.setEndY(getStartY());
+
+				l2.setStartX(getStartX() + mid);
+				l2.setStartY(getStartY());
+				l2.setEndX(getStartX() + mid);
+				l2.setEndY(getEndY());
+
+				l3.setStartX(getStartX() + mid);
+				l3.setStartY(getEndY());
+				l3.setEndX(getEndX());
+				l3.setEndY(getEndY());
 			} else {
 				isdrawable = false;
 				System.out.println("You cann't daraw This Line");
 			}
 		}
 
-		
-		else if (getStartX() > getEndX() && getStartY() == getEndY()) {
-			// Figure6
+		if (getStartX() > getEndX() && getStartY() == getEndY()) {
 			if (slope == -0.0) {
+				node1.setX(getStartX() - 5);
+				node1.setY(getStartY() + mid - 5);
+
+				node2.setX(getStartX() - 5);
+				node2.setY(getEndY() + mid - 5);
+
+				startNode.setX(getStartX() - 5);
+				startNode.setY(getStartY() - 5);
+
+				endNode.setX(getEndX() - 5);
+				endNode.setY(getEndY() - 5);
+
+				l1.setStartX(getStartX());
+				l1.setStartY(getStartY());
+				l1.setEndX(getStartX());
+				l1.setEndY(getStartY() + mid);
+
+				l2.setStartX(getStartX() - mid);
+				l2.setStartY(getStartY());
+				l2.setEndX(getStartX() - mid);
+				l2.setEndY(getEndY());
+
+				l3.setStartX(getStartX() - mid);
+				l3.setStartY(getEndY());
+				l3.setEndX(getEndX());
+				l3.setEndY(getEndY());
 
 			} else {
 				isdrawable = false;
@@ -190,28 +308,10 @@ public class C_Association extends Line {
 			}
 		}
 
+		if (getStartX() == getEndX() && getStartY() < getEndY()) {}
+
+		if (getStartX() == getEndX() && getStartY() > getEndY()) {}
 		
-		else if (getStartX() == getEndX() && getStartY() < getEndY()) {
-			// Figure7
-			if (slope == -0.0) {
-
-			} else {
-				isdrawable = false;
-				System.out.println("You cann't daraw This Line");
-			}
-		}
-
-		
-		else if (getStartX() == getEndX() && getStartY() > getEndY()) {
-			// Figure8
-			if (slope == -0.0) {
-
-			} else {
-				isdrawable = false;
-				System.out.println("You cann't daraw This Line");
-			}
-		}
-
 		l1.startXProperty().bind(startNode.xProperty().add(5));
 		l3.endXProperty().bind(endNode.xProperty().add(5));
 		l1.endXProperty().bind(node1.xProperty().add(5));

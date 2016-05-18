@@ -648,6 +648,7 @@ public class ClassCanvaBox extends CanvasPane {
 					public void handle(MouseEvent key) {
 						if (key.getClickCount() == 2) {
 							// Edit Actor Label
+							cboxs.get(index).getText(true).toFront();
 							cboxs.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED,
 									new EventHandler<KeyEvent>() {
 								@Override
@@ -717,11 +718,59 @@ public class ClassCanvaBox extends CanvasPane {
 
 			// Link
 			for (int k = 0; k < assos.size(); k++) {
-				Shape intersect = Shape.intersect(assos.get(k).getStartNode(), cboxs.get(i));
-				boolean intersects = intersect.getBoundsInLocal().getWidth() >= 0
-						|| intersect.getBoundsInLocal().getHeight() >= 0;
-				if (intersects) {
-					assos.get(k).getStartNode().xProperty().bind(cboxs.get(i).xProperty().add(cboxs.get(i).getWidth()));
+				
+				//StartNodeLink
+				Shape start = Shape.intersect(assos.get(k).getStartNode(), cboxs.get(i));
+				boolean isStart = start.getBoundsInLocal().getWidth() >= 0
+						|| start.getBoundsInLocal().getHeight() >= 0;
+				if (isStart) {
+					// Find x,y difference
+					double dx = cboxs.get(i).getX() - assos.get(k).getStartNode().getX();
+					double dy = cboxs.get(i).getY() - assos.get(k).getStartNode().getY();
+
+					if (dy <= 0 && dx < 0) {
+						// Right link
+						assos.get(k).getStartNode().xProperty()
+								.bind(cboxs.get(i).xProperty().add(cboxs.get(i).widthProperty()).subtract(5));
+					}
+					if(dy<=0 && dx>0){
+						// Left Link
+						assos.get(k).getStartNode().xProperty().bind(cboxs.get(i).xProperty().subtract(5));
+						assos.get(k).getStartNode().toFront();
+					}
+					
+					if(dy>0 && dx<=0){
+						//Top Link
+						assos.get(k).getStartNode().xProperty().bind(cboxs.get(i).xProperty().subtract(dx));
+					}
+					
+				}
+				
+				//EndNodeLink
+				
+				Shape end = Shape.intersect(assos.get(k).getEndNode(), cboxs.get(i));
+				boolean isEnd = end.getBoundsInLocal().getWidth() >= 0
+						|| end.getBoundsInLocal().getHeight() >= 0;
+				if (isEnd) {
+					// Find x,y difference
+					double dx = cboxs.get(i).getX() - assos.get(k).getEndNode().getX();
+					double dy = cboxs.get(i).getY() - assos.get(k).getEndNode().getY();
+
+					if (dy <= 0 && dx < 0) {
+						// Right link
+						assos.get(k).getEndNode().xProperty()
+								.bind(cboxs.get(i).xProperty().add(cboxs.get(i).widthProperty()).subtract(5));
+					}
+					if(dy<=0 && dx>0){
+						// Left Link
+						assos.get(k).getEndNode().xProperty().bind(cboxs.get(i).xProperty().subtract(5));
+						assos.get(k).getEndNode().toFront();
+					}
+					if(dy>0 && dx<=0){
+						//Top Link
+						assos.get(k).getEndNode().xProperty().bind(cboxs.get(i).xProperty().subtract(dx));
+					}
+					
 				}
 			}
 
