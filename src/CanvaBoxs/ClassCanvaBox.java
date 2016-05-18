@@ -117,10 +117,9 @@ public class ClassCanvaBox extends CanvasPane {
 						case "Class_InterfaceClass":
 							icbox = new C_Interface(e.getX(), e.getY(), 100, 100, color, Color.LIGHTGRAY);
 							isInterFace = true;
-							getChildren().addAll(icbox, icbox.getdataBox(), icbox.getfunctionBox());
-							drawInterfaceClassLabel(icbox);
+							getChildren().addAll(icbox, icbox.getdataBox(), icbox.getfunctionBox(), icbox.getLabel(),
+									icbox.getiLabel(), icbox.getText(false));
 							break;
-
 						default:
 							break;
 						}
@@ -192,23 +191,7 @@ public class ClassCanvaBox extends CanvasPane {
 		isNew = true;
 		isNewOrEditClass(e, point);
 		isNewOrEditAClass(e, point);
-	}
-
-	public void drawInterfaceClassLabel(C_Interface icbox) {
-		Text head = new Text("<<interface>>");
-		head.setFont(Font.font("Arial", FontWeight.BLACK, 14));
-		head.layoutXProperty()
-				.bind(icbox.xProperty().add(head.layoutBoundsProperty().getValue().getWidth() / 3).subtract(7));
-		head.layoutYProperty().bind(icbox.yProperty().add(20));
-
-		Text label = new Text(icbox.labelProperty().get());
-		label.setFont(Font.font("Arial", FontWeight.BLACK, 14));
-		label.textProperty().bind(icbox.labelProperty());
-		label.layoutXProperty().bind(icbox.xProperty().add(label.layoutBoundsProperty().getValue().getWidth() / 3));
-		label.layoutYProperty().bind(icbox.yProperty().add(40));
-		icbox.widthProperty()
-				.bind(new SimpleDoubleProperty(label.layoutBoundsProperty().getValue().getWidth()).add(60));
-		getChildren().addAll(label, head);
+		isNewOrEditIClass(e, point);
 	}
 
 	public void addClassDataLabel(int index) {
@@ -434,6 +417,67 @@ public class ClassCanvaBox extends CanvasPane {
 								acboxs.get(index).widthProperty().bind(
 										new SimpleDoubleProperty(data.layoutBoundsProperty().getValue().getWidth())
 												.add(20));
+							}
+							getChildren().remove(text);
+						}
+					}
+				});
+				//
+			}
+		});
+
+	}
+
+	public void addIClassDataLabel(int index) {
+		Text data = new Text("data");
+		int size = icboxs.get(index).getDatas().size();
+		data.textProperty().bindBidirectional(icboxs.get(index).getDatas().get(--size));
+		data.setFont(Font.font("Arial", FontWeight.BLACK, 12));
+		data.setLayoutX(icboxs.get(index).getdataBox().getX() + 10);
+		data.setLayoutY(icboxs.get(index).getdataBox().getY() + icboxs.get(index).getdataBox().getHeight());
+		data.layoutXProperty().bind(icboxs.get(index).getdataBox().xProperty().add(10));
+		data.layoutYProperty()
+				.bind(icboxs.get(index).getdataBox().yProperty().add(icboxs.get(index).getdataBox().getHeight()));
+		icboxs.get(index).getdataBox().setHeight(icboxs.get(index).getdataBox().getHeight() + 20);
+		getChildren().add(data);
+
+		// Label Listener
+		data.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				data.setFill(Color.BLUE);
+			}
+		});
+		data.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				data.setFill(Color.BLACK);
+			}
+		});
+
+		data.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				// Edit
+				TextField text = new TextField();
+				text.layoutXProperty().bind(data.layoutXProperty().subtract(15));
+				text.layoutYProperty().bind(data.layoutYProperty().subtract(15));
+				getChildren().add(text);
+
+				text.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+					@Override
+					public void handle(KeyEvent e) {
+						if (e.getCode() == KeyCode.ENTER) {
+							data.setText(text.getText().trim());
+							if (icboxs.get(index).getdataBox().getWidth() < data.layoutBoundsProperty().getValue()
+									.getWidth()) {
+								icboxs.get(index).widthProperty().bind(
+										new SimpleDoubleProperty(data.layoutBoundsProperty().getValue().getWidth())
+												.add(20));
+								icboxs.get(index).getLabel().xProperty().bind(icboxs.get(index).xProperty().add(icboxs.get(index).widthProperty().getValue() / 2)
+										.subtract(icboxs.get(index).getLabel().layoutBoundsProperty().getValue().getWidth() / 2));
+								icboxs.get(index).getiLabel().xProperty().bind(icboxs.get(index).xProperty().add(icboxs.get(index).widthProperty().getValue() / 2)
+										.subtract(icboxs.get(index).getiLabel().layoutBoundsProperty().getValue().getWidth() / 2));
 							}
 							getChildren().remove(text);
 						}
@@ -1610,7 +1654,8 @@ public class ClassCanvaBox extends CanvasPane {
 							public void handle(MouseEvent e) {
 								Button addf = new Button("+");
 								getChildren().remove(addf);
-								addf.layoutXProperty().bind(acboxs.get(index).getfunctionBox().xProperty().subtract(30));
+								addf.layoutXProperty()
+										.bind(acboxs.get(index).getfunctionBox().xProperty().subtract(30));
 								addf.layoutYProperty().bind(acboxs.get(index).getfunctionBox().yProperty());
 								getChildren().add(addf);
 								addf.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -1629,7 +1674,6 @@ public class ClassCanvaBox extends CanvasPane {
 							}
 						});
 
-				
 				acboxs.get(i).getLabel().addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent key) {
@@ -1640,7 +1684,8 @@ public class ClassCanvaBox extends CanvasPane {
 								@Override
 								public void handle(KeyEvent e) {
 									DoubleProperty width = new SimpleDoubleProperty();
-									width.set(acboxs.get(index).getLabel().layoutBoundsProperty().getValue().getWidth());
+									width.set(
+											acboxs.get(index).getLabel().layoutBoundsProperty().getValue().getWidth());
 									acboxs.get(index).getLabel().xProperty()
 											.bind(acboxs.get(index).xProperty()
 													.add(acboxs.get(index).widthProperty().getValue() / 2)
@@ -1656,10 +1701,60 @@ public class ClassCanvaBox extends CanvasPane {
 
 					}
 				});
-				
 				acboxs.get(i).setEffect(shape);
 			} else {
 				acboxs.get(i).setEffect(null);
+			}
+		}
+	}
+
+	public void isNewOrEditIClass(MouseEvent e, Point2D point) {
+		for (int i = 0; i < icboxs.size(); i++) {
+			if (icboxs.get(i).contains(point) || icboxs.get(i).getdataBox().contains(point)
+					|| icboxs.get(i).getfunctionBox().contains(point)) {
+				isNew = false;
+				int index = i;
+				icboxs.get(i).addEventHandler(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						icboxs.get(index).setX(e.getX());
+						icboxs.get(index).setY(e.getY());
+					}
+				});
+
+				icboxs.get(i).getdataBox().addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent e) {
+						Button addf = new Button("+");
+						getChildren().remove(addf);
+						addf.layoutXProperty().bind(icboxs.get(index).getdataBox().xProperty().subtract(30));
+						addf.layoutYProperty().bind(icboxs.get(index).getdataBox().yProperty());
+						getChildren().add(addf);
+						addf.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+							@Override
+							public void handle(MouseEvent e) {
+								icboxs.get(index).addData("data");
+								addIClassDataLabel(index);
+							}
+						});
+						addf.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
+							@Override
+							public void handle(MouseEvent e) {
+								getChildren().remove(addf);
+							}
+						});
+
+					}
+				});
+
+				icboxs.get(i).setEffect(shape);
+				icboxs.get(i).getdataBox().setEffect(shape);
+				icboxs.get(i).getfunctionBox().setEffect(shape);
+			} else {
+				icboxs.get(i).setEffect(null);
+				icboxs.get(i).getdataBox().setEffect(null);
+				icboxs.get(i).getfunctionBox().setEffect(null);
+
 			}
 		}
 	}

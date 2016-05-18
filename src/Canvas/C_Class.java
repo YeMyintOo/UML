@@ -67,7 +67,6 @@ public class C_Class extends Rectangle {
 		dataBox.widthProperty().bindBidirectional(widthProperty());
 		
 		
-
 		datas = new ArrayList<StringProperty>();
 		functions = new ArrayList<StringProperty>();
 	}
