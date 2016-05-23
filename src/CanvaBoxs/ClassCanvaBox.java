@@ -181,7 +181,12 @@ public class ClassCanvaBox extends CanvasPane {
 					isAssociation = false;
 				}
 				if (isAggregation) {
-					aggs.add(agg);
+					getChildren().remove(agg);
+					if (agg.filterLine()) {
+						getChildren().addAll(agg.getL1(), agg.getL2(), agg.getL3(), agg.getNode1(), agg.getNode2(),
+								agg.getStartNode(), agg.getBox());
+						aggs.add(agg);
+					}
 					isAggregation = false;
 
 				}
@@ -718,11 +723,10 @@ public class ClassCanvaBox extends CanvasPane {
 
 			// Link
 			for (int k = 0; k < assos.size(); k++) {
-				
-				//StartNodeLink
+
+				// StartNodeLink
 				Shape start = Shape.intersect(assos.get(k).getStartNode(), cboxs.get(i));
-				boolean isStart = start.getBoundsInLocal().getWidth() >= 0
-						|| start.getBoundsInLocal().getHeight() >= 0;
+				boolean isStart = start.getBoundsInLocal().getWidth() >= 0 || start.getBoundsInLocal().getHeight() >= 0;
 				if (isStart) {
 					// Find x,y difference
 					double dx = cboxs.get(i).getX() - assos.get(k).getStartNode().getX();
@@ -733,24 +737,23 @@ public class ClassCanvaBox extends CanvasPane {
 						assos.get(k).getStartNode().xProperty()
 								.bind(cboxs.get(i).xProperty().add(cboxs.get(i).widthProperty()).subtract(5));
 					}
-					if(dy<=0 && dx>0){
+					if (dy <= 0 && dx > 0) {
 						// Left Link
 						assos.get(k).getStartNode().xProperty().bind(cboxs.get(i).xProperty().subtract(5));
 						assos.get(k).getStartNode().toFront();
 					}
-					
-					if(dy>0 && dx<=0){
-						//Top Link
+
+					if (dy > 0 && dx <= 0) {
+						// Top Link
 						assos.get(k).getStartNode().xProperty().bind(cboxs.get(i).xProperty().subtract(dx));
 					}
-					
+
 				}
-				
-				//EndNodeLink
-				
+
+				// EndNodeLink
+
 				Shape end = Shape.intersect(assos.get(k).getEndNode(), cboxs.get(i));
-				boolean isEnd = end.getBoundsInLocal().getWidth() >= 0
-						|| end.getBoundsInLocal().getHeight() >= 0;
+				boolean isEnd = end.getBoundsInLocal().getWidth() >= 0 || end.getBoundsInLocal().getHeight() >= 0;
 				if (isEnd) {
 					// Find x,y difference
 					double dx = cboxs.get(i).getX() - assos.get(k).getEndNode().getX();
@@ -761,16 +764,16 @@ public class ClassCanvaBox extends CanvasPane {
 						assos.get(k).getEndNode().xProperty()
 								.bind(cboxs.get(i).xProperty().add(cboxs.get(i).widthProperty()).subtract(5));
 					}
-					if(dy<=0 && dx>0){
+					if (dy <= 0 && dx > 0) {
 						// Left Link
 						assos.get(k).getEndNode().xProperty().bind(cboxs.get(i).xProperty().subtract(5));
 						assos.get(k).getEndNode().toFront();
 					}
-					if(dy>0 && dx<=0){
-						//Top Link
+					if (dy > 0 && dx <= 0) {
+						// Top Link
 						assos.get(k).getEndNode().xProperty().bind(cboxs.get(i).xProperty().subtract(dx));
 					}
-					
+
 				}
 			}
 
