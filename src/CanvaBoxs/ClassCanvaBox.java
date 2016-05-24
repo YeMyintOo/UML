@@ -10,6 +10,7 @@ import Canvas.C_Aggregation;
 import Canvas.C_Association;
 import Canvas.C_Class;
 import Canvas.C_Composition;
+import Canvas.C_Dependency;
 import Canvas.C_Inheritance;
 import Canvas.C_Interface;
 import Database.ToolHandler;
@@ -69,6 +70,11 @@ public class ClassCanvaBox extends CanvasPane {
 	private C_Inheritance inh;
 	private boolean isInheritance;
 
+	// Dependency
+	private ArrayList<C_Dependency> deps;
+	private C_Dependency dep;
+	private boolean isDependency;
+
 	public ClassCanvaBox(Scene owner, File path, boolean isLoad) {
 		setOwner(owner);
 		setPath(path);
@@ -79,6 +85,7 @@ public class ClassCanvaBox extends CanvasPane {
 		aggs = new ArrayList<C_Aggregation>();
 		comps = new ArrayList<C_Composition>();
 		inhs = new ArrayList<C_Inheritance>();
+		deps = new ArrayList<C_Dependency>();
 
 		if (isLoad) {
 			try {
@@ -141,6 +148,11 @@ public class ClassCanvaBox extends CanvasPane {
 						isInheritance = true;
 						getChildren().addAll(inh);
 						break;
+					case "Class_Dependency":
+						dep = new C_Dependency(e.getX(), e.getY(), e.getX(), e.getY(), color);
+						isDependency = true;
+						getChildren().addAll(dep);
+						break;
 					default:
 						break;
 					}
@@ -178,6 +190,10 @@ public class ClassCanvaBox extends CanvasPane {
 				if (isInheritance) {
 					inh.setEndX(e.getX());
 					inh.setEndY(e.getY());
+				}
+				if (isDependency) {
+					dep.setEndX(e.getX());
+					dep.setEndY(e.getY());
 				}
 			}
 		});
@@ -230,10 +246,19 @@ public class ClassCanvaBox extends CanvasPane {
 					getChildren().remove(inh);
 					if (inh.filterLine()) {
 						getChildren().addAll(inh.getL1(), inh.getL2(), inh.getL3(), inh.getNode1(), inh.getNode2(),
-								inh.getStartNode(),inh.getTri());
+								inh.getStartNode(), inh.getTri());
 						inhs.add(inh);
 					}
 					isInheritance = false;
+				}
+				if (isDependency) {
+					getChildren().remove(dep);
+					if (dep.filterLine()) {
+						getChildren().addAll(dep.getL1(), dep.getL2(), dep.getL3(), dep.getNode1(), dep.getNode2(),
+								dep.getStartNode(),dep.getTop(),dep.getBot());
+						deps.add(dep);
+					}
+					isDependency = false;
 				}
 			}
 		});
@@ -249,7 +274,7 @@ public class ClassCanvaBox extends CanvasPane {
 		isNewOrEditAssociation(e, point);
 		isNewOrEditAggregation(e, point);
 		isNewOrEditComposition(e, point);
-		isNewOrEditInheritance(e,point);
+		isNewOrEditInheritance(e, point);
 	}
 
 	public void addClassDataLabel(int index) {
@@ -1067,10 +1092,10 @@ public class ClassCanvaBox extends CanvasPane {
 			}
 		}
 	}
-	
-	public void isNewOrEditInheritance(MouseEvent e,Point2D point){
+
+	public void isNewOrEditInheritance(MouseEvent e, Point2D point) {
 		for (int i = 0; i < inhs.size(); i++) {
-			int index=i;
+			int index = i;
 			if (inhs.get(i).getNode1().contains(point) || inhs.get(i).getNode2().contains(point)
 					|| inhs.get(i).getStartNode().contains(point) || inhs.get(i).getEndNode().contains(point)
 					|| inhs.get(i).getTri().contains(point)) {

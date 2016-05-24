@@ -7,10 +7,9 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
-public class C_Inheritance extends Line {
+public class C_Dependency extends Line {
 
 	private StringProperty data1; // Start Point Multiplicity
 	private StringProperty data2; // End Point Multiplicity
@@ -25,11 +24,12 @@ public class C_Inheritance extends Line {
 	private Rectangle startNode;
 	private Rectangle endNode;
 
-	private Polygon tri;
+	private Line top;
+	private Line bot;
 
 	private boolean isdrawable;
 
-	public C_Inheritance(double startx, double starty, double endx, double endy, Color color) {
+	public C_Dependency(double startx, double starty, double endx, double endy, Color color) {
 		super(startx, starty, endx, endy);
 		setStroke(color);
 
@@ -40,9 +40,6 @@ public class C_Inheritance extends Line {
 		node2 = new LRectangle();
 		startNode = new LRectangle();
 		endNode = new LRectangle();
-		tri = new Polygon();
-		tri.setFill(Color.WHITE);
-		tri.setStroke(Color.LIGHTGRAY);
 
 		l1 = new Line();
 		l1.setStroke(color);
@@ -52,6 +49,12 @@ public class C_Inheritance extends Line {
 
 		l3 = new Line();
 		l3.setStroke(color);
+
+		top = new Line();
+		top.setStroke(color);
+
+		bot = new Line();
+		bot.setStroke(color);
 
 		node1.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
 			@Override
@@ -82,7 +85,6 @@ public class C_Inheritance extends Line {
 				endNode.setX(e.getX() - 5);
 			}
 		});
-
 	}
 
 	public Rectangle getStartNode() {
@@ -106,7 +108,11 @@ public class C_Inheritance extends Line {
 		double d = Math.sqrt((Math.pow(getEndX() - getStartX(), 2)) + (Math.pow(getEndY() - getStartY(), 2)));
 		double mid = d / 2;
 		double slope = (getStartY() - getEndY()) / (getStartX() - getEndX());
-
+		top.startXProperty().bind(endXProperty());
+		top.startYProperty().bind(endYProperty());
+		bot.startXProperty().bind(endXProperty());
+		bot.startYProperty().bind(endYProperty());
+		
 		if (getStartX() < getEndX() && getStartY() < getEndY()) {
 			if (slope < 2) {
 				node1.setX(getStartX() + mid - 5);
@@ -120,10 +126,6 @@ public class C_Inheritance extends Line {
 
 				endNode.setX(getEndX() - 5);
 				endNode.setY(getEndY() - 5);
-
-				tri.getPoints().addAll(endXProperty().subtract(20).get(), endYProperty().subtract(10).get(),
-						endXProperty().get(), endYProperty().get(), endXProperty().subtract(20).get(),
-						endYProperty().add(10).get());
 
 				l1.setStartX(getStartX());
 				l1.setStartY(getStartY());
@@ -139,6 +141,13 @@ public class C_Inheritance extends Line {
 				l3.setStartY(getEndY());
 				l3.setEndX(getEndX());
 				l3.setEndY(getEndY());
+				
+				
+				top.endXProperty().bind(endXProperty().subtract(10));
+				top.endYProperty().bind(endYProperty().subtract(10));
+							
+				bot.endXProperty().bind(endXProperty().subtract(10));
+				bot.endYProperty().bind(endYProperty().add(10));
 
 			} else {
 				isdrawable = false;
@@ -159,10 +168,14 @@ public class C_Inheritance extends Line {
 
 				endNode.setX(getEndX() - 5);
 				endNode.setY(getEndY() - 5);
+				
+				
+				top.endXProperty().bind(endXProperty().add(10));
+				top.endYProperty().bind(endYProperty().subtract(10));
+							
+				bot.endXProperty().bind(endXProperty().add(10));
+				bot.endYProperty().bind(endYProperty().add(10));
 
-				tri.getPoints().addAll(endXProperty().add(20).get(), endYProperty().subtract(10).get(),
-						endXProperty().get(), endYProperty().get(), endXProperty().add(20).get(),
-						endYProperty().add(10).get());
 
 				l1.setStartX(getStartX());
 				l1.setStartY(getStartY());
@@ -198,10 +211,13 @@ public class C_Inheritance extends Line {
 
 				endNode.setX(getEndX() - 5);
 				endNode.setY(getEndY() - 5);
+				
+				top.endXProperty().bind(endXProperty().add(10));
+				top.endYProperty().bind(endYProperty().subtract(10));
+							
+				bot.endXProperty().bind(endXProperty().add(10));
+				bot.endYProperty().bind(endYProperty().add(10));
 
-				tri.getPoints().addAll(endXProperty().add(20).get(), endYProperty().subtract(10).get(),
-						endXProperty().get(), endYProperty().get(), endXProperty().add(20).get(),
-						endYProperty().add(10).get());
 
 				l1.setStartX(getStartX());
 				l1.setStartY(getStartY());
@@ -236,10 +252,13 @@ public class C_Inheritance extends Line {
 
 				endNode.setX(getEndX() - 5);
 				endNode.setY(getEndY() - 5);
+				
+				top.endXProperty().bind(endXProperty().subtract(10));
+				top.endYProperty().bind(endYProperty().subtract(10));
+							
+				bot.endXProperty().bind(endXProperty().subtract(10));
+				bot.endYProperty().bind(endYProperty().add(10));
 
-				tri.getPoints().addAll(endXProperty().subtract(20).get(), endYProperty().subtract(10).get(),
-						endXProperty().get(), endYProperty().get(), endXProperty().subtract(20).get(),
-						endYProperty().add(10).get());
 
 				l1.setStartX(getStartX());
 				l1.setStartY(getStartY());
@@ -274,10 +293,12 @@ public class C_Inheritance extends Line {
 
 				endNode.setX(getEndX() - 5);
 				endNode.setY(getEndY() - 5);
-
-				tri.getPoints().addAll(endXProperty().subtract(20).get(), endYProperty().subtract(10).get(),
-						endXProperty().get(), endYProperty().get(), endXProperty().subtract(20).get(),
-						endYProperty().add(10).get());
+				
+				top.endXProperty().bind(endXProperty().subtract(10));
+				top.endYProperty().bind(endYProperty().subtract(10));
+							
+				bot.endXProperty().bind(endXProperty().subtract(10));
+				bot.endYProperty().bind(endYProperty().add(10));
 
 				l1.setStartX(getStartX());
 				l1.setStartY(getStartY());
@@ -313,10 +334,12 @@ public class C_Inheritance extends Line {
 				endNode.setX(getEndX() - 5);
 				endNode.setY(getEndY() - 5);
 
-				tri.getPoints().addAll(endXProperty().add(20).get(), endYProperty().subtract(10).get(),
-						endXProperty().get(), endYProperty().get(), endXProperty().add(20).get(),
-						endYProperty().add(10).get());
-
+				top.endXProperty().bind(endXProperty().add(10));
+				top.endYProperty().bind(endYProperty().subtract(10));
+							
+				bot.endXProperty().bind(endXProperty().add(10));
+				bot.endYProperty().bind(endYProperty().add(10));
+				
 				l1.setStartX(getStartX());
 				l1.setStartY(getStartY());
 				l1.setEndX(getStartX());
@@ -384,8 +407,12 @@ public class C_Inheritance extends Line {
 		return l3;
 	}
 
-	public Polygon getTri() {
-		return tri;
+	public Line getTop() {
+		return top;
+	}
+
+	public Line getBot() {
+		return bot;
 	}
 
 }
