@@ -10,6 +10,7 @@ import Canvas.C_Aggregation;
 import Canvas.C_Association;
 import Canvas.C_Class;
 import Canvas.C_Composition;
+import Canvas.C_Inheritance;
 import Canvas.C_Interface;
 import Database.ToolHandler;
 import Library.SaveDiagramXML;
@@ -63,6 +64,11 @@ public class ClassCanvaBox extends CanvasPane {
 	private C_Composition comp;
 	private boolean isComposition;
 
+	// Inheritance
+	private ArrayList<C_Inheritance> inhs;
+	private C_Inheritance inh;
+	private boolean isInheritance;
+
 	public ClassCanvaBox(Scene owner, File path, boolean isLoad) {
 		setOwner(owner);
 		setPath(path);
@@ -72,6 +78,7 @@ public class ClassCanvaBox extends CanvasPane {
 		icboxs = new ArrayList<C_Interface>();
 		aggs = new ArrayList<C_Aggregation>();
 		comps = new ArrayList<C_Composition>();
+		inhs = new ArrayList<C_Inheritance>();
 
 		if (isLoad) {
 			try {
@@ -81,13 +88,10 @@ public class ClassCanvaBox extends CanvasPane {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 		}
-
 		if (toolHandler.getGrid().equals("Show")) {
 			setGridLine();
 		}
-
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -132,6 +136,11 @@ public class ClassCanvaBox extends CanvasPane {
 						isComposition = true;
 						getChildren().addAll(comp);
 						break;
+					case "Class_Inheritance":
+						inh = new C_Inheritance(e.getX(), e.getY(), e.getX(), e.getY(), color);
+						isInheritance = true;
+						getChildren().addAll(inh);
+						break;
 					default:
 						break;
 					}
@@ -165,6 +174,10 @@ public class ClassCanvaBox extends CanvasPane {
 				if (isComposition) {
 					comp.setEndX(e.getX());
 					comp.setEndY(e.getY());
+				}
+				if (isInheritance) {
+					inh.setEndX(e.getX());
+					inh.setEndY(e.getY());
 				}
 			}
 		});
@@ -212,6 +225,16 @@ public class ClassCanvaBox extends CanvasPane {
 					}
 					isComposition = false;
 				}
+
+				if (isInheritance) {
+					getChildren().remove(inh);
+					if (inh.filterLine()) {
+						getChildren().addAll(inh.getL1(), inh.getL2(), inh.getL3(), inh.getNode1(), inh.getNode2(),
+								inh.getStartNode(),inh.getTri());
+						inhs.add(inh);
+					}
+					isInheritance = false;
+				}
 			}
 		});
 
@@ -225,7 +248,8 @@ public class ClassCanvaBox extends CanvasPane {
 		isNewOrEditIClass(e, point);
 		isNewOrEditAssociation(e, point);
 		isNewOrEditAggregation(e, point);
-		isNewOrEditComposition(e,point);
+		isNewOrEditComposition(e, point);
+		isNewOrEditInheritance(e,point);
 	}
 
 	public void addClassDataLabel(int index) {
@@ -1032,8 +1056,8 @@ public class ClassCanvaBox extends CanvasPane {
 			}
 		}
 	}
-	
-	public void isNewOrEditComposition(MouseEvent e,Point2D point){
+
+	public void isNewOrEditComposition(MouseEvent e, Point2D point) {
 		for (int i = 0; i < comps.size(); i++) {
 			if (comps.get(i).getNode1().contains(point) || comps.get(i).getNode2().contains(point)
 					|| comps.get(i).getStartNode().contains(point) || comps.get(i).getEndNode().contains(point)
@@ -1041,6 +1065,32 @@ public class ClassCanvaBox extends CanvasPane {
 				isNew = false;
 				comps.get(i).getStartNode().xProperty().unbind();
 			}
+		}
+	}
+	
+	public void isNewOrEditInheritance(MouseEvent e,Point2D point){
+		for (int i = 0; i < inhs.size(); i++) {
+			int index=i;
+			if (inhs.get(i).getNode1().contains(point) || inhs.get(i).getNode2().contains(point)
+					|| inhs.get(i).getStartNode().contains(point) || inhs.get(i).getEndNode().contains(point)
+					|| inhs.get(i).getTri().contains(point)) {
+				isNew = false;
+				inhs.get(i).getStartNode().xProperty().unbind();
+			}
+			inhs.get(i).getTri().addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent e) {
+					getChildren().remove(inhs.get(index).getTri());
+					getChildren().add(inhs.get(index).getEndNode());
+				}
+			});
+			inhs.get(i).getEndNode().addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent e) {
+					getChildren().add(inhs.get(index).getTri());
+					getChildren().remove(inhs.get(index).getEndNode());
+				}
+			});
 		}
 	}
 }
