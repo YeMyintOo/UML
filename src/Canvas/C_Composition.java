@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
-public class C_Aggregation extends Line {
+public class C_Composition extends Line{
 
 	private StringProperty data1; // Start Point Multiplicity
 	private StringProperty data2; // End Point Multiplicity
@@ -28,10 +28,9 @@ public class C_Aggregation extends Line {
 	
 	private boolean isdrawable;
 
-	public C_Aggregation(double startx, double starty, double endx, double endy, Color color) {
+	public C_Composition(double startx, double starty, double endx, double endy, Color color) {
 		super(startx, starty, endx, endy);
-		setStroke(color);
-
+		
 		data1 = new SimpleStringProperty("1");
 		data2 = new SimpleStringProperty("1");
 
@@ -41,7 +40,7 @@ public class C_Aggregation extends Line {
 		startNode = new LRectangle();
 		endNode = new LRectangle();
 		box=new Rectangle();
-		box.setFill(Color.LIGHTBLUE);
+		box.setFill(Color.WHITE);
 		box.setStroke(Color.LIGHTGRAY);
 		box.setWidth(20);
 		box.setHeight(20);

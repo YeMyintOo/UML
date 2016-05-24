@@ -9,13 +9,13 @@ import Canvas.C_AbstractClass;
 import Canvas.C_Aggregation;
 import Canvas.C_Association;
 import Canvas.C_Class;
+import Canvas.C_Composition;
 import Canvas.C_Interface;
 import Database.ToolHandler;
 import Library.SaveDiagramXML;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.print.PageOrientation;
 import javafx.print.Paper;
@@ -27,8 +27,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -60,6 +58,11 @@ public class ClassCanvaBox extends CanvasPane {
 	private C_Aggregation agg;
 	private boolean isAggregation;
 
+	// Composition
+	private ArrayList<C_Composition> comps;
+	private C_Composition comp;
+	private boolean isComposition;
+
 	public ClassCanvaBox(Scene owner, File path, boolean isLoad) {
 		setOwner(owner);
 		setPath(path);
@@ -68,6 +71,7 @@ public class ClassCanvaBox extends CanvasPane {
 		acboxs = new ArrayList<C_AbstractClass>();
 		icboxs = new ArrayList<C_Interface>();
 		aggs = new ArrayList<C_Aggregation>();
+		comps = new ArrayList<C_Composition>();
 
 		if (isLoad) {
 			try {
@@ -119,9 +123,14 @@ public class ClassCanvaBox extends CanvasPane {
 						getChildren().addAll(asso);
 						break;
 					case "Class_Aggregation":
-						agg = new C_Aggregation(e.getX(), e.getY(), e.getX(), e.getY(), Color.LIGHTGRAY);
+						agg = new C_Aggregation(e.getX(), e.getY(), e.getX(), e.getY(), color);
 						isAggregation = true;
 						getChildren().addAll(agg);
+						break;
+					case "Class_Composition":
+						comp = new C_Composition(e.getX(), e.getY(), e.getX(), e.getY(), color);
+						isComposition = true;
+						getChildren().addAll(comp);
 						break;
 					default:
 						break;
@@ -152,6 +161,10 @@ public class ClassCanvaBox extends CanvasPane {
 				if (isAggregation) {
 					agg.setEndX(e.getX());
 					agg.setEndY(e.getY());
+				}
+				if (isComposition) {
+					comp.setEndX(e.getX());
+					comp.setEndY(e.getY());
 				}
 			}
 		});
@@ -188,9 +201,17 @@ public class ClassCanvaBox extends CanvasPane {
 						aggs.add(agg);
 					}
 					isAggregation = false;
-
 				}
 
+				if (isComposition) {
+					getChildren().remove(comp);
+					if (comp.filterLine()) {
+						getChildren().addAll(comp.getL1(), comp.getL2(), comp.getL3(), comp.getNode1(), comp.getNode2(),
+								comp.getStartNode(), comp.getBox());
+						comps.add(comp);
+					}
+					isComposition = false;
+				}
 			}
 		});
 
@@ -203,6 +224,8 @@ public class ClassCanvaBox extends CanvasPane {
 		isNewOrEditAClass(e, point);
 		isNewOrEditIClass(e, point);
 		isNewOrEditAssociation(e, point);
+		isNewOrEditAggregation(e, point);
+		isNewOrEditComposition(e,point);
 	}
 
 	public void addClassDataLabel(int index) {
@@ -995,6 +1018,28 @@ public class ClassCanvaBox extends CanvasPane {
 					|| assos.get(i).getStartNode().contains(point) || assos.get(i).getEndNode().contains(point)) {
 				isNew = false;
 				assos.get(i).getStartNode().xProperty().unbind();
+			}
+		}
+	}
+
+	public void isNewOrEditAggregation(MouseEvent e, Point2D point) {
+		for (int i = 0; i < aggs.size(); i++) {
+			if (aggs.get(i).getNode1().contains(point) || aggs.get(i).getNode2().contains(point)
+					|| aggs.get(i).getStartNode().contains(point) || aggs.get(i).getEndNode().contains(point)
+					|| aggs.get(i).getBox().contains(point)) {
+				isNew = false;
+				aggs.get(i).getStartNode().xProperty().unbind();
+			}
+		}
+	}
+	
+	public void isNewOrEditComposition(MouseEvent e,Point2D point){
+		for (int i = 0; i < comps.size(); i++) {
+			if (comps.get(i).getNode1().contains(point) || comps.get(i).getNode2().contains(point)
+					|| comps.get(i).getStartNode().contains(point) || comps.get(i).getEndNode().contains(point)
+					|| comps.get(i).getBox().contains(point)) {
+				isNew = false;
+				comps.get(i).getStartNode().xProperty().unbind();
 			}
 		}
 	}

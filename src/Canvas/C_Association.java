@@ -62,7 +62,6 @@ public class C_Association extends Line {
 				node2.setX(e.getX() - 5);
 				node2.setY(e.getY() - 5);
 				endNode.setY(e.getY() - 5);
-
 			}
 		});
 		startNode.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
