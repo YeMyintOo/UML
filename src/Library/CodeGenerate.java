@@ -25,7 +25,17 @@ public class CodeGenerate {
 		if (file != null) {
 			try {
 				FileWriter out = new FileWriter(file);
-				out.write("this is java Code");
+				out.write("public class "+data.getLabel().getText()+"{\n");
+				
+				for(int i=0; i<data.getDatas().size(); i++){
+					String raw=data.getDatas().get(i).get();
+					
+					String var=raw.substring(0, raw.indexOf(":"));
+					String ret=raw.substring(raw.indexOf(":")+1,raw.length());
+					
+					out.write("public "+ret+" "+var+"; \n");
+				}
+				out.write("}");
 				out.close();
 			} catch (IOException ex) {
 				ex.printStackTrace();
