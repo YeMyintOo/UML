@@ -1,10 +1,14 @@
 package CanvaBoxs;
 
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import Canvas.C_AbstractClass;
 import Canvas.C_Aggregation;
 import Canvas.C_Association;
@@ -14,6 +18,7 @@ import Canvas.C_Dependency;
 import Canvas.C_Inheritance;
 import Canvas.C_Interface;
 import Database.ToolHandler;
+import Library.CodeGenerate;
 import Library.SaveDiagramXML;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -33,6 +38,8 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class ClassCanvaBox extends CanvasPane {
 	// Class
@@ -75,8 +82,9 @@ public class ClassCanvaBox extends CanvasPane {
 	private C_Dependency dep;
 	private boolean isDependency;
 
-	public ClassCanvaBox(Scene owner, File path, boolean isLoad) {
+	public ClassCanvaBox(Scene owner,Stage parent, File path, boolean isLoad) {
 		setOwner(owner);
+		setStage(parent);
 		setPath(path);
 		cboxs = new ArrayList<C_Class>();
 		assos = new ArrayList<C_Association>();
@@ -255,7 +263,7 @@ public class ClassCanvaBox extends CanvasPane {
 					getChildren().remove(dep);
 					if (dep.filterLine()) {
 						getChildren().addAll(dep.getL1(), dep.getL2(), dep.getL3(), dep.getNode1(), dep.getNode2(),
-								dep.getStartNode(),dep.getTop(),dep.getBot());
+								dep.getStartNode(), dep.getTop(), dep.getBot());
 						deps.add(dep);
 					}
 					isDependency = false;
@@ -275,6 +283,7 @@ public class ClassCanvaBox extends CanvasPane {
 		isNewOrEditAggregation(e, point);
 		isNewOrEditComposition(e, point);
 		isNewOrEditInheritance(e, point);
+		isNewOrEditDependency(e, point);
 	}
 
 	public void addClassDataLabel(int index) {
@@ -780,6 +789,13 @@ public class ClassCanvaBox extends CanvasPane {
 						save.saveClassCavaBox(cboxs);
 						System.out.println("****Save*****");
 					}
+
+					// Code Print
+					if (key.getCode() == KeyCode.F2) {
+						System.out.println("****Code Print*****");
+						code=new CodeGenerate(parent);
+						code.generateClass(cboxs.get(index));
+					}
 				});
 
 				cboxs.get(i).setEffect(shape);
@@ -1118,4 +1134,16 @@ public class ClassCanvaBox extends CanvasPane {
 			});
 		}
 	}
+
+	public void isNewOrEditDependency(MouseEvent e, Point2D point) {
+		for (int i = 0; i < deps.size(); i++) {
+			if (deps.get(i).getNode1().contains(point) || deps.get(i).getNode2().contains(point)
+					|| deps.get(i).getStartNode().contains(point) || deps.get(i).getEndNode().contains(point)) {
+				isNew = false;
+				deps.get(i).getStartNode().xProperty().unbind();
+			}
+		}
+	}
+
+	
 }

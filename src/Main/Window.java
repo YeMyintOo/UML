@@ -282,7 +282,7 @@ public class Window extends Application {
 			new BuildCanvaXML(file, name, type); // Build XML file
 			Tab tab = new Tab();
 			tab.setText(name);
-			workspace = new WorkSpace2(type, file, scene, false);
+			workspace = new WorkSpace2(type, file, scene, stage, false);
 			tab.setContent(workspace);
 			tabPane.getTabs().add(tab);
 		} catch (Exception e) {
@@ -326,7 +326,7 @@ public class Window extends Application {
 				break;
 			}
 			Tab tab = new Tab();
-			workspace = new WorkSpace2(type, file, scene, true);
+			workspace = new WorkSpace2(type, file, scene, stage, true);
 			tab.setContent(workspace);
 			tabPane.getTabs().add(tab);
 			tab.setText(xml.getName());

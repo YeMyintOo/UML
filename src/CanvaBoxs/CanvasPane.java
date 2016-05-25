@@ -10,6 +10,7 @@ import org.w3c.dom.Document;
 import com.sun.glass.ui.Window;
 
 import Database.ToolHandler;
+import Library.CodeGenerate;
 import Library.MyGridLine;
 import Library.SaveDiagramXML;
 import javafx.print.JobSettings;
@@ -23,8 +24,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
+import javafx.stage.Stage;
 
 public class CanvasPane extends Pane {
+	
 	
 	protected DocumentBuilderFactory dbFactory;
 	protected DocumentBuilder dBuilder;
@@ -32,6 +35,7 @@ public class CanvasPane extends Pane {
 	public ToolHandler toolHandler;
 	public Color color;
 	public Scene owner;
+	public Stage parent;
 	public File path;
 	public SaveDiagramXML save;
 	public BorderPane gridLine;
@@ -39,7 +43,9 @@ public class CanvasPane extends Pane {
 	public Printer defaultprinter;
 	public PageLayout pageLayout;
 	public boolean isNew;
+	public CodeGenerate code;
 
+	
 	public CanvasPane() {
 		toolHandler = new ToolHandler();
 
@@ -77,6 +83,14 @@ public class CanvasPane extends Pane {
 		this.owner = owner;
 	}
 
+	public Stage getStage() {
+		return parent;
+	}
+
+	public void setStage(Stage parent) {
+		this.parent = parent;
+	}
+	
 	public File getPath() {
 		return path;
 	}
