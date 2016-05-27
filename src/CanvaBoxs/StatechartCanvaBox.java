@@ -21,12 +21,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-public class StatechartCanvaBox extends Pane {
-	// Only State chart Components Can Draw
-	private ToolHandler toolHandler;
-	private Color color;
-	private DropShadow shape;
-
+public class StatechartCanvaBox extends CanvasPane {
 	// StartState
 	private ArrayList<S_StartState> sStates;
 	private S_StartState sState;
@@ -58,7 +53,12 @@ public class StatechartCanvaBox extends Pane {
 	private boolean isTransitions;
 
 	public StatechartCanvaBox() {
-		init();
+		sStates = new ArrayList<S_StartState>();
+		fStates = new ArrayList<S_FinalState>();
+		states = new ArrayList<S_State>();
+		subStates = new ArrayList<S_SubState>();
+		hisStates = new ArrayList<S_HistoryState>();
+		transitions = new ArrayList<S_Transistion>();
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -69,7 +69,6 @@ public class StatechartCanvaBox extends Pane {
 				color = Color.web(colorS); // Dynamic color from ToolHander.xml
 
 				switch (tool) {
-
 				case "Statechart_InitState":
 					sState = new S_StartState(e.getX(), e.getY(), 10, color);
 					isStartState = true;
@@ -79,31 +78,31 @@ public class StatechartCanvaBox extends Pane {
 				case "Statechart_FinalState":
 					fState = new S_FinalState(e.getX(), e.getY(), 10, color);
 					isFinalState = true;
-					drawFinalStateOutLine(fState);
-					getChildren().add(fState);
+					getChildren().addAll(fState.getOuter(), fState);
 					break;
 
 				case "Statechart_State":
 					state = new S_State(e.getX(), e.getY(), color);
 					isState = true;
-					getChildren().add(state);
+					getChildren().addAll(state, state.getLabel(), state.getText(false));
 					break;
 
 				case "Statechart_Substate":
 					subState = new S_SubState(e.getX(), e.getY(), color);
 					isSubState = true;
-					getChildren().add(subState);
+					getChildren().addAll(subState, subState.getLabel(), subState.getBr(), subState.getText(false));
 					break;
 				case "Statechart_HistoryState":
 					hisState = new S_HistoryState(e.getX(), e.getY(), color);
 					isHisState = true;
-					getChildren().add(hisState);
+					getChildren().addAll(hisState, hisState.getLabel(), hisState.gethLabel(), hisState.getBr1(),
+							hisState.getBr2());
 					break;
 
 				case "Statechart_Transition":
 					transition = new S_Transistion(e.getX(), e.getY(), 0, 0, e.getX(), e.getY(), color);
 					isTransitions = true;
-					getChildren().add(transition);
+					getChildren().addAll(transition,transition.getNode());
 
 				}
 
@@ -136,9 +135,8 @@ public class StatechartCanvaBox extends Pane {
 				if (isTransitions) {
 					transition.setEndX(e.getX());
 					transition.setEndY(e.getY());
-					transition.setControlX(e.getX() + 5);
-					transition.setControlY(e.getY() + 5);
-
+					transition.setControlX(e.getX());
+					transition.setControlY(e.getY());
 				}
 			}
 		});
@@ -155,137 +153,26 @@ public class StatechartCanvaBox extends Pane {
 					isFinalState = false;
 				}
 				if (isState) {
-					drawStateLabel(state);
 					states.add(state);
 					isState = false;
 				}
 				if (isSubState) {
-					drawSubStateLabel(subState);
 					subStates.add(subState);
 					isSubState = false;
 				}
 				if (isHisState) {
-					drawHisStateLabel(hisState);
 					hisStates.add(hisState);
 					isHisState = false;
 				}
 				if (isTransitions) {
-					drawTransition(transition);
+					transition.recalculatePoint();
+					getChildren().addAll(transition.getTop(),transition.getBot());
 					transitions.add(transition);
 					isTransitions = false;
 				}
+				toolHandler.setTool("");
 			}
 		});
-
 	}
 
-	public void init() {
-		shape = new DropShadow();
-		shape.setOffsetX(5);
-		shape.setOffsetY(5);
-		shape.setRadius(15);
-		sStates = new ArrayList<S_StartState>();
-		fStates = new ArrayList<S_FinalState>();
-		states = new ArrayList<S_State>();
-		subStates = new ArrayList<S_SubState>();
-		hisStates = new ArrayList<S_HistoryState>();
-		transitions = new ArrayList<S_Transistion>();
-	}
-
-	public void drawFinalStateOutLine(S_FinalState fstate) {
-		Circle outLine = new Circle(fstate.getCenterX(), fstate.getCenterY(), 15);
-		outLine.setFill(Color.WHITE);
-		outLine.setStroke(Color.LIGHTGRAY);
-
-		outLine.centerXProperty().bindBidirectional(fstate.centerXProperty());
-		outLine.centerYProperty().bindBidirectional(fstate.centerYProperty());
-
-		getChildren().add(outLine);
-	}
-
-	public void drawStateLabel(S_State state) {
-		Text label = new Text(state.labelProperty().get());
-		label.setFont(Font.font("Arial", FontWeight.BLACK, 14));
-		label.textProperty().bind(state.labelProperty());
-
-		label.xProperty().bind(state.xProperty().add(label.layoutBoundsProperty().getValue().getWidth() / 2));
-		label.yProperty().bind(state.yProperty().add(state.heightProperty().divide(2)));
-
-		getChildren().add(label);
-	}
-
-	public void drawSubStateLabel(S_SubState subState) {
-		Text label = new Text(subState.labelProperty().get());
-		label.setFont(Font.font("Arial", FontWeight.BLACK, 14));
-		label.textProperty().bind(subState.labelProperty());
-
-		label.xProperty().bind(subState.xProperty().add(10));
-		label.yProperty().bind(subState.yProperty().add(20));
-
-		Line line = new Line(subState.getX(), subState.getY() + 30, subState.getX() + subState.getWidth(),
-				subState.getY() + 30);
-		line.setStroke(Color.LIGHTGRAY);
-		line.startXProperty().bind(subState.xProperty());
-		line.startYProperty().bind(subState.yProperty().add(30));
-		line.endXProperty().bind(subState.xProperty().add(subState.getWidth()));
-		line.endYProperty().bind(subState.yProperty().add(30));
-
-		getChildren().addAll(label, line);
-	}
-
-	public void drawHisStateLabel(S_HistoryState hisState) {
-		Text label = new Text(hisState.labelProperty().get());
-		label.setFont(Font.font("Arial", FontWeight.BLACK, 14));
-		label.textProperty().bind(hisState.labelProperty());
-
-		label.xProperty().bind(hisState.xProperty().add(10));
-		label.yProperty().bind(hisState.yProperty().add(20));
-
-		Text his = new Text(hisState.historyProperty().get());
-		his.textProperty().bind(hisState.historyProperty());
-
-		his.xProperty().bind(hisState.xProperty().add(10));
-		his.yProperty().bind(hisState.yProperty().add(50));
-
-		Line line = new Line(hisState.getX(), hisState.getY() + 30, hisState.getX() + hisState.getWidth(),
-				hisState.getY() + 30);
-		line.setStroke(Color.LIGHTGRAY);
-		line.startXProperty().bind(hisState.xProperty());
-		line.startYProperty().bind(hisState.yProperty().add(30));
-		line.endXProperty().bind(hisState.xProperty().add(hisState.getWidth()));
-		line.endYProperty().bind(hisState.yProperty().add(30));
-
-		Line line2 = new Line(hisState.getX(), hisState.getY() + 60, hisState.getX() + hisState.getWidth(),
-				hisState.getY() + 60);
-		line2.setStroke(Color.LIGHTGRAY);
-		line2.startXProperty().bind(hisState.xProperty());
-		line2.startYProperty().bind(hisState.yProperty().add(60));
-		line2.endXProperty().bind(hisState.xProperty().add(hisState.getWidth()));
-		line2.endYProperty().bind(hisState.yProperty().add(60));
-
-		getChildren().addAll(label, line, his, line2);
-
-	}
-
-	public void drawTransition(S_Transistion transition) {
-		double startx = transition.getStartX();
-		double starty = transition.getStartY();
-		double endx = transition.getEndX();
-		double endy = transition.getEndY();
-		double slope = (starty - endy) / (startx - endx);
-
-		// Distance
-		double d = Math.sqrt((Math.pow(endx - startx, 2)) + (Math.pow(endy - starty, 2)));
-		double mid = d / 2;
-
-		Rectangle rc = new Rectangle();
-		rc.setFill(Color.LIGHTBLUE);
-		rc.setRotate(45);
-		rc.setX(startx + mid);
-		rc.setY(starty);
-		rc.setWidth(20);
-		rc.setHeight(20);
-
-		getChildren().add(rc);
-	}
 }

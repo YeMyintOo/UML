@@ -63,6 +63,15 @@ public class ToolBar extends VBox {
 	MyImageView ihnV;
 	//////////////////////
 
+	// StateChart Image View
+	MyImageView fstateV;
+	MyImageView istateV;
+	MyImageView hstateV;
+	MyImageView stateV;
+	MyImageView sstateV;
+	MyImageView tranV;
+	////////////////////////
+
 	public ToolBar(int type) {
 		shape = new DropShadow();
 		shape.setOffsetX(5);
@@ -437,8 +446,6 @@ public class ToolBar extends VBox {
 			e.printStackTrace();
 		}
 
-		
-
 		classV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -463,7 +470,7 @@ public class ToolBar extends VBox {
 				iclassV.setEffect(shape);
 			}
 		});
-		
+
 		assoV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -472,7 +479,7 @@ public class ToolBar extends VBox {
 				assoV.setEffect(shape);
 			}
 		});
-		
+
 		aggV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -481,7 +488,7 @@ public class ToolBar extends VBox {
 				aggV.setEffect(shape);
 			}
 		});
-		
+
 		comV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -490,7 +497,7 @@ public class ToolBar extends VBox {
 				comV.setEffect(shape);
 			}
 		});
-		
+
 		ihnV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -499,7 +506,7 @@ public class ToolBar extends VBox {
 				ihnV.setEffect(shape);
 			}
 		});
-		
+
 		depenV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -508,7 +515,7 @@ public class ToolBar extends VBox {
 				depenV.setEffect(shape);
 			}
 		});
-		
+
 		btnP.getChildren().addAll(classV, aclassV, iclassV, assoV, aggV, comV, ihnV, depenV, color);
 		return btnP;
 	}
@@ -517,39 +524,81 @@ public class ToolBar extends VBox {
 		VBox btnP = new VBox();
 		btnP.setSpacing(10);
 		btnP.setAlignment(Pos.CENTER_LEFT);
-		ToggleButton init = new ToggleButton("Initial State");
-		ToggleButton fin = new ToggleButton("Final State");
-		ToggleButton state = new ToggleButton("State");
-		ToggleButton subState = new ToggleButton("Substate");
-		ToggleButton hisState = new ToggleButton("History State");
-		ToggleButton tran = new ToggleButton("Transition");
 
-		ToggleGroup group = new ToggleGroup();
-		init.setToggleGroup(group);
-		fin.setToggleGroup(group);
-		state.setToggleGroup(group);
-		tran.setToggleGroup(group);
+		Image fstate, istate, hstate, state, sstate, tran;
+		fstateV = new MyImageView();
+		istateV = new MyImageView();
+		hstateV = new MyImageView();
+		stateV = new MyImageView();
+		sstateV = new MyImageView();
+		tranV = new MyImageView();
+		try {
+			fstate = new Image(new FileInputStream("Resources/Icons/Statechart/FinalState.png"));
+			istate = new Image(new FileInputStream("Resources/Icons/Statechart/InitState.png"));
+			hstate = new Image(new FileInputStream("Resources/Icons/Statechart/HState.png"));
+			sstate = new Image(new FileInputStream("Resources/Icons/Statechart/SubState.png"));
+			state = new Image(new FileInputStream("Resources/Icons/Statechart/State.png"));
+			tran = new Image(new FileInputStream("Resources/Icons/Statechart/Transition.png"));
+			fstateV.setImage(fstate);
+			istateV.setImage(istate);
+			hstateV.setImage(hstate);
+			stateV.setImage(state);
+			sstateV.setImage(sstate);
+			tranV.setImage(tran);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		init.setOnAction(e -> {
-			toolHandler.setTool("Statechart_InitState");
+		istateV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Statechart_InitState");
+				ClearStateToolShape();
+				istateV.setEffect(shape);
+			}
 		});
-		fin.setOnAction(e -> {
-			toolHandler.setTool("Statechart_FinalState");
+		fstateV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Statechart_FinalState");
+				ClearStateToolShape();
+				fstateV.setEffect(shape);
+			}
 		});
-		subState.setOnAction(e -> {
-			toolHandler.setTool("Statechart_Substate");
+		sstateV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Statechart_Substate");
+				ClearStateToolShape();
+				sstateV.setEffect(shape);
+			}
 		});
-		hisState.setOnAction(e -> {
-			toolHandler.setTool("Statechart_HistoryState");
+		hstateV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Statechart_HistoryState");
+				ClearStateToolShape();
+				hstateV.setEffect(shape);
+			}
 		});
-		state.setOnAction(e -> {
-			toolHandler.setTool("Statechart_State");
+		stateV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Statechart_State");
+				ClearStateToolShape();
+				stateV.setEffect(shape);
+			}
 		});
-		tran.setOnAction(e -> {
-			toolHandler.setTool("Statechart_Transition");
+		tranV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Statechart_Transition");
+				ClearStateToolShape();
+				tranV.setEffect(shape);
+			}
 		});
 
-		btnP.getChildren().addAll(init, fin, state, subState, hisState, tran);
+		btnP.getChildren().addAll(istateV, fstateV, stateV, sstateV, hstateV, tranV);
 		return btnP;
 	}
 
@@ -714,5 +763,14 @@ public class ToolBar extends VBox {
 		comV.setEffect(null);
 		ihnV.setEffect(null);
 		depenV.setEffect(null);
+	}
+	
+	public void ClearStateToolShape(){
+		fstateV.setEffect(null);
+		istateV.setEffect(null);
+		hstateV.setEffect(null);
+		stateV.setEffect(null);
+		sstateV.setEffect(null);
+		tranV.setEffect(null);
 	}
 }

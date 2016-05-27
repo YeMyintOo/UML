@@ -35,6 +35,9 @@ public class CodeGenerate {
 					
 					out.write("public "+ret+" "+var+"; \n");
 				}
+				
+				
+				
 				out.write("}");
 				out.close();
 			} catch (IOException ex) {
