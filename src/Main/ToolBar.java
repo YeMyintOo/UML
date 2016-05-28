@@ -72,6 +72,16 @@ public class ToolBar extends VBox {
 	MyImageView tranV;
 	////////////////////////
 
+	// Activity Image View
+	MyImageView initNodeV;
+	MyImageView endNodeV;
+	MyImageView astateV;
+	MyImageView edgeV;
+	MyImageView mergeV;
+	MyImageView timeV;
+	MyImageView regionV;
+	///////////////////////
+
 	public ToolBar(int type) {
 		shape = new DropShadow();
 		shape.setOffsetX(5);
@@ -598,7 +608,7 @@ public class ToolBar extends VBox {
 			}
 		});
 
-		btnP.getChildren().addAll(istateV, fstateV, stateV, sstateV, hstateV, tranV);
+		btnP.getChildren().addAll(istateV, fstateV, stateV, sstateV, hstateV, tranV, color);
 		return btnP;
 	}
 
@@ -606,39 +616,92 @@ public class ToolBar extends VBox {
 		VBox btnP = new VBox();
 		btnP.setSpacing(10);
 		btnP.setAlignment(Pos.CENTER_LEFT);
-		ToggleButton init = new ToggleButton("Initial Node");
-		ToggleButton end = new ToggleButton("End Node");
-		ToggleButton action = new ToggleButton("Action");
-		ToggleButton edge = new ToggleButton("Edge");
-		ToggleButton merge = new ToggleButton("Merge");
-		ToggleButton time = new ToggleButton("Time");
-		ToggleButton region = new ToggleButton("Region");
 
-		ToggleGroup group = new ToggleGroup();
+		Image init, end, astate, edge, merge, time, region;
+		initNodeV = new MyImageView();
+		endNodeV = new MyImageView();
+		astateV = new MyImageView();
+		edgeV = new MyImageView();
+		mergeV = new MyImageView();
+		timeV = new MyImageView();
+		regionV = new MyImageView();
+		try {
+			init = new Image(new FileInputStream("Resources/Icons/Activity/Start.png"));
+			end = new Image(new FileInputStream("Resources/Icons/Activity/End.png"));
+			astate = new Image(new FileInputStream("Resources/Icons/Activity/Action.png"));
+			edge = new Image(new FileInputStream("Resources/Icons/Activity/Edge.png"));
+			merge = new Image(new FileInputStream("Resources/Icons/Activity/Merge.png"));
+			time = new Image(new FileInputStream("Resources/Icons/Activity/Time.png"));
+			region = new Image(new FileInputStream("Resources/Icons/Activity/Region.png"));
+			initNodeV.setImage(init);
+			endNodeV.setImage(end);
+			astateV.setImage(astate);
+			edgeV.setImage(edge);
+			mergeV.setImage(merge);
+			timeV.setImage(time);
+			regionV.setImage(region);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		initNodeV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Activity_InitNode");
+				ClearActivityToolShape();
+				initNodeV.setEffect(shape);
+			}
+		});
+		endNodeV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Activity_EndNode");
+				ClearActivityToolShape();
+				endNodeV.setEffect(shape);
+			}
+		});
+		astateV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Activity_Action");
+				ClearActivityToolShape();
+				astateV.setEffect(shape);
+			}
+		});
 
-		init.setOnAction(e -> {
-			toolHandler.setTool("Activity_InitNode");
+		edgeV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Activity_Edge");
+				ClearActivityToolShape();
+				edgeV.setEffect(shape);
+			}
 		});
-		end.setOnAction(e -> {
-			toolHandler.setTool("Activity_EndNode");
+		mergeV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Activity_Merge");
+				ClearActivityToolShape();
+				mergeV.setEffect(shape);
+			}
 		});
-		action.setOnAction(e -> {
-			toolHandler.setTool("Activity_Action");
+		timeV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Activity_Time");
+				ClearActivityToolShape();
+				timeV.setEffect(shape);
+			}
 		});
-		edge.setOnAction(e -> {
-			toolHandler.setTool("Activity_Edge");
-		});
-		merge.setOnAction(e -> {
-			toolHandler.setTool("Activity_Merge");
-		});
-		time.setOnAction(e -> {
-			toolHandler.setTool("Activity_Time");
-		});
-		region.setOnAction(e -> {
-			toolHandler.setTool("Activity_Region");
+		regionV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Activity_Region");
+				ClearActivityToolShape();
+				regionV.setEffect(shape);
+			}
 		});
 
-		btnP.getChildren().addAll(init, end, action, edge, merge, time, region);
+		btnP.getChildren().addAll(initNodeV, endNodeV, astateV,edgeV, mergeV, timeV, regionV, color);
 		return btnP;
 	}
 
@@ -764,13 +827,22 @@ public class ToolBar extends VBox {
 		ihnV.setEffect(null);
 		depenV.setEffect(null);
 	}
-	
-	public void ClearStateToolShape(){
+
+	public void ClearStateToolShape() {
 		fstateV.setEffect(null);
 		istateV.setEffect(null);
 		hstateV.setEffect(null);
 		stateV.setEffect(null);
 		sstateV.setEffect(null);
 		tranV.setEffect(null);
+	}
+
+	public void ClearActivityToolShape() {
+		initNodeV.setEffect(null);
+		endNodeV.setEffect(null);
+		edgeV.setEffect(null);
+		mergeV.setEffect(null);
+		timeV.setEffect(null);
+		regionV.setEffect(null);
 	}
 }

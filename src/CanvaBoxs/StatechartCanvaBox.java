@@ -67,7 +67,7 @@ public class StatechartCanvaBox extends CanvasPane {
 				String tool = toolHandler.getTool();// Check Tool From
 													// ToolHandler.xml
 				color = Color.web(colorS); // Dynamic color from ToolHander.xml
-
+				
 				switch (tool) {
 				case "Statechart_InitState":
 					sState = new S_StartState(e.getX(), e.getY(), 10, color);
@@ -100,10 +100,10 @@ public class StatechartCanvaBox extends CanvasPane {
 					break;
 
 				case "Statechart_Transition":
+					//Check
 					transition = new S_Transistion(e.getX(), e.getY(), 0, 0, e.getX(), e.getY(), color);
 					isTransitions = true;
 					getChildren().addAll(transition,transition.getNode());
-
 				}
 
 			}

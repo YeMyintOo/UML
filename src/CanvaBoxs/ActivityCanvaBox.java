@@ -17,12 +17,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-public class ActivityCanvaBox extends Pane {
-	// Only Activity Components Can Draw
-	private ToolHandler toolHandler;
-	private Color color;
-	private DropShadow shape;
-
+public class ActivityCanvaBox extends CanvasPane {
 	// Initial Node
 	private ArrayList<A_InitNode> initNodes;
 	private A_InitNode initNode;
@@ -59,7 +54,13 @@ public class ActivityCanvaBox extends Pane {
 	private boolean isRegion;
 
 	public ActivityCanvaBox() {
-		init();
+		initNodes = new ArrayList<A_InitNode>();
+		endNodes = new ArrayList<A_EndNode>();
+		actions = new ArrayList<A_Action>();
+		edges = new ArrayList<A_Edge>();
+		merges = new ArrayList<A_Merge>();
+		times = new ArrayList<A_Time>();
+		regions = new ArrayList<A_Region>();
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -78,13 +79,12 @@ public class ActivityCanvaBox extends Pane {
 				case "Activity_EndNode":
 					endNode = new A_EndNode(e.getX(), e.getY(), 10, color);
 					isEndNode = true;
-					drawEndNodeBorder(endNode);
-					getChildren().add(endNode);
+					getChildren().addAll(endNode.getOuter(), endNode);
 					break;
 				case "Activity_Action":
 					action = new A_Action(e.getX(), e.getY(), color);
 					isAction = true;
-					getChildren().addAll(action, action.getLabel());
+					getChildren().addAll(action, action.getLabel(), action.getText(false));
 					break;
 				case "Activity_Edge":
 					edge = new A_Edge(e.getX(), e.getY(), e.getX(), e.getY(), color);
@@ -99,12 +99,12 @@ public class ActivityCanvaBox extends Pane {
 				case "Activity_Time":
 					time = new A_Time(e.getX(), e.getY(), color);
 					isTime = true;
-					getChildren().addAll(time, time.getLine1(), time.getLine2(), time.getLine3());
+					getChildren().addAll(time,time.getLine0(), time.getLine1(), time.getLine2(), time.getLine3());
 					break;
 				case "Activity_Region":
 					region = new A_Region(e.getX(), e.getY(), color);
 					isRegion = true;
-					getChildren().addAll(region, region.getLabel());
+					getChildren().addAll(region, region.getLabel(),region.getText(false));
 					region.toBack();
 					break;
 				}
@@ -136,8 +136,8 @@ public class ActivityCanvaBox extends Pane {
 					merge.setY(e.getY());
 				}
 				if (isTime) {
-					time.setStartX(e.getX());
-					time.setStartY(e.getY());
+					time.setX(e.getX());
+					time.setY(e.getY());
 				}
 				if (isRegion) {
 					region.setX(e.getX());
@@ -162,9 +162,12 @@ public class ActivityCanvaBox extends Pane {
 					isAction = false;
 				}
 				if (isEdge) {
-					edge.recalculatePoint();
-					getChildren().addAll(edge.getTop(), edge.getBot());
-					edges.add(edge);
+					getChildren().remove(edge);
+					if (edge.filterLine()) {
+						getChildren().addAll(edge.getL1(), edge.getL2(), edge.getL3(), edge.getNode1(), edge.getNode2(),
+								edge.getStartNode(), edge.getEndNode(), edge.getTop(), edge.getBot());
+						edges.add(edge);
+					}
 					isEdge = false;
 				}
 				if (isMerge) {
@@ -179,34 +182,10 @@ public class ActivityCanvaBox extends Pane {
 					regions.add(region);
 					isRegion = false;
 				}
+				toolHandler.setTool("");
 			}
 		});
 
 	}
 
-	public void init() {
-		shape = new DropShadow();
-		shape.setOffsetX(5);
-		shape.setOffsetY(5);
-		shape.setRadius(15);
-
-		initNodes = new ArrayList<A_InitNode>();
-		endNodes = new ArrayList<A_EndNode>();
-		actions = new ArrayList<A_Action>();
-		edges = new ArrayList<A_Edge>();
-		merges = new ArrayList<A_Merge>();
-		times = new ArrayList<A_Time>();
-		regions = new ArrayList<A_Region>();
-	}
-
-	public void drawEndNodeBorder(A_EndNode endNode) {
-		Circle c = new Circle();
-		c.centerXProperty().bind(endNode.centerXProperty());
-		c.centerYProperty().bind(endNode.centerYProperty());
-		c.setRadius(15);
-		c.setStroke(Color.LIGHTGRAY);
-		c.setFill(Color.WHITE);
-
-		getChildren().add(c);
-	}
 }
