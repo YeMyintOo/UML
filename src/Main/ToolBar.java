@@ -82,6 +82,15 @@ public class ToolBar extends VBox {
 	MyImageView regionV;
 	///////////////////////
 
+	// Component Image View
+	MyImageView compV;
+	MyImageView depV;
+	MyImageView souceV;
+	MyImageView sCompV;
+	MyImageView packageV;
+	MyImageView libV;
+	///////////////////////
+
 	public ToolBar(int type) {
 		shape = new DropShadow();
 		shape.setOffsetX(5);
@@ -701,7 +710,7 @@ public class ToolBar extends VBox {
 			}
 		});
 
-		btnP.getChildren().addAll(initNodeV, endNodeV, astateV,edgeV, mergeV, timeV, regionV, color);
+		btnP.getChildren().addAll(initNodeV, endNodeV, astateV, edgeV, mergeV, timeV, regionV, color);
 		return btnP;
 	}
 
@@ -709,41 +718,85 @@ public class ToolBar extends VBox {
 		VBox btnP = new VBox();
 		btnP.setSpacing(10);
 		btnP.setAlignment(Pos.CENTER_LEFT);
-		ToggleButton component = new ToggleButton("Component");
-		ToggleButton dependence = new ToggleButton("Dependence");
-		ToggleButton sart = new ToggleButton("Source Artefact");
-		ToggleButton scomp = new ToggleButton("Source Component");
-		ToggleButton pack = new ToggleButton("Package");
-		ToggleButton lib = new ToggleButton("Library");
 
-		ToggleGroup group = new ToggleGroup();
-		component.setToggleGroup(group);
-		dependence.setToggleGroup(group);
-		sart.setToggleGroup(group);
-		scomp.setToggleGroup(group);
-		pack.setToggleGroup(group);
-		lib.setToggleGroup(group);
+		Image comp, dep, souce, sComp, pack, lib;
+		compV = new MyImageView();
+		depV = new MyImageView();
+		souceV = new MyImageView();
+		sCompV = new MyImageView();
+		packageV = new MyImageView();
+		libV = new MyImageView();
+		try {
+			comp = new Image(new FileInputStream("Resources/Icons/Component/Component.png"));
+			dep = new Image(new FileInputStream("Resources/Icons/Component/Depen.png"));
+			souce = new Image(new FileInputStream("Resources/Icons/Component/Source.png"));
+			sComp = new Image(new FileInputStream("Resources/Icons/Component/SComponent.png"));
+			pack = new Image(new FileInputStream("Resources/Icons/Component/Package.png"));
+			lib = new Image(new FileInputStream("Resources/Icons/Component/Library.png"));
+			compV.setImage(comp);
+			depV.setImage(dep);
+			souceV.setImage(souce);
+			sCompV.setImage(sComp);
+			packageV.setImage(pack);
+			libV.setImage(lib);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		component.setOnAction(e -> {
-			toolHandler.setTool("Component_Component");
-		});
-		dependence.setOnAction(e -> {
-			toolHandler.setTool("Component_Dependence");
-		});
-		sart.setOnAction(e -> {
-			toolHandler.setTool("Component_SArtefact");
-		});
-		scomp.setOnAction(e -> {
-			toolHandler.setTool("Component_SComponent");
-		});
-		pack.setOnAction(e -> {
-			toolHandler.setTool("Component_Package");
-		});
-		lib.setOnAction(e -> {
-			toolHandler.setTool("Component_Library");
+		compV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Component_Component");
+				ClearComponentToolShape();
+				compV.setEffect(shape);
+			}
 		});
 
-		btnP.getChildren().addAll(component, dependence, sart, scomp, pack, lib);
+		depV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Component_Dependence");
+				ClearComponentToolShape();
+				depV.setEffect(shape);
+			}
+		});
+
+		souceV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Component_SArtefact");
+				ClearComponentToolShape();
+				souceV.setEffect(shape);
+			}
+		});
+
+		sCompV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Component_SComponent");
+				ClearComponentToolShape();
+				sCompV.setEffect(shape);
+			}
+		});
+		packageV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Component_Package");
+				ClearComponentToolShape();
+				packageV.setEffect(shape);
+			}
+		});
+
+		libV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Component_Library");
+				ClearComponentToolShape();
+				libV.setEffect(shape);
+			}
+		});
+
+		btnP.getChildren().addAll(compV, depV, souceV, sCompV, packageV, libV, color);
 		return btnP;
 	}
 
@@ -844,5 +897,14 @@ public class ToolBar extends VBox {
 		mergeV.setEffect(null);
 		timeV.setEffect(null);
 		regionV.setEffect(null);
+	}
+
+	public void ClearComponentToolShape() {
+		compV.setEffect(null);
+		depV.setEffect(null);
+		souceV.setEffect(null);
+		sCompV.setEffect(null);
+		packageV.setEffect(null);
+		libV.setEffect(null);
 	}
 }

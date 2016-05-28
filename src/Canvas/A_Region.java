@@ -95,5 +95,4 @@ public class A_Region extends Rectangle {
 	public final StringProperty labelProperty() {
 		return data;
 	}
-
 }

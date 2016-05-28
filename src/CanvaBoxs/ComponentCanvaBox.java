@@ -14,10 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-public class ComponentCanvaBox extends Pane {
-	// Only Components Can Draw
-	private ToolHandler toolHandler;
-	private Color color;
+public class ComponentCanvaBox extends CanvasPane {
 
 	// Component
 	private ArrayList<CO_Component> components;
@@ -48,21 +45,26 @@ public class ComponentCanvaBox extends Pane {
 	private boolean isLibrary;
 
 	public ComponentCanvaBox() {
-		init();
+		components = new ArrayList<CO_Component>();
+		depens = new ArrayList<CO_Depend>();
+		artefacts = new ArrayList<CO_Artefact>();
+		scomponents = new ArrayList<CO_SComponent>();
+		packs = new ArrayList<CO_Package>();
+		librarys = new ArrayList<CO_Library>();
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
 				toolHandler = new ToolHandler();
 				String colorS = toolHandler.getColor();
-				String tool = toolHandler.getTool();// Check Tool From
-													// ToolHandler.xml
-				color = Color.web(colorS); // Dynamic color from ToolHander.xml
+				String tool = toolHandler.getTool();
+				color = Color.web(colorS);
 
 				switch (tool) {
 				case "Component_Component":
 					component = new CO_Component(e.getX(), e.getY(), color);
 					isComponent = true;
-					getChildren().addAll(component, component.getNode1(), component.getNode2());
+					getChildren().addAll(component, component.getNode1(), component.getNode2(), component.getLabel(),
+							component.getText(false));
 					break;
 				case "Component_Dependence":
 					depen = new CO_Depend(e.getX(), e.getY(), e.getX(), e.getY(), color);
@@ -72,23 +74,24 @@ public class ComponentCanvaBox extends Pane {
 				case "Component_SArtefact":
 					artefact = new CO_Artefact(e.getX(), e.getY(), color);
 					isArtefact = true;
-					getChildren().addAll(artefact, artefact.getLabel());
+					getChildren().addAll(artefact, artefact.getHead(), artefact.getLabel(), artefact.getText(false));
 					break;
 				case "Component_SComponent":
 					scomponent = new CO_SComponent(e.getX(), e.getY(), color);
 					isSComponent = true;
-					getChildren().addAll(scomponent, scomponent.getLabel(), scomponent.getNode1(),
-							scomponent.getNode2());
+					getChildren().addAll(scomponent, scomponent.getHead(), scomponent.getNode1(), scomponent.getNode2(),
+							scomponent.getLabel(), scomponent.getText(false));
 					break;
 				case "Component_Package":
 					pack = new CO_Package(e.getX(), e.getY(), color);
 					isPackage = true;
-					getChildren().addAll(pack, pack.getLabel(), pack.getNode1());
+					getChildren().addAll(pack, pack.getLabel(), pack.getNode1(), pack.getText(false));
 					break;
 				case "Component_Library":
 					library = new CO_Library(e.getX(), e.getY(), 400, 200, color, Color.LIGHTGRAY);
 					isLibrary = true;
-					getChildren().addAll(library, library.getLabel(),library.getNode1(),library.getNode2());
+					getChildren().addAll(library, library.getLabel(), library.getNode1(), library.getNode2(),
+							library.getText(false));
 					break;
 				}
 
@@ -154,17 +157,10 @@ public class ComponentCanvaBox extends Pane {
 					depens.add(depen);
 					isDependence = false;
 				}
+				toolHandler.setTool("");
 			}
 		});
 
 	}
 
-	public void init() {
-		components = new ArrayList<CO_Component>();
-		depens = new ArrayList<CO_Depend>();
-		artefacts = new ArrayList<CO_Artefact>();
-		scomponents = new ArrayList<CO_SComponent>();
-		packs = new ArrayList<CO_Package>();
-		librarys = new ArrayList<CO_Library>();
-	}
 }
