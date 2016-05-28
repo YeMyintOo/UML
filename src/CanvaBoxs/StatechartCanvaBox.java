@@ -96,7 +96,7 @@ public class StatechartCanvaBox extends CanvasPane {
 					hisState = new S_HistoryState(e.getX(), e.getY(), color);
 					isHisState = true;
 					getChildren().addAll(hisState, hisState.getLabel(), hisState.gethLabel(), hisState.getBr1(),
-							hisState.getBr2());
+							hisState.getBr2(),hisState.getText(false),hisState.getHText(false));
 					break;
 
 				case "Statechart_Transition":

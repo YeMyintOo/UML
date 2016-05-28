@@ -1,5 +1,7 @@
 package Canvas;
 
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -18,6 +20,14 @@ public class S_FinalState extends Circle {
 
 		outer.centerXProperty().bindBidirectional(centerXProperty());
 		outer.centerYProperty().bindBidirectional(centerYProperty());
+		
+		addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				setCenterX(e.getX());
+				setCenterY(e.getY());
+			}
+		});
 	}
 
 	public Circle getOuter() {

@@ -1,7 +1,15 @@
 package Canvas;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.event.EventHandler;
+import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -17,6 +25,8 @@ public class S_HistoryState extends Rectangle {
 	private Text hlabel;
 	private Line br1;
 	private Line br2;
+	private TextField field;
+	private TextField hfield;
 
 	public S_HistoryState(double x, double y, Color color) {
 		super(x, y, 200, 300);
@@ -51,9 +61,91 @@ public class S_HistoryState extends Rectangle {
 		br2.startYProperty().bind(yProperty().add(60));
 		br2.endXProperty().bind(xProperty().add(getWidth()));
 		br2.endYProperty().bind(yProperty().add(60));
+		
+		field = new TextField(labelProperty().get());
+		field.layoutXProperty().bind(xProperty().subtract(20));
+		field.layoutYProperty().bind(yProperty().add(5));
+		field.textProperty().bindBidirectional(labelProperty());
+		
+		hfield = new TextField(historyProperty().get());
+		hfield.layoutXProperty().bind(xProperty().subtract(20));
+		hfield.layoutYProperty().bind(yProperty().add(40));
+		hfield.textProperty().bindBidirectional(historyProperty());
+		
+		addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				setX(e.getX());
+				setY(e.getY());
+			}
+		});
+		
+		label.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				field.setText(labelProperty().get());
+				field.setVisible(true);
+			}
+		});
+		
+		hlabel.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				hfield.setText(historyProperty().get());
+				hfield.setVisible(true);
+			}
+		});
+		
+		DoubleProperty width = new SimpleDoubleProperty();
+		field.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent e) {
+				if (e.getCode() == KeyCode.ENTER) {
+					field.setVisible(false);
+				}
+			}
+		});
+		
+		hfield.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent e) {
+				if (e.getCode() == KeyCode.ENTER) {
+					hfield.setVisible(false);
+				}
+			}
+		});
 
 	}
+	
+	public TextField getText(boolean isShow) {
+		field.setText(labelProperty().get());
+		if (isShow) {
+			field.setVisible(isShow);
+		} else {
+			field.setVisible(false);
+		}
+		return field;
+	}
 
+	public void setTextInVisible() {
+		field.setVisible(false);
+	}
+
+
+	public TextField getHText(boolean isShow) {
+		hfield.setText(labelProperty().get());
+		if (isShow) {
+			hfield.setVisible(isShow);
+		} else {
+			hfield.setVisible(false);
+		}
+		return hfield;
+	}
+
+	public void setHTextInVisible() {
+		hfield.setVisible(false);
+	}
+	
 	public Line getBr1() {
 		return br1;
 	}
