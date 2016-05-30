@@ -83,6 +83,8 @@ public class D_Device extends Rectangle {
 				if (w.get() < min.get()) {
 					widthProperty().unbind();
 					setWidth(100);
+					data.xProperty().bind(xProperty().add(widthProperty().getValue() / 2)
+							.subtract(data.layoutBoundsProperty().getValue().getWidth() / 2));
 				}
 				if (e.getCode() == KeyCode.ENTER) {
 					field.setVisible(false);

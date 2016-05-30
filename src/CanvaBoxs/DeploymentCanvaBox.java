@@ -77,7 +77,7 @@ public class DeploymentCanvaBox extends CanvasPane {
 				case "Deployment_Software":
 					software = new D_Software(e.getX(), e.getY(), color);
 					isSoftware = true;
-					getChildren().addAll(software.getShape(), software, software.getLabel(), software.getData());
+					getChildren().addAll(software.getShape(), software, software.getLabel(), software.getData(),software.getText(false));
 					break;
 				case "Deployment_Database":
 					database = new D_Database(e.getX(), e.getY(), color);
