@@ -15,11 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-public class DeploymentCanvaBox extends Pane {
-	// Only Deployment Components Can Draw
-	private ToolHandler toolHandler;
-	private Color color;
-
+public class DeploymentCanvaBox extends CanvasPane {
 	// Hardware
 	private ArrayList<D_Device> devices;
 	private D_Device device;
@@ -56,7 +52,13 @@ public class DeploymentCanvaBox extends Pane {
 	private boolean isSystem;
 
 	public DeploymentCanvaBox() {
-		init();
+		devices = new ArrayList<D_Device>();
+		softwares = new ArrayList<D_Software>();
+		databases = new ArrayList<D_Database>();
+		protocols = new ArrayList<D_Protocal>();
+		files = new ArrayList<D_File>();
+		components = new ArrayList<D_Component>();
+		systems = new ArrayList<D_System>();
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -70,7 +72,7 @@ public class DeploymentCanvaBox extends Pane {
 				case "Deployment_Hardware":
 					device = new D_Device(e.getX(), e.getY(), color);
 					isDevice = true;
-					getChildren().addAll(device.getShape(), device, device.getLabel(), device.getData());
+					getChildren().addAll(device.getShape(), device, device.getLabel(), device.getData(),device.getText(false));
 					break;
 				case "Deployment_Software":
 					software = new D_Software(e.getX(), e.getY(), color);
@@ -102,7 +104,7 @@ public class DeploymentCanvaBox extends Pane {
 					system = new D_System(e.getX(), e.getY(), color);
 					isSystem = true;
 					getChildren().addAll(system, system.getLabel());
-					break;	
+					break;
 				}
 
 			}
@@ -135,7 +137,7 @@ public class DeploymentCanvaBox extends Pane {
 					component.setX(e.getX());
 					component.setY(e.getY());
 				}
-				if(isSystem){
+				if (isSystem) {
 					system.setX(e.getX());
 					system.setY(e.getY());
 				}
@@ -169,22 +171,14 @@ public class DeploymentCanvaBox extends Pane {
 					components.add(component);
 					isComponent = false;
 				}
-				if(isSystem){
+				if (isSystem) {
 					systems.add(system);
-					isSystem=false;
+					isSystem = false;
 				}
+				toolHandler.setTool("");
 			}
 		});
 
 	}
 
-	public void init() {
-		devices = new ArrayList<D_Device>();
-		softwares = new ArrayList<D_Software>();
-		databases = new ArrayList<D_Database>();
-		protocols = new ArrayList<D_Protocal>();
-		files = new ArrayList<D_File>();
-		components = new ArrayList<D_Component>();
-		systems = new ArrayList<D_System>();
-	}
 }

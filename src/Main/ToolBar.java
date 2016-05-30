@@ -91,6 +91,16 @@ public class ToolBar extends VBox {
 	MyImageView libV;
 	///////////////////////
 
+	// Development Image View
+	MyImageView hardV;
+	MyImageView softV;
+	MyImageView dbV;
+	MyImageView proV;
+	MyImageView fileV;
+	MyImageView cV;
+	MyImageView sysV;
+	//////////////////////////
+
 	public ToolBar(int type) {
 		shape = new DropShadow();
 		shape.setOffsetX(5);
@@ -804,46 +814,92 @@ public class ToolBar extends VBox {
 		VBox btnP = new VBox();
 		btnP.setSpacing(10);
 		btnP.setAlignment(Pos.CENTER_LEFT);
-		ToggleButton hardware = new ToggleButton("Hardware");
-		ToggleButton software = new ToggleButton("Software");
-		ToggleButton database = new ToggleButton("Database");
-		ToggleButton protocol = new ToggleButton("Protocol");
-		ToggleButton file = new ToggleButton("File");
-		ToggleButton component = new ToggleButton("Component");
-		ToggleButton system = new ToggleButton("System");
 
-		ToggleGroup group = new ToggleGroup();
-		hardware.setToggleGroup(group);
-		software.setToggleGroup(group);
-		database.setToggleGroup(group);
-		protocol.setToggleGroup(group);
-		file.setToggleGroup(group);
-		component.setToggleGroup(group);
-		system.setToggleGroup(group);
+		Image hard, soft, db, pro, file, c, sys;
+		hardV = new MyImageView();
+		softV = new MyImageView();
+		dbV = new MyImageView();
+		proV = new MyImageView();
+		fileV = new MyImageView();
+		cV = new MyImageView();
+		sysV = new MyImageView();
+		try {
+			hard = new Image(new FileInputStream("Resources/Icons/Development/Hardware.png"));
+			soft = new Image(new FileInputStream("Resources/Icons/Development/Software.png"));
+			db = new Image(new FileInputStream("Resources/Icons/Development/Database.png"));
+			pro = new Image(new FileInputStream("Resources/Icons/Development/Protocol.png"));
+			file = new Image(new FileInputStream("Resources/Icons/Development/File.png"));
+			c = new Image(new FileInputStream("Resources/Icons/Development/Component.png"));
+			sys = new Image(new FileInputStream("Resources/Icons/Development/System.png"));
+			hardV.setImage(hard);
+			softV.setImage(soft);
+			dbV.setImage(db);
+			proV.setImage(pro);
+			fileV.setImage(file);
+			cV.setImage(c);
+			sysV.setImage(sys);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		hardware.setOnAction(e -> {
-			toolHandler.setTool("Deployment_Hardware");
+		hardV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Deployment_Hardware");
+				ClearDevelopmentToolShape();
+				hardV.setEffect(shape);
+			}
 		});
-		software.setOnAction(e -> {
-			toolHandler.setTool("Deployment_Software");
+		softV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Deployment_Software");
+				ClearDevelopmentToolShape();
+				softV.setEffect(shape);
+			}
 		});
-		database.setOnAction(e -> {
-			toolHandler.setTool("Deployment_Database");
+		dbV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Deployment_Database");
+				ClearDevelopmentToolShape();
+				dbV.setEffect(shape);
+			}
 		});
-		protocol.setOnAction(e -> {
-			toolHandler.setTool("Deployment_Protocol");
+		proV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Deployment_Protocol");
+				ClearDevelopmentToolShape();
+				proV.setEffect(shape);
+			}
 		});
-		file.setOnAction(e -> {
-			toolHandler.setTool("Deployment_File");
+		fileV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Deployment_File");
+				ClearDevelopmentToolShape();
+				fileV.setEffect(shape);
+			}
 		});
-		component.setOnAction(e -> {
-			toolHandler.setTool("Deployment_Component");
+		cV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Deployment_Component");
+				ClearDevelopmentToolShape();
+				cV.setEffect(shape);
+			}
 		});
-		system.setOnAction(e -> {
-			toolHandler.setTool("Deployment_System");
+		sysV.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				toolHandler.setTool("Deployment_System");
+				ClearDevelopmentToolShape();
+				sysV.setEffect(shape);
+			}
 		});
 
-		btnP.getChildren().addAll(hardware, software, database, protocol, file, component, system);
+		btnP.getChildren().addAll(hardV, softV, dbV, proV, fileV, cV, sysV, color);
 		return btnP;
 	}
 
@@ -906,5 +962,15 @@ public class ToolBar extends VBox {
 		sCompV.setEffect(null);
 		packageV.setEffect(null);
 		libV.setEffect(null);
+	}
+
+	public void ClearDevelopmentToolShape() {
+		hardV.setEffect(null);
+		softV.setEffect(null);
+		dbV.setEffect(null);
+		proV.setEffect(null);
+		fileV.setEffect(null);
+		cV.setEffect(null);
+		sysV.setEffect(null);
 	}
 }
