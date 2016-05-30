@@ -72,17 +72,20 @@ public class DeploymentCanvaBox extends CanvasPane {
 				case "Deployment_Hardware":
 					device = new D_Device(e.getX(), e.getY(), color);
 					isDevice = true;
-					getChildren().addAll(device.getShape(), device, device.getLabel(), device.getData(),device.getText(false));
+					getChildren().addAll(device.getShape(), device, device.getLabel(), device.getData(),
+							device.getText(false));
 					break;
 				case "Deployment_Software":
 					software = new D_Software(e.getX(), e.getY(), color);
 					isSoftware = true;
-					getChildren().addAll(software.getShape(), software, software.getLabel(), software.getData(),software.getText(false));
+					getChildren().addAll(software.getShape(), software, software.getLabel(), software.getData(),
+							software.getText(false));
 					break;
 				case "Deployment_Database":
 					database = new D_Database(e.getX(), e.getY(), color);
 					isDatabase = true;
-					getChildren().addAll(database.getShape(), database, database.getLabel(), database.getData());
+					getChildren().addAll(database.getShape(), database, database.getLabel(), database.getData(),
+							database.getText(false));
 					break;
 				case "Deployment_Protocol":
 					protocol = new D_Protocal(e.getX(), e.getY(), e.getX(), e.getY(), color);
@@ -92,18 +95,18 @@ public class DeploymentCanvaBox extends CanvasPane {
 				case "Deployment_File":
 					file = new D_File(e.getX(), e.getY(), color);
 					isFile = true;
-					getChildren().addAll(file, file.getLabel(), file.getData(), file.getFile());
+					getChildren().addAll(file, file.getLabel(), file.getData(),file.getText(false));
 					break;
 				case "Deployment_Component":
 					component = new D_Component(e.getX(), e.getY(), color);
 					isComponent = true;
-					getChildren().addAll(component, component.getLabel(), component.getData(), component.getComponent(),
-							component.getNode1(), component.getNode2());
+					getChildren().addAll(component, component.getLabel(), component.getData(),
+							component.getText(false));
 					break;
 				case "Deployment_System":
 					system = new D_System(e.getX(), e.getY(), color);
 					isSystem = true;
-					getChildren().addAll(system, system.getLabel());
+					getChildren().addAll(system, system.getLabel(),system.getText(false));
 					break;
 				}
 
@@ -160,7 +163,12 @@ public class DeploymentCanvaBox extends CanvasPane {
 					isDatabase = false;
 				}
 				if (isProtocol) {
-					protocols.add(protocol);
+					getChildren().remove(protocol);
+					if (protocol.filterLine()) {
+						getChildren().addAll(protocol.getL1(), protocol.getL2(), protocol.getL3(), protocol.getNode1(),
+								protocol.getNode2(), protocol.getStartNode(), protocol.getEndNode());
+						protocols.add(protocol);
+					}
 					isProtocol = false;
 				}
 				if (isFile) {
