@@ -210,13 +210,9 @@ public class ObjectCanvaBox extends CanvasPane {
 					}
 					// Print
 					if (key.getCode() == KeyCode.PRINTSCREEN) {
-						if (defaultprinter == null) {
-							defaultprinter = Printer.getDefaultPrinter();
-							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
-									Printer.MarginType.HARDWARE_MINIMUM);
-						}
+						new Library.PrintNode(this);
 						getChildren().remove(gridLine);
-						PrintNode(this, pageLayout);
+						new Library.PrintNode(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}
@@ -278,14 +274,10 @@ public class ObjectCanvaBox extends CanvasPane {
 					}
 					// Print
 					if (key.getCode() == KeyCode.PRINTSCREEN) {
-						if (defaultprinter == null) {
-							defaultprinter = Printer.getDefaultPrinter();
-							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
-									Printer.MarginType.HARDWARE_MINIMUM);
-						}
+						
 						links.get(index).setEffect(null);
 						getChildren().remove(gridLine);
-						PrintNode(this, pageLayout);
+						new Library.PrintNode(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}

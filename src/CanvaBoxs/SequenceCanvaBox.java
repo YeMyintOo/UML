@@ -285,14 +285,10 @@ public class SequenceCanvaBox extends CanvasPane {
 					}
 					// Print
 					if (key.getCode() == KeyCode.PRINTSCREEN) {
-						if (defaultprinter == null) {
-							defaultprinter = Printer.getDefaultPrinter();
-							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
-									Printer.MarginType.HARDWARE_MINIMUM);
-						}
+						
 						roles.get(index).setEffect(null);
 						getChildren().remove(gridLine);
-						PrintNode(this, pageLayout);
+						new Library.PrintNode(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}
@@ -372,14 +368,10 @@ public class SequenceCanvaBox extends CanvasPane {
 					}
 					// Print
 					if (key.getCode() == KeyCode.PRINTSCREEN) {
-						if (defaultprinter == null) {
-							defaultprinter = Printer.getDefaultPrinter();
-							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
-									Printer.MarginType.HARDWARE_MINIMUM);
-						}
+						
 						anormals.get(index).setEffect(null);
 						getChildren().remove(gridLine);
-						PrintNode(this, pageLayout);
+						new Library.PrintNode(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}
@@ -506,14 +498,10 @@ public class SequenceCanvaBox extends CanvasPane {
 					}
 					// Print
 					if (key.getCode() == KeyCode.PRINTSCREEN) {
-						if (defaultprinter == null) {
-							defaultprinter = Printer.getDefaultPrinter();
-							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
-									Printer.MarginType.HARDWARE_MINIMUM);
-						}
+						
 						anews.get(index).setEffect(null);
 						getChildren().remove(gridLine);
-						PrintNode(this, pageLayout);
+						new Library.PrintNode(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}
@@ -574,14 +562,10 @@ public class SequenceCanvaBox extends CanvasPane {
 					}
 					// Print
 					if (key.getCode() == KeyCode.PRINTSCREEN) {
-						if (defaultprinter == null) {
-							defaultprinter = Printer.getDefaultPrinter();
-							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
-									Printer.MarginType.HARDWARE_MINIMUM);
-						}
+						
 						dnews.get(index).setEffect(null);
 						getChildren().remove(gridLine);
-						PrintNode(this, pageLayout);
+						new Library.PrintNode(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}
@@ -641,14 +625,10 @@ public class SequenceCanvaBox extends CanvasPane {
 					}
 					// Print
 					if (key.getCode() == KeyCode.PRINTSCREEN) {
-						if (defaultprinter == null) {
-							defaultprinter = Printer.getDefaultPrinter();
-							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
-									Printer.MarginType.HARDWARE_MINIMUM);
-						}
+						
 						snews.get(index).setEffect(null);
 						getChildren().remove(gridLine);
-						PrintNode(this, pageLayout);
+						new Library.PrintNode(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}

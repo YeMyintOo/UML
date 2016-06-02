@@ -82,7 +82,7 @@ public class ClassCanvaBox extends CanvasPane {
 	private C_Dependency dep;
 	private boolean isDependency;
 
-	public ClassCanvaBox(Scene owner,Stage parent, File path, boolean isLoad) {
+	public ClassCanvaBox(Scene owner, Stage parent, File path, boolean isLoad) {
 		setOwner(owner);
 		setStage(parent);
 		setPath(path);
@@ -770,14 +770,10 @@ public class ClassCanvaBox extends CanvasPane {
 					}
 					// Print
 					if (key.getCode() == KeyCode.PRINTSCREEN) {
-						if (defaultprinter == null) {
-							defaultprinter = Printer.getDefaultPrinter();
-							pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
-									Printer.MarginType.HARDWARE_MINIMUM);
-						}
+
 						cboxs.get(index).setEffect(null);
 						getChildren().remove(gridLine);
-						PrintNode(this, pageLayout);
+						new Library.PrintNode(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}
@@ -793,7 +789,7 @@ public class ClassCanvaBox extends CanvasPane {
 					// Code Print
 					if (key.getCode() == KeyCode.F2) {
 						System.out.println("****Code Print*****");
-						code=new CodeGenerate(parent);
+						code = new CodeGenerate(parent);
 						code.generateClass(cboxs.get(index));
 					}
 				});
@@ -1145,5 +1141,4 @@ public class ClassCanvaBox extends CanvasPane {
 		}
 	}
 
-	
 }

@@ -20,7 +20,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class UC_Actor extends Circle {
-
 	
 	private StringProperty data;
 	private Text label;
@@ -31,7 +30,6 @@ public class UC_Actor extends Circle {
 	private Line leg3;
 	private Line leg4;
 	private DropShadow shape;
-	private Button delB;
 
 	public UC_Actor(double centerX, double centerY, double radius, Color bgcolor, Color scolor) {
 		super(centerX, centerY, radius);
@@ -81,10 +79,6 @@ public class UC_Actor extends Circle {
 		field.layoutYProperty().bind(centerYProperty().add(60));
 		field.textProperty().bindBidirectional(labelProperty());
 
-		delB = new Button("x");
-		delB.layoutXProperty().bind(centerXProperty().add(20));
-		delB.layoutYProperty().bind(centerYProperty().subtract(10));
-
 		addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent key) {
@@ -100,7 +94,6 @@ public class UC_Actor extends Circle {
 					shape = new DropShadow();
 				}
 				setEffect(shape);
-				delB.setVisible(true);
 			}
 		});
 
@@ -108,13 +101,6 @@ public class UC_Actor extends Circle {
 			@Override
 			public void handle(MouseEvent key) {
 				setEffect(null);
-			}
-		});
-
-		delB.addEventFilter(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent key) {
-				delB.setVisible(false);
 			}
 		});
 
@@ -136,7 +122,7 @@ public class UC_Actor extends Circle {
 				}
 			}
 		});
-
+		
 		
 	}
 
@@ -182,12 +168,4 @@ public class UC_Actor extends Circle {
 		return leg4;
 	}
 
-	public Button getDel(boolean isShow) {
-		if (isShow) {
-			delB.setVisible(isShow);
-		} else {
-			delB.setVisible(false);
-		}
-		return delB;
-	}
 }

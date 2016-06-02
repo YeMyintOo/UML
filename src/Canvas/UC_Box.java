@@ -1,8 +1,15 @@
 package Canvas;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.event.EventHandler;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -34,9 +41,34 @@ public class UC_Box extends Rectangle {
 		text = new TextField(data.get());
 		text.layoutXProperty().bind(xProperty());
 		text.layoutYProperty().bind(yProperty().subtract(10));
-		
+
 		labelProperty().bindBidirectional(getTextData().textProperty());
 
+		addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent key) {
+				setX(key.getX() - 100);
+				setY(key.getY() - 100);
+			}
+		});
+
+		label.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent key) {
+				text.setVisible(true);
+			}
+		});
+		
+		DoubleProperty w = new SimpleDoubleProperty();
+		text.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent e) {
+				w.set(label.layoutBoundsProperty().getValue().getWidth());
+				if (e.getCode() == KeyCode.ENTER) {
+					text.setVisible(false);
+				}
+			}
+		});
 	}
 
 	public final StringProperty labelProperty() {
@@ -46,20 +78,22 @@ public class UC_Box extends Rectangle {
 	public Text getLabel() {
 		return label;
 	}
-	
-	public TextField getTextData(){
+
+	public TextField getTextData() {
 		return text;
 	}
+
 	public TextField getText(boolean isShow) {
 		text.setText(labelProperty().get());
-		if(isShow){
+		if (isShow) {
 			text.setVisible(isShow);
-		}else{
+		} else {
 			text.setVisible(false);
 		}
 		return text;
 	}
-	public void setTextInVisible(){
+
+	public void setTextInVisible() {
 		text.setVisible(false);
 	}
 }

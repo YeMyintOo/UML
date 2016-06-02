@@ -14,22 +14,15 @@ import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
 import Library.MyGridLine;
 import Library.SaveDiagramXML;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
-import javafx.print.PageOrientation;
-import javafx.print.Paper;
-import javafx.print.Printer;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 public class UseCaseCanvaBox2 extends CanvasPane {
 
@@ -50,7 +43,7 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 
 	// Process
 	private ArrayList<UC_ProcessCycle> processCycles;
-	private UC_ProcessCycle processCycle;
+	private UC_ProcessCycle pC;
 	private boolean isProcessCycle;
 
 	// ExtendLine
@@ -67,6 +60,8 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 	private ArrayList<UC_TypeOfLine> typeofLines;
 	private UC_TypeOfLine typeofLine;
 	private boolean isTypeofLine;
+	
+	
 
 	public UseCaseCanvaBox2(Scene owner, File path, boolean isLoad) {
 		this.isLoad = isLoad;
@@ -82,7 +77,7 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 		extendLines = new ArrayList<UC_ExtendLine>();
 		includeLines = new ArrayList<UC_IncludeLine>();
 		typeofLines = new ArrayList<UC_TypeOfLine>();
-
+		
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent key) {
@@ -95,7 +90,7 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 						actor = new UC_Actor(key.getX(), key.getY(), 20, color, Color.GRAY);
 						isActor = true;
 						getChildren().addAll(actor, actor.getBody(), actor.getLeg(), actor.getLeg2(), actor.getLeg3(),
-								actor.getLeg4(), actor.getLabel(), actor.getText(false), actor.getDel(false));
+								actor.getLeg4(), actor.getLabel(), actor.getText(false));
 						break;
 					case "UseCase_Action":
 						actionLine = new UC_ActionLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
@@ -109,9 +104,9 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 						getChildren().addAll(box, box.getLabel());
 						break;
 					case "UseCase_Process":
-						processCycle = new UC_ProcessCycle(key.getX(), key.getY(), 60, 30, color, Color.BLACK);
+						pC = new UC_ProcessCycle(key.getX(), key.getY(), 60, 30, color, Color.BLACK);
 						isProcessCycle = true;
-						getChildren().addAll(processCycle, processCycle.getLabel());
+						getChildren().addAll(pC, pC.getLabel(), pC.getText(false));
 						break;
 					case "UseCase_Extend":
 						extendLine = new UC_ExtendLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
@@ -132,6 +127,7 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 						break;
 					}
 					requestFocus();
+					toolHandler.setTool("");
 				}
 			}
 		});
@@ -141,28 +137,22 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 				if (isActor) {
 					actor.setCenterX(e.getX());
 					actor.setCenterY(e.getY());
-				}
-				if (isActionLine) {
+				} else if (isActionLine) {
 					actionLine.setEndX(e.getX());
 					actionLine.setEndY(e.getY());
-				}
-				if (isBox) {
+				} else if (isBox) {
 					box.setX(e.getX() - 100);
 					box.setY(e.getY() - 100);
-				}
-				if (isProcessCycle) {
-					processCycle.setCenterX(e.getX());
-					processCycle.setCenterY(e.getY());
-				}
-				if (isExtendLine) {
+				} else if (isProcessCycle) {
+					pC.setCenterX(e.getX());
+					pC.setCenterY(e.getY());
+				} else if (isExtendLine) {
 					extendLine.setEndX(e.getX());
 					extendLine.setEndY(e.getY());
-				}
-				if (isIncludeLine) {
+				} else if (isIncludeLine) {
 					includeLine.setEndX(e.getX());
 					includeLine.setEndY(e.getY());
-				}
-				if (isTypeofLine) {
+				} else if (isTypeofLine) {
 					typeofLine.setEndX(e.getX());
 					typeofLine.setEndY(e.getY());
 				}
@@ -174,42 +164,34 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 				if (isActor) {
 					actors.add(actor);
 					isActor = false;
-				}
-				if (isActionLine) {
+				} else if (isActionLine) {
 					actionLines.add(actionLine);
 					isActionLine = false;
-				}
-				if (isBox) {
+				} else if (isBox) {
 					getChildren().add(box.getText(false));
 					boxs.add(box);
 					isBox = false;
 					requestFocus();
-				}
-				if (isProcessCycle) {
-					getChildren().add(processCycle.getText(false));
-					processCycles.add(processCycle);
+				} else if (isProcessCycle) {
+					processCycles.add(pC);
 					isProcessCycle = false;
-				}
-				if (isExtendLine) {
+				} else if (isExtendLine) {
 					extendLine.recalculatePoint();
 					getChildren().addAll(extendLine.getLabel(true), extendLine.getTop(), extendLine.getBot());
 					extendLines.add(extendLine);
 					isExtendLine = false;
-				}
-				if (isIncludeLine) {
+				} else if (isIncludeLine) {
 					includeLine.recalculatePoint();
 					getChildren().addAll(includeLine.getLabel(true), includeLine.getTop(), includeLine.getBot());
 					includeLines.add(includeLine);
 					isIncludeLine = false;
-				}
-				if (isTypeofLine) {
+				} else if (isTypeofLine) {
 					typeofLine.calculateTri();
 					getChildren().add(typeofLine.getTri());
 					typeofLines.add(typeofLine);
 					isTypeofLine = false;
 				}
 				requestFocus();
-				toolHandler.setTool("");
 			}
 		});
 
@@ -226,8 +208,15 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 				}
 				save.saveUseCaseCanvaBox(actors, actionLines, boxs, processCycles, extendLines, includeLines,
 						typeofLines);
-				System.out.println("****Save*****");
-			}
+			} 
+		});
+		
+		saveB.setOnAction(e->{
+			System.out.println("Save Me");
+		});
+		
+		printB.setOnAction(e->{
+			System.out.println("Print Me");
 		});
 
 	}
@@ -249,93 +238,11 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 	public void isNewOrEdit(MouseEvent e) {
 		isNew = true;
 		Point2D point = new Point2D(e.getX(), e.getY());
-		// isNewOREditActor(e, point);
 		isNewOREditAction(e, point);
-		isNewOREditBox(e, point);
-		isNewOREditProcess(e, point);
 		isNewOREditTypeOf(e, point);
 		isNewOREditInclude(e, point);
 		isNewOREditExtend(e, point);
-	}
 
-	public void isNewOREditActor(MouseEvent e, Point2D point) {
-		// Actor
-		int i;
-		for (i = 0; i < actors.size(); i++) {
-			if (actors.get(i).contains(point)) {
-				isNew = false;
-				// Edition Process////////////
-				int index = i;
-				actors.get(i).addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent key) {
-						actors.get(index).setCenterX(key.getX());
-						actors.get(index).setCenterY(key.getY());
-					}
-				});
-				actors.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent key) {
-						Button x = null;
-						if (key.getClickCount() == 2) {
-							TextField data = new TextField();
-							data.layoutXProperty().bind(actors.get(index).centerXProperty().subtract(60));
-							data.layoutYProperty().bind(actors.get(index).centerYProperty().add(60));
-							getChildren().add(data);
-							data.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-								@Override
-								public void handle(KeyEvent e) {
-									if (e.getCode() == KeyCode.ENTER) {
-										if (!data.getText().equals("")) {
-											actors.get(index).labelProperty().set(data.getText().trim());
-										}
-										getChildren().remove(data);
-									}
-								}
-							});
-						}
-					}
-				});
-
-				actors.get(i).setEffect(shape);
-
-				// Delete
-				actors.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
-				actors.get(i).setOnKeyPressed(key -> {
-					if (key.getCode() == KeyCode.DELETE) {
-						if (actors.size() > 0) {
-							getChildren().removeAll(actors.get(index), actors.get(index).getBody(),
-									actors.get(index).getLeg(), actors.get(index).getLeg2(),
-									actors.get(index).getLeg3(), actors.get(index).getLeg4(),
-									actors.get(index).getLabel());
-							actors.remove(index);
-						} else {
-							System.out.println("No Actor to delete");
-						}
-
-					}
-				});
-
-			} else {
-				actors.get(i).setEffect(null);
-			}
-
-			// Linked
-
-			for (int k = 0; k < actionLines.size(); k++) {
-				Rectangle rc = new Rectangle(actors.get(i).getCenterX() - 30, actors.get(i).getCenterY() - 30, 60, 100);
-				Point2D p = new Point2D(actionLines.get(k).getStartX(), actionLines.get(k).getStartY());
-				if (rc.contains(p)) {
-					double difx = actors.get(i).getCenterX() - actionLines.get(k).getStartX();
-					double dify = actors.get(i).getCenterY() - actionLines.get(k).getStartY();
-					actionLines.get(k).startXProperty().bind(actors.get(i).centerXProperty().add(difx + 30));
-					actionLines.get(k).startYProperty().bind(actors.get(i).centerYProperty());
-					actors.get(i).toFront();
-				}
-
-			}
-
-		}
 	}
 
 	public void isNewOREditAction(MouseEvent e, Point2D point) {
@@ -378,129 +285,10 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 					}
 				});
 				actionLines.get(i).setEffect(shape);
-				// getChildren().addAll(x, y);
 			} else {
 				actionLines.get(i).setEffect(null);
 			}
 
-		}
-	}
-
-	public void isNewOREditBox(MouseEvent e, Point2D point) {
-		for (int i = 0; i < boxs.size(); i++) {
-			int index = i;
-			if (boxs.get(i).contains(point)) {
-				isNew = false;
-				boxs.get(i).addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent key) {
-						boxs.get(index).setX(key.getX() - 100);
-						boxs.get(index).setY(key.getY() - 100);
-					}
-				});
-				boxs.get(i).setOnScroll(new EventHandler<ScrollEvent>() {
-					@Override
-					public void handle(ScrollEvent s) {
-						if (s.getDeltaY() == 40) {
-							boxs.get(index).setWidth(boxs.get(index).getWidth() + 10);
-						} else {
-							boxs.get(index).setHeight(boxs.get(index).getHeight() + 10);
-						}
-					}
-				});
-				boxs.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent key) {
-						if (key.getClickCount() == 2) {
-							boxs.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED,
-									new EventHandler<KeyEvent>() {
-								@Override
-								public void handle(KeyEvent e) {
-									if (e.getCode() == KeyCode.ENTER) {
-										boxs.get(index).setTextInVisible();
-									}
-								}
-							});
-						}
-					}
-				});
-
-				break;
-			}
-		}
-	}
-
-	public void isNewOREditProcess(MouseEvent e, Point2D point) {
-		for (int i = 0; i < processCycles.size(); i++) {
-			if (processCycles.get(i).contains(point)) {
-				isNew = false;
-				int index = i;
-				processCycles.get(i).setEffect(shape);
-				processCycles.get(i).addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent key) {
-						processCycles.get(index).setCenterX(key.getX());
-						processCycles.get(index).setCenterY(key.getY());
-					}
-				});
-				processCycles.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent key) {
-						Button x = null;
-						if (key.getClickCount() == 2) {
-							processCycles.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED,
-									new EventHandler<KeyEvent>() {
-								@Override
-								public void handle(KeyEvent e) {
-									if (e.getCode() == KeyCode.ENTER) {
-										DoubleProperty width = new SimpleDoubleProperty();
-										width.set(processCycles.get(index).getLabel().layoutBoundsProperty().getValue()
-												.getWidth());
-										processCycles.get(index).radiusXProperty().bind(width);
-										processCycles.get(index).getLabel()
-												.layoutXProperty().bind(
-														processCycles.get(index).centerXProperty()
-																.subtract(processCycles.get(index).getLabel()
-																		.layoutBoundsProperty().getValue().getWidth()
-																		/ 2));
-										processCycles.get(index).setTextInVisible();
-									}
-								}
-							});
-						}
-					}
-				});
-
-				// Delete
-				processCycles.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
-				processCycles.get(i).setOnKeyPressed(key -> {
-					if (key.getCode() == KeyCode.DELETE) {
-						if (processCycles.size() > 0) {
-							getChildren().removeAll(processCycles.get(index), processCycles.get(index).getLabel(),
-									processCycles.get(index).getText(false));
-							processCycles.remove(index);
-						} else {
-							System.out.println("No ProcessCycle to delete");
-						}
-					}
-				});
-
-			} else {
-				processCycles.get(i).setEffect(null);
-			}
-
-			// Linked
-			if (actionLines.size() > 0) {
-				for (int k = 0; k < actionLines.size(); k++) {
-					Point2D p = new Point2D(actionLines.get(k).getEndX(), actionLines.get(k).getEndY());
-					if (processCycles.get(i).contains(p)) {
-						actionLines.get(k).endXProperty().bind(processCycles.get(i).centerXProperty());
-						actionLines.get(k).endYProperty().bind(processCycles.get(i).centerYProperty());
-						processCycles.get(i).toFront();
-						processCycles.get(i).getLabel().toFront();
-					}
-				}
-			}
 		}
 	}
 
@@ -531,7 +319,6 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 					|| typeofLines.get(i).contains(point.getX(), point.getY() + 5);
 			if (isclick) {
 				isNew = false;
-
 				// Delete
 				typeofLines.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
 				typeofLines.get(i).setOnKeyPressed(key -> {
@@ -918,6 +705,33 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	// Delete Function
+	public void DeleteNode() {
+		for (int i = 0; i < actors.size(); i++) {
+			int index = i;
+			if (actors.get(i).isFocused()) {
+				System.out.println(" Actor " + index + " is foucsed");
+			}
+
+		}
+
+		for (int i = 0; i < processCycles.size(); i++) {
+			int index = i;
+			processCycles.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+			processCycles.get(i).setOnKeyPressed(key -> {
+				if (key.getCode() == KeyCode.DELETE) {
+					if (processCycles.size() > 0) {
+						getChildren().removeAll(processCycles.get(index), processCycles.get(index).getLabel(),
+								processCycles.get(index).getText(false));
+						processCycles.remove(index);
+					} else {
+						System.out.println("No ProcessCycle to delete");
+					}
+				}
+			});
 		}
 	}
 
