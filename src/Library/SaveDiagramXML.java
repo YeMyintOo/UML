@@ -29,7 +29,7 @@ import Canvas.UC_Actor;
 import Canvas.UC_Box;
 import Canvas.UC_ExtendLine;
 import Canvas.UC_IncludeLine;
-import Canvas.UC_ProcessCycle;
+import Canvas.UC_Process;
 import Canvas.UC_TypeOfLine;
 
 public class SaveDiagramXML {
@@ -53,7 +53,7 @@ public class SaveDiagramXML {
 	}
 
 	public void saveUseCaseCanvaBox(ArrayList<UC_Actor> actors, ArrayList<UC_ActionLine> actions,
-			ArrayList<UC_Box> boxs, ArrayList<UC_ProcessCycle> processCycles, ArrayList<UC_ExtendLine> extendLines,
+			ArrayList<UC_Box> boxs, ArrayList<UC_Process> processCycles, ArrayList<UC_ExtendLine> extendLines,
 			ArrayList<UC_IncludeLine> includeLines, ArrayList<UC_TypeOfLine> typeofLines) {
 
 		// Actor

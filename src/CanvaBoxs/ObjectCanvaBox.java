@@ -14,7 +14,7 @@ import Canvas.UC_Actor;
 import Canvas.UC_Box;
 import Canvas.UC_ExtendLine;
 import Canvas.UC_IncludeLine;
-import Canvas.UC_ProcessCycle;
+import Canvas.UC_Process;
 import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
 import Library.SaveDiagramXML;

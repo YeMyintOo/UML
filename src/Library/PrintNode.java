@@ -7,6 +7,7 @@ import javafx.print.Paper;
 import javafx.print.Printer;
 import javafx.print.PrinterJob;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.transform.Scale;
 
 public class PrintNode {
@@ -22,8 +23,7 @@ public class PrintNode {
 		PrinterJob job = PrinterJob.createPrinterJob();
 		JobSettings setting = job.getJobSettings();
 		setting.setPageLayout(pageLayout);
-		boolean isPrint = job.showPrintDialog(null);
-
+		boolean isPrint = job.showPrintDialog(node.getScene().getWindow());
 		if (isPrint) {
 			// Scale
 			double scaleX = pageLayout.getPrintableWidth() / node.getLayoutBounds().getWidth();

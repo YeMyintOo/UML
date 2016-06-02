@@ -9,23 +9,23 @@ import Canvas.UC_Actor;
 import Canvas.UC_Box;
 import Canvas.UC_ExtendLine;
 import Canvas.UC_IncludeLine;
-import Canvas.UC_ProcessCycle;
+import Canvas.UC_Process;
 import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
 import Library.MyGridLine;
 import Library.SaveDiagramXML;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
 public class UseCaseCanvaBox2 extends CanvasPane {
-
+	
+	//All In One
+	
+	
 	// Actor
 	private ArrayList<UC_Actor> actors;
 	private UC_Actor actor;
@@ -42,8 +42,8 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 	private boolean isBox;
 
 	// Process
-	private ArrayList<UC_ProcessCycle> processCycles;
-	private UC_ProcessCycle pC;
+	private ArrayList<UC_Process> processCycles;
+	private UC_Process pC;
 	private boolean isProcessCycle;
 
 	// ExtendLine
@@ -60,8 +60,6 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 	private ArrayList<UC_TypeOfLine> typeofLines;
 	private UC_TypeOfLine typeofLine;
 	private boolean isTypeofLine;
-	
-	
 
 	public UseCaseCanvaBox2(Scene owner, File path, boolean isLoad) {
 		this.isLoad = isLoad;
@@ -73,11 +71,11 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 		actors = new ArrayList<UC_Actor>();
 		actionLines = new ArrayList<UC_ActionLine>();
 		boxs = new ArrayList<UC_Box>();
-		processCycles = new ArrayList<UC_ProcessCycle>();
+		processCycles = new ArrayList<UC_Process>();
 		extendLines = new ArrayList<UC_ExtendLine>();
 		includeLines = new ArrayList<UC_IncludeLine>();
 		typeofLines = new ArrayList<UC_TypeOfLine>();
-		
+
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent key) {
@@ -104,7 +102,7 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 						getChildren().addAll(box, box.getLabel());
 						break;
 					case "UseCase_Process":
-						pC = new UC_ProcessCycle(key.getX(), key.getY(), 60, 30, color, Color.BLACK);
+						pC = new UC_Process(key.getX(), key.getY(), 60, 30, color, Color.BLACK);
 						isProcessCycle = true;
 						getChildren().addAll(pC, pC.getLabel(), pC.getText(false));
 						break;
@@ -195,30 +193,18 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 			}
 		});
 
-		this.onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
-		this.setOnKeyPressed(e -> {
-			if (e.getCode() == KeyCode.PRINTSCREEN) {
-				getChildren().remove(gridLine);
-				new Library.PrintNode(this);
-				getChildren().add(gridLine);
-				gridLine.toBack();
-			} else if (e.getCode() == KeyCode.F1) {
-				if (save == null) {
-					save = new SaveDiagramXML(path);
-				}
-				save.saveUseCaseCanvaBox(actors, actionLines, boxs, processCycles, extendLines, includeLines,
-						typeofLines);
-			} 
+		saveB.setOnAction(e -> {
+			if (save == null) {
+				save = new SaveDiagramXML(path);
+			}
+			save.saveUseCaseCanvaBox(actors, actionLines, boxs, processCycles, extendLines, includeLines, typeofLines);
 		});
-		
-		saveB.setOnAction(e->{
-			System.out.println("Save Me");
+		printB.setOnAction(e -> {
+			getChildren().removeAll(gridLine, menu);
+			new Library.PrintNode(this);
+			getChildren().add(gridLine);
+			gridLine.toBack();
 		});
-		
-		printB.setOnAction(e->{
-			System.out.println("Print Me");
-		});
-
 	}
 
 	public void init() {
@@ -242,7 +228,6 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 		isNewOREditTypeOf(e, point);
 		isNewOREditInclude(e, point);
 		isNewOREditExtend(e, point);
-
 	}
 
 	public void isNewOREditAction(MouseEvent e, Point2D point) {
@@ -593,7 +578,7 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 						}
 
 					}
-					UC_ProcessCycle up = new UC_ProcessCycle(x, y, 60, 30, color, Color.LIGHTGRAY);
+					UC_Process up = new UC_Process(x, y, 60, 30, color, Color.LIGHTGRAY);
 					processCycles.add(up);
 					getChildren().addAll(up, up.getLabel());
 				}
@@ -708,32 +693,7 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 		}
 	}
 
-	// Delete Function
-	public void DeleteNode() {
-		for (int i = 0; i < actors.size(); i++) {
-			int index = i;
-			if (actors.get(i).isFocused()) {
-				System.out.println(" Actor " + index + " is foucsed");
-			}
-
-		}
-
-		for (int i = 0; i < processCycles.size(); i++) {
-			int index = i;
-			processCycles.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
-			processCycles.get(i).setOnKeyPressed(key -> {
-				if (key.getCode() == KeyCode.DELETE) {
-					if (processCycles.size() > 0) {
-						getChildren().removeAll(processCycles.get(index), processCycles.get(index).getLabel(),
-								processCycles.get(index).getText(false));
-						processCycles.remove(index);
-					} else {
-						System.out.println("No ProcessCycle to delete");
-					}
-				}
-			});
-		}
-	}
+	
 
 	public Scene getOwner() {
 		return owner;
