@@ -39,7 +39,6 @@ public class CanvasPane extends Pane {
 	public Scene owner;
 	public Stage parent;
 	public File path;
-	public SaveDiagramXML save;
 	public BorderPane gridLine;
 	public DropShadow shape;
 	public boolean isNew;
@@ -153,31 +152,5 @@ public class CanvasPane extends Pane {
 
 	public void removeGridLine() {
 		getChildren().remove(gridLine);
-	}
-
-	public void PrintNode(Node node, PageLayout pageLayout) {
-		PrinterJob job = PrinterJob.createPrinterJob();
-		JobSettings jobSettings = job.getJobSettings();
-		jobSettings.setPageLayout(pageLayout);
-
-		boolean proceed = job.showPrintDialog(null);
-		if (proceed) {
-			double scaleX = pageLayout.getPrintableWidth() / node.getLayoutBounds().getWidth();
-			double scaleY = pageLayout.getPrintableHeight() / node.getLayoutBounds().getHeight();
-			double minimumScale = Math.min(scaleX, scaleY);
-			Scale scale = new Scale(minimumScale, minimumScale);
-			try {
-				node.getTransforms().add(scale);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			job.printPage(node);
-			job.endJob();
-			node.getTransforms().remove(scale);
-			System.out.println("***Print Success");
-
-		}
-
 	}
 }

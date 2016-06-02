@@ -14,6 +14,7 @@ import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
 import Library.MyGridLine;
 import Library.SaveDiagramXML;
+import SaveMe.SaveUseCase;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
@@ -22,58 +23,47 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class UseCaseCanvaBox2 extends CanvasPane {
-	
-	//All In One
-	
-	// Actor
+	private SaveUseCase saveMe;
+
 	private ArrayList<UC_Actor> actors;
 	private UC_Actor actor;
 	private boolean isActor;
-
-	// Action
-	private ArrayList<UC_ActionLine> actionLines;
-	private UC_ActionLine actionLine;
-	private boolean isActionLine;
-
-	// Box
+	private ArrayList<UC_ActionLine> aLines;
+	private UC_ActionLine aLine;
+	private boolean isaLine;
 	private ArrayList<UC_Box> boxs;
 	private UC_Box box;
 	private boolean isBox;
-
-	// Process
-	private ArrayList<UC_Process> processCycles;
+	private ArrayList<UC_Process> processes;
 	private UC_Process pC;
-	private boolean isProcessCycle;
-
-	// ExtendLine
-	private ArrayList<UC_ExtendLine> extendLines;
-	private UC_ExtendLine extendLine;
-	private boolean isExtendLine;
-
-	// IncludeLine
-	private ArrayList<UC_IncludeLine> includeLines;
-	private UC_IncludeLine includeLine;
-	private boolean isIncludeLine;
-
-	// TypeOf
-	private ArrayList<UC_TypeOfLine> typeofLines;
-	private UC_TypeOfLine typeofLine;
-	private boolean isTypeofLine;
+	private boolean isProcess;
+	private ArrayList<UC_ExtendLine> eLines;
+	private UC_ExtendLine eLine;
+	private boolean iseLine;
+	private ArrayList<UC_IncludeLine> iLines;
+	private UC_IncludeLine iLine;
+	private boolean isiLine;
+	private ArrayList<UC_TypeOfLine> tLines;
+	private UC_TypeOfLine tLine;
+	private boolean istLine;
 
 	public UseCaseCanvaBox2(Scene owner, File path, boolean isLoad) {
 		this.isLoad = isLoad;
 		setOwner(owner);
 		setPath(path);
-		if (toolHandler.getGrid().equals("Show")) {
-			setGridLines();
-		}
 		actors = new ArrayList<UC_Actor>();
-		actionLines = new ArrayList<UC_ActionLine>();
+		aLines = new ArrayList<UC_ActionLine>();
 		boxs = new ArrayList<UC_Box>();
-		processCycles = new ArrayList<UC_Process>();
-		extendLines = new ArrayList<UC_ExtendLine>();
-		includeLines = new ArrayList<UC_IncludeLine>();
-		typeofLines = new ArrayList<UC_TypeOfLine>();
+		processes = new ArrayList<UC_Process>();
+		eLines = new ArrayList<UC_ExtendLine>();
+		iLines = new ArrayList<UC_IncludeLine>();
+		tLines = new ArrayList<UC_TypeOfLine>();
+		if (isLoad) {
+			loadXMLData();
+		}
+		if (toolHandler.getGrid().equals("Show")) {
+			setGridLine();
+		}
 
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
@@ -90,9 +80,9 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 								actor.getLeg4(), actor.getLabel(), actor.getText(false));
 						break;
 					case "UseCase_Action":
-						actionLine = new UC_ActionLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
-						isActionLine = true;
-						getChildren().addAll(actionLine);
+						aLine = new UC_ActionLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
+						isaLine = true;
+						getChildren().addAll(aLine);
 
 						break;
 					case "UseCase_Box":
@@ -102,28 +92,27 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 						break;
 					case "UseCase_Process":
 						pC = new UC_Process(key.getX(), key.getY(), 60, 30, color, Color.BLACK);
-						isProcessCycle = true;
+						isProcess = true;
 						getChildren().addAll(pC, pC.getLabel(), pC.getText(false));
 						break;
 					case "UseCase_Extend":
-						extendLine = new UC_ExtendLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
-						isExtendLine = true;
-						getChildren().addAll(extendLine);
+						eLine = new UC_ExtendLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
+						iseLine = true;
+						getChildren().addAll(eLine);
 						break;
 					case "UseCase_Include":
-						includeLine = new UC_IncludeLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
-						isIncludeLine = true;
-						getChildren().add(includeLine);
+						iLine = new UC_IncludeLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
+						isiLine = true;
+						getChildren().add(iLine);
 						break;
 					case "UseCase_Type":
-						typeofLine = new UC_TypeOfLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
-						isTypeofLine = true;
-						getChildren().add(typeofLine);
+						tLine = new UC_TypeOfLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
+						istLine = true;
+						getChildren().add(tLine);
 						break;
 					default:
 						break;
 					}
-					requestFocus();
 					toolHandler.setTool("");
 				}
 			}
@@ -134,24 +123,24 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 				if (isActor) {
 					actor.setCenterX(e.getX());
 					actor.setCenterY(e.getY());
-				} else if (isActionLine) {
-					actionLine.setEndX(e.getX());
-					actionLine.setEndY(e.getY());
+				} else if (isaLine) {
+					aLine.setEndX(e.getX());
+					aLine.setEndY(e.getY());
 				} else if (isBox) {
 					box.setX(e.getX() - 100);
 					box.setY(e.getY() - 100);
-				} else if (isProcessCycle) {
+				} else if (isProcess) {
 					pC.setCenterX(e.getX());
 					pC.setCenterY(e.getY());
-				} else if (isExtendLine) {
-					extendLine.setEndX(e.getX());
-					extendLine.setEndY(e.getY());
-				} else if (isIncludeLine) {
-					includeLine.setEndX(e.getX());
-					includeLine.setEndY(e.getY());
-				} else if (isTypeofLine) {
-					typeofLine.setEndX(e.getX());
-					typeofLine.setEndY(e.getY());
+				} else if (iseLine) {
+					eLine.setEndX(e.getX());
+					eLine.setEndY(e.getY());
+				} else if (isiLine) {
+					iLine.setEndX(e.getX());
+					iLine.setEndY(e.getY());
+				} else if (istLine) {
+					tLine.setEndX(e.getX());
+					tLine.setEndY(e.getY());
 				}
 			}
 		});
@@ -161,42 +150,42 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 				if (isActor) {
 					actors.add(actor);
 					isActor = false;
-				} else if (isActionLine) {
-					actionLines.add(actionLine);
-					isActionLine = false;
+				} else if (isaLine) {
+					aLines.add(aLine);
+					isaLine = false;
 				} else if (isBox) {
 					getChildren().add(box.getText(false));
 					boxs.add(box);
 					isBox = false;
 					requestFocus();
-				} else if (isProcessCycle) {
-					processCycles.add(pC);
-					isProcessCycle = false;
-				} else if (isExtendLine) {
-					extendLine.recalculatePoint();
-					getChildren().addAll(extendLine.getLabel(true), extendLine.getTop(), extendLine.getBot());
-					extendLines.add(extendLine);
-					isExtendLine = false;
-				} else if (isIncludeLine) {
-					includeLine.recalculatePoint();
-					getChildren().addAll(includeLine.getLabel(true), includeLine.getTop(), includeLine.getBot());
-					includeLines.add(includeLine);
-					isIncludeLine = false;
-				} else if (isTypeofLine) {
-					typeofLine.calculateTri();
-					getChildren().add(typeofLine.getTri());
-					typeofLines.add(typeofLine);
-					isTypeofLine = false;
+				} else if (isProcess) {
+					processes.add(pC);
+					isProcess = false;
+				} else if (iseLine) {
+					eLine.recalculatePoint();
+					getChildren().addAll(eLine.getLabel(true), eLine.getTop(), eLine.getBot());
+					eLines.add(eLine);
+					iseLine = false;
+				} else if (isiLine) {
+					iLine.recalculatePoint();
+					getChildren().addAll(iLine.getLabel(true), iLine.getTop(), iLine.getBot());
+					iLines.add(iLine);
+					isiLine=false;
+				} else if (istLine) {
+					tLine.calculateTri();
+					getChildren().add(tLine.getTri());
+					tLines.add(tLine);
+					istLine = false;
 				}
-				requestFocus();
 			}
 		});
 
 		saveB.setOnAction(e -> {
-			if (save == null) {
-				save = new SaveDiagramXML(path);
+			if (saveMe == null) {
+				saveMe = new SaveUseCase(path);
 			}
-			save.saveUseCaseCanvaBox(actors, actionLines, boxs, processCycles, extendLines, includeLines, typeofLines);
+			saveMe.setDatas(actors, aLines, boxs, processes, eLines, iLines, tLines);
+			saveMe.save();
 		});
 		printB.setOnAction(e -> {
 			getChildren().removeAll(gridLine, menu);
@@ -206,20 +195,6 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 		});
 	}
 
-	public void init() {
-		if (isLoad) {
-			System.out.println(" Load Actor data From XML");
-			loadXMLData("Actors");
-			loadXMLData("Actions");
-			loadXMLData("Boxs");
-			loadXMLData("Processes");
-			loadXMLData("Extends");
-			loadXMLData("Includes");
-			loadXMLData("Types");
-
-		}
-	}
-
 	public void isNewOrEdit(MouseEvent e) {
 		isNew = true;
 		Point2D point = new Point2D(e.getX(), e.getY());
@@ -227,154 +202,155 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 		isNewOREditTypeOf(e, point);
 		isNewOREditInclude(e, point);
 		isNewOREditExtend(e, point);
+		DeleteNode();
 	}
 
 	public void isNewOREditAction(MouseEvent e, Point2D point) {
-		for (int i = 0; i < actionLines.size(); i++) {
+		for (int i = 0; i < aLines.size(); i++) {
 			int index = i;
-			boolean isclick = actionLines.get(i).contains(point.getX(), point.getY())
-					|| actionLines.get(i).contains(point.getX() - 1, point.getY())
-					|| actionLines.get(i).contains(point.getX() - 2, point.getY())
-					|| actionLines.get(i).contains(point.getX() - 3, point.getY())
-					|| actionLines.get(i).contains(point.getX() - 4, point.getY())
-					|| actionLines.get(i).contains(point.getX() - 5, point.getY())
-					|| actionLines.get(i).contains(point.getX() + 1, point.getY())
-					|| actionLines.get(i).contains(point.getX() + 2, point.getY())
-					|| actionLines.get(i).contains(point.getX() + 3, point.getY())
-					|| actionLines.get(i).contains(point.getX() + 4, point.getY())
-					|| actionLines.get(i).contains(point.getX() + 5, point.getY())
-					|| actionLines.get(i).contains(point.getX(), point.getY() - 1)
-					|| actionLines.get(i).contains(point.getX(), point.getY() - 2)
-					|| actionLines.get(i).contains(point.getX(), point.getY() - 3)
-					|| actionLines.get(i).contains(point.getX(), point.getY() - 4)
-					|| actionLines.get(i).contains(point.getX(), point.getY() - 5)
-					|| actionLines.get(i).contains(point.getX(), point.getY() + 1)
-					|| actionLines.get(i).contains(point.getX(), point.getY() + 2)
-					|| actionLines.get(i).contains(point.getX(), point.getY() + 3)
-					|| actionLines.get(i).contains(point.getX(), point.getY() + 4)
-					|| actionLines.get(i).contains(point.getX(), point.getY() + 5);
+			boolean isclick = aLines.get(i).contains(point.getX(), point.getY())
+					|| aLines.get(i).contains(point.getX() - 1, point.getY())
+					|| aLines.get(i).contains(point.getX() - 2, point.getY())
+					|| aLines.get(i).contains(point.getX() - 3, point.getY())
+					|| aLines.get(i).contains(point.getX() - 4, point.getY())
+					|| aLines.get(i).contains(point.getX() - 5, point.getY())
+					|| aLines.get(i).contains(point.getX() + 1, point.getY())
+					|| aLines.get(i).contains(point.getX() + 2, point.getY())
+					|| aLines.get(i).contains(point.getX() + 3, point.getY())
+					|| aLines.get(i).contains(point.getX() + 4, point.getY())
+					|| aLines.get(i).contains(point.getX() + 5, point.getY())
+					|| aLines.get(i).contains(point.getX(), point.getY() - 1)
+					|| aLines.get(i).contains(point.getX(), point.getY() - 2)
+					|| aLines.get(i).contains(point.getX(), point.getY() - 3)
+					|| aLines.get(i).contains(point.getX(), point.getY() - 4)
+					|| aLines.get(i).contains(point.getX(), point.getY() - 5)
+					|| aLines.get(i).contains(point.getX(), point.getY() + 1)
+					|| aLines.get(i).contains(point.getX(), point.getY() + 2)
+					|| aLines.get(i).contains(point.getX(), point.getY() + 3)
+					|| aLines.get(i).contains(point.getX(), point.getY() + 4)
+					|| aLines.get(i).contains(point.getX(), point.getY() + 5);
 			if (isclick) {
 				isNew = false;
 
 				// Delete
-				actionLines.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
-				actionLines.get(i).setOnKeyPressed(key -> {
+				aLines.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				aLines.get(i).setOnKeyPressed(key -> {
 					if (key.getCode() == KeyCode.DELETE) {
-						if (actionLines.size() > 0) {
-							getChildren().removeAll(actionLines.get(index));
-							actionLines.remove(index);
+						if (aLines.size() > 0) {
+							getChildren().removeAll(aLines.get(index));
+							aLines.remove(index);
 						} else {
 							System.out.println("No ActionLine to delete");
 						}
 					}
 				});
-				actionLines.get(i).setEffect(shape);
+				aLines.get(i).setEffect(shape);
 			} else {
-				actionLines.get(i).setEffect(null);
+				aLines.get(i).setEffect(null);
 			}
 
 		}
 	}
 
 	public void isNewOREditTypeOf(MouseEvent e, Point2D point) {
-		for (int i = 0; i < typeofLines.size(); i++) {
+		for (int i = 0; i < tLines.size(); i++) {
 
 			int index = i;
-			boolean isclick = typeofLines.get(i).contains(point.getX(), point.getY())
-					|| typeofLines.get(i).contains(point.getX() - 1, point.getY())
-					|| typeofLines.get(i).contains(point.getX() - 2, point.getY())
-					|| typeofLines.get(i).contains(point.getX() - 3, point.getY())
-					|| typeofLines.get(i).contains(point.getX() - 4, point.getY())
-					|| typeofLines.get(i).contains(point.getX() - 5, point.getY())
-					|| typeofLines.get(i).contains(point.getX() + 1, point.getY())
-					|| typeofLines.get(i).contains(point.getX() + 2, point.getY())
-					|| typeofLines.get(i).contains(point.getX() + 3, point.getY())
-					|| typeofLines.get(i).contains(point.getX() + 4, point.getY())
-					|| typeofLines.get(i).contains(point.getX() + 5, point.getY())
-					|| typeofLines.get(i).contains(point.getX(), point.getY() - 1)
-					|| typeofLines.get(i).contains(point.getX(), point.getY() - 2)
-					|| typeofLines.get(i).contains(point.getX(), point.getY() - 3)
-					|| typeofLines.get(i).contains(point.getX(), point.getY() - 4)
-					|| typeofLines.get(i).contains(point.getX(), point.getY() - 5)
-					|| typeofLines.get(i).contains(point.getX(), point.getY() + 1)
-					|| typeofLines.get(i).contains(point.getX(), point.getY() + 2)
-					|| typeofLines.get(i).contains(point.getX(), point.getY() + 3)
-					|| typeofLines.get(i).contains(point.getX(), point.getY() + 4)
-					|| typeofLines.get(i).contains(point.getX(), point.getY() + 5);
+			boolean isclick = tLines.get(i).contains(point.getX(), point.getY())
+					|| tLines.get(i).contains(point.getX() - 1, point.getY())
+					|| tLines.get(i).contains(point.getX() - 2, point.getY())
+					|| tLines.get(i).contains(point.getX() - 3, point.getY())
+					|| tLines.get(i).contains(point.getX() - 4, point.getY())
+					|| tLines.get(i).contains(point.getX() - 5, point.getY())
+					|| tLines.get(i).contains(point.getX() + 1, point.getY())
+					|| tLines.get(i).contains(point.getX() + 2, point.getY())
+					|| tLines.get(i).contains(point.getX() + 3, point.getY())
+					|| tLines.get(i).contains(point.getX() + 4, point.getY())
+					|| tLines.get(i).contains(point.getX() + 5, point.getY())
+					|| tLines.get(i).contains(point.getX(), point.getY() - 1)
+					|| tLines.get(i).contains(point.getX(), point.getY() - 2)
+					|| tLines.get(i).contains(point.getX(), point.getY() - 3)
+					|| tLines.get(i).contains(point.getX(), point.getY() - 4)
+					|| tLines.get(i).contains(point.getX(), point.getY() - 5)
+					|| tLines.get(i).contains(point.getX(), point.getY() + 1)
+					|| tLines.get(i).contains(point.getX(), point.getY() + 2)
+					|| tLines.get(i).contains(point.getX(), point.getY() + 3)
+					|| tLines.get(i).contains(point.getX(), point.getY() + 4)
+					|| tLines.get(i).contains(point.getX(), point.getY() + 5);
 			if (isclick) {
 				isNew = false;
 				// Delete
-				typeofLines.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
-				typeofLines.get(i).setOnKeyPressed(key -> {
+				tLines.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				tLines.get(i).setOnKeyPressed(key -> {
 					if (key.getCode() == KeyCode.DELETE) {
-						if (typeofLines.size() > 0) {
-							getChildren().removeAll(typeofLines.get(index), typeofLines.get(index).getTri());
-							typeofLines.remove(index);
+						if (tLines.size() > 0) {
+							getChildren().removeAll(tLines.get(index), tLines.get(index).getTri());
+							tLines.remove(index);
 						} else {
 							System.out.println("No TypeOfLine to delete");
 						}
 					}
 				});
-				typeofLines.get(i).setEffect(shape);
-				typeofLines.get(i).getTri().setEffect(shape);
+				tLines.get(i).setEffect(shape);
+				tLines.get(i).getTri().setEffect(shape);
 				// getChildren().addAll(x, y);
 			} else {
-				typeofLines.get(i).setEffect(null);
-				typeofLines.get(i).getTri().setEffect(null);
+				tLines.get(i).setEffect(null);
+				tLines.get(i).getTri().setEffect(null);
 			}
 
 		}
 	}
 
 	public void isNewOREditInclude(MouseEvent e, Point2D point) {
-		for (int i = 0; i < includeLines.size(); i++) {
+		for (int i = 0; i < iLines.size(); i++) {
 
 			int index = i;
-			boolean isclick = includeLines.get(i).contains(point.getX(), point.getY())
-					|| includeLines.get(i).contains(point.getX() - 1, point.getY())
-					|| includeLines.get(i).contains(point.getX() - 2, point.getY())
-					|| includeLines.get(i).contains(point.getX() - 3, point.getY())
-					|| includeLines.get(i).contains(point.getX() - 4, point.getY())
-					|| includeLines.get(i).contains(point.getX() - 5, point.getY())
-					|| includeLines.get(i).contains(point.getX() + 1, point.getY())
-					|| includeLines.get(i).contains(point.getX() + 2, point.getY())
-					|| includeLines.get(i).contains(point.getX() + 3, point.getY())
-					|| includeLines.get(i).contains(point.getX() + 4, point.getY())
-					|| includeLines.get(i).contains(point.getX() + 5, point.getY())
-					|| includeLines.get(i).contains(point.getX(), point.getY() - 1)
-					|| includeLines.get(i).contains(point.getX(), point.getY() - 2)
-					|| includeLines.get(i).contains(point.getX(), point.getY() - 3)
-					|| includeLines.get(i).contains(point.getX(), point.getY() - 4)
-					|| includeLines.get(i).contains(point.getX(), point.getY() - 5)
-					|| includeLines.get(i).contains(point.getX(), point.getY() + 1)
-					|| includeLines.get(i).contains(point.getX(), point.getY() + 2)
-					|| includeLines.get(i).contains(point.getX(), point.getY() + 3)
-					|| includeLines.get(i).contains(point.getX(), point.getY() + 4)
-					|| includeLines.get(i).contains(point.getX(), point.getY() + 5);
+			boolean isclick = iLines.get(i).contains(point.getX(), point.getY())
+					|| iLines.get(i).contains(point.getX() - 1, point.getY())
+					|| iLines.get(i).contains(point.getX() - 2, point.getY())
+					|| iLines.get(i).contains(point.getX() - 3, point.getY())
+					|| iLines.get(i).contains(point.getX() - 4, point.getY())
+					|| iLines.get(i).contains(point.getX() - 5, point.getY())
+					|| iLines.get(i).contains(point.getX() + 1, point.getY())
+					|| iLines.get(i).contains(point.getX() + 2, point.getY())
+					|| iLines.get(i).contains(point.getX() + 3, point.getY())
+					|| iLines.get(i).contains(point.getX() + 4, point.getY())
+					|| iLines.get(i).contains(point.getX() + 5, point.getY())
+					|| iLines.get(i).contains(point.getX(), point.getY() - 1)
+					|| iLines.get(i).contains(point.getX(), point.getY() - 2)
+					|| iLines.get(i).contains(point.getX(), point.getY() - 3)
+					|| iLines.get(i).contains(point.getX(), point.getY() - 4)
+					|| iLines.get(i).contains(point.getX(), point.getY() - 5)
+					|| iLines.get(i).contains(point.getX(), point.getY() + 1)
+					|| iLines.get(i).contains(point.getX(), point.getY() + 2)
+					|| iLines.get(i).contains(point.getX(), point.getY() + 3)
+					|| iLines.get(i).contains(point.getX(), point.getY() + 4)
+					|| iLines.get(i).contains(point.getX(), point.getY() + 5);
 			if (isclick) {
 				isNew = false;
 
 				// Delete
-				includeLines.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
-				includeLines.get(i).setOnKeyPressed(key -> {
+				iLines.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				iLines.get(i).setOnKeyPressed(key -> {
 					if (key.getCode() == KeyCode.DELETE) {
-						if (includeLines.size() > 0) {
-							getChildren().removeAll(includeLines.get(index), includeLines.get(index).getTop(),
-									includeLines.get(index).getBot(), includeLines.get(index).getLabel(false));
-							includeLines.remove(index);
+						if (iLines.size() > 0) {
+							getChildren().removeAll(iLines.get(index), iLines.get(index).getTop(),
+									iLines.get(index).getBot(), iLines.get(index).getLabel(false));
+							iLines.remove(index);
 						} else {
 							System.out.println("No Include Line to delete");
 						}
 					}
 				});
-				includeLines.get(i).setEffect(shape);
-				includeLines.get(i).getTop().setEffect(shape);
-				includeLines.get(i).getBot().setEffect(shape);
+				iLines.get(i).setEffect(shape);
+				iLines.get(i).getTop().setEffect(shape);
+				iLines.get(i).getBot().setEffect(shape);
 				// getChildren().addAll(x, y);
 			} else {
-				includeLines.get(i).setEffect(null);
-				includeLines.get(i).getTop().setEffect(null);
-				includeLines.get(i).getBot().setEffect(null);
+				iLines.get(i).setEffect(null);
+				iLines.get(i).getTop().setEffect(null);
+				iLines.get(i).getBot().setEffect(null);
 			}
 
 		}
@@ -382,309 +358,275 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 
 	public void isNewOREditExtend(MouseEvent e, Point2D point) {
 
-		for (int i = 0; i < extendLines.size(); i++) {
+		for (int i = 0; i < eLines.size(); i++) {
 
 			int index = i;
-			boolean isclick = extendLines.get(i).contains(point.getX(), point.getY())
-					|| extendLines.get(i).contains(point.getX() - 1, point.getY())
-					|| extendLines.get(i).contains(point.getX() - 2, point.getY())
-					|| extendLines.get(i).contains(point.getX() - 3, point.getY())
-					|| extendLines.get(i).contains(point.getX() - 4, point.getY())
-					|| extendLines.get(i).contains(point.getX() - 5, point.getY())
-					|| extendLines.get(i).contains(point.getX() + 1, point.getY())
-					|| extendLines.get(i).contains(point.getX() + 2, point.getY())
-					|| extendLines.get(i).contains(point.getX() + 3, point.getY())
-					|| extendLines.get(i).contains(point.getX() + 4, point.getY())
-					|| extendLines.get(i).contains(point.getX() + 5, point.getY())
-					|| extendLines.get(i).contains(point.getX(), point.getY() - 1)
-					|| extendLines.get(i).contains(point.getX(), point.getY() - 2)
-					|| extendLines.get(i).contains(point.getX(), point.getY() - 3)
-					|| extendLines.get(i).contains(point.getX(), point.getY() - 4)
-					|| extendLines.get(i).contains(point.getX(), point.getY() - 5)
-					|| extendLines.get(i).contains(point.getX(), point.getY() + 1)
-					|| extendLines.get(i).contains(point.getX(), point.getY() + 2)
-					|| extendLines.get(i).contains(point.getX(), point.getY() + 3)
-					|| extendLines.get(i).contains(point.getX(), point.getY() + 4)
-					|| extendLines.get(i).contains(point.getX(), point.getY() + 5);
+			boolean isclick = eLines.get(i).contains(point.getX(), point.getY())
+					|| eLines.get(i).contains(point.getX() - 1, point.getY())
+					|| eLines.get(i).contains(point.getX() - 2, point.getY())
+					|| eLines.get(i).contains(point.getX() - 3, point.getY())
+					|| eLines.get(i).contains(point.getX() - 4, point.getY())
+					|| eLines.get(i).contains(point.getX() - 5, point.getY())
+					|| eLines.get(i).contains(point.getX() + 1, point.getY())
+					|| eLines.get(i).contains(point.getX() + 2, point.getY())
+					|| eLines.get(i).contains(point.getX() + 3, point.getY())
+					|| eLines.get(i).contains(point.getX() + 4, point.getY())
+					|| eLines.get(i).contains(point.getX() + 5, point.getY())
+					|| eLines.get(i).contains(point.getX(), point.getY() - 1)
+					|| eLines.get(i).contains(point.getX(), point.getY() - 2)
+					|| eLines.get(i).contains(point.getX(), point.getY() - 3)
+					|| eLines.get(i).contains(point.getX(), point.getY() - 4)
+					|| eLines.get(i).contains(point.getX(), point.getY() - 5)
+					|| eLines.get(i).contains(point.getX(), point.getY() + 1)
+					|| eLines.get(i).contains(point.getX(), point.getY() + 2)
+					|| eLines.get(i).contains(point.getX(), point.getY() + 3)
+					|| eLines.get(i).contains(point.getX(), point.getY() + 4)
+					|| eLines.get(i).contains(point.getX(), point.getY() + 5);
 			if (isclick) {
 				isNew = false;
 
 				// Delete
-				extendLines.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
-				extendLines.get(i).setOnKeyPressed(key -> {
+				eLines.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				eLines.get(i).setOnKeyPressed(key -> {
 					if (key.getCode() == KeyCode.DELETE) {
-						if (extendLines.size() > 0) {
-							getChildren().removeAll(extendLines.get(index), extendLines.get(index).getTop(),
-									extendLines.get(index).getBot(), extendLines.get(index).getLabel(false));
-							extendLines.remove(index);
+						if (eLines.size() > 0) {
+							getChildren().removeAll(eLines.get(index), eLines.get(index).getTop(),
+									eLines.get(index).getBot(), eLines.get(index).getLabel(false));
+							eLines.remove(index);
 						} else {
 							System.out.println("No Extend Line to delete");
 						}
 					}
 				});
-				extendLines.get(i).setEffect(shape);
-				extendLines.get(i).getTop().setEffect(shape);
-				extendLines.get(i).getBot().setEffect(shape);
+				eLines.get(i).setEffect(shape);
+				eLines.get(i).getTop().setEffect(shape);
+				eLines.get(i).getBot().setEffect(shape);
 				// getChildren().addAll(x, y);
 			} else {
-				extendLines.get(i).setEffect(null);
-				extendLines.get(i).getTop().setEffect(null);
-				extendLines.get(i).getBot().setEffect(null);
+				eLines.get(i).setEffect(null);
+				eLines.get(i).getTop().setEffect(null);
+				eLines.get(i).getBot().setEffect(null);
 			}
 
 		}
 
 	}
 
-	public void setGridLines() {
-		int i = 10;
-		while (i < 800) {
-			MyGridLine l = new MyGridLine(10, i, 1340, i);
-			gridLine.getChildren().add(l);
-			i = i + 20;
-		}
-		int k = 10;
-		while (k < 1340) {
-			MyGridLine l = new MyGridLine(k, 10, k, 690);
-			gridLine.getChildren().add(l);
-			k = k + 20;
-		}
-		getChildren().add(gridLine);
-		gridLine.toBack();
-	}
-
-	private void loadXMLData(String tagName) {
+	private void loadXMLData() {
 		try {
 			dbFactory = DocumentBuilderFactory.newInstance();
 			dBuilder = dbFactory.newDocumentBuilder();
 			doc = dBuilder.parse(path);
 
-			switch (tagName) {
-			case "Actors":
-				org.w3c.dom.Node node = doc.getElementsByTagName("Actors").item(0);
-				NodeList nodes = node.getChildNodes();
-				for (int i = 0; i < nodes.getLength(); i++) {
-					org.w3c.dom.Node data = nodes.item(i);
-					NodeList datas = data.getChildNodes();
-					double x = 0, y = 0;
-					Color color = null;
-					for (int k = 0; k < datas.getLength(); k++) {
-						org.w3c.dom.Node element = datas.item(k);
-						if ("x".equals(element.getNodeName())) {
-							System.out.println(" Center X Value : " + element.getTextContent());
-							x = Double.parseDouble(element.getTextContent());
-						}
-						if ("y".equals(element.getNodeName())) {
-							System.out.println(" Center Y Value : " + element.getTextContent());
-							y = Double.parseDouble(element.getTextContent());
-						}
-						if ("color".equals(element.getNodeName())) {
-							System.out.println(" color : " + element.getTextContent());
-							color = Color.web(element.getTextContent());
-						}
-
+			org.w3c.dom.Node node = doc.getElementsByTagName("Actors").item(0);
+			NodeList nodes = node.getChildNodes();
+			for (int i = 0; i < nodes.getLength(); i++) {
+				org.w3c.dom.Node data = nodes.item(i);
+				NodeList datas = data.getChildNodes();
+				double x = 0, y = 0;
+				Color color = null;
+				for (int k = 0; k < datas.getLength(); k++) {
+					org.w3c.dom.Node element = datas.item(k);
+					if ("x".equals(element.getNodeName())) {
+						System.out.println(" Center X Value : " + element.getTextContent());
+						x = Double.parseDouble(element.getTextContent());
 					}
-					UC_Actor actor = new UC_Actor(x, y, 20, color, Color.LIGHTGRAY);
-					actors.add(actor);
-					getChildren().addAll(actor, actor.getBody(), actor.getLeg(), actor.getLeg2(), actor.getLeg3(),
-							actor.getLeg4(), actor.getLabel());
-				}
-
-				break;
-			case "Actions":
-				org.w3c.dom.Node action = doc.getElementsByTagName("Actions").item(0);
-				NodeList actions = action.getChildNodes();
-				for (int i = 0; i < actions.getLength(); i++) {
-					org.w3c.dom.Node data = actions.item(i);
-					NodeList datas = data.getChildNodes();
-					double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-					Color color = null;
-					for (int k = 0; k < datas.getLength(); k++) {
-						org.w3c.dom.Node element = datas.item(k);
-						if ("x1".equals(element.getNodeName())) {
-							x1 = Double.parseDouble(element.getTextContent());
-						}
-						if ("y1".equals(element.getNodeName())) {
-							y1 = Double.parseDouble(element.getTextContent());
-						}
-						if ("x2".equals(element.getNodeName())) {
-							x2 = Double.parseDouble(element.getTextContent());
-						}
-						if ("y2".equals(element.getNodeName())) {
-							y2 = Double.parseDouble(element.getTextContent());
-						}
-						if ("color".equals(element.getNodeName())) {
-							color = Color.web(element.getTextContent());
-						}
+					if ("y".equals(element.getNodeName())) {
+						System.out.println(" Center Y Value : " + element.getTextContent());
+						y = Double.parseDouble(element.getTextContent());
 					}
-					UC_ActionLine actionLine = new UC_ActionLine(x1, y1, x2, y2, color);
-					actionLines.add(actionLine);
-					getChildren().addAll(actionLine);
-				}
-				break;
-
-			case "Boxs":
-				org.w3c.dom.Node ubox = doc.getElementsByTagName("Boxs").item(0);
-				NodeList uboxs = ubox.getChildNodes();
-				for (int i = 0; i < uboxs.getLength(); i++) {
-					org.w3c.dom.Node data = uboxs.item(i);
-					NodeList datas = data.getChildNodes();
-					double x = 0, y = 0, h = 0, w = 0;
-					Color color = null;
-					for (int k = 0; k < datas.getLength(); k++) {
-						org.w3c.dom.Node element = datas.item(k);
-						if ("x".equals(element.getNodeName())) {
-							x = Double.parseDouble(element.getTextContent());
-						}
-						if ("y".equals(element.getNodeName())) {
-							y = Double.parseDouble(element.getTextContent());
-						}
-						if ("width".equals(element.getNodeName())) {
-							w = Double.parseDouble(element.getTextContent());
-						}
-						if ("height".equals(element.getNodeName())) {
-							h = Double.parseDouble(element.getTextContent());
-						}
-						if ("color".equals(element.getNodeName())) {
-							color = Color.web(element.getTextContent());
-						}
-
+					if ("color".equals(element.getNodeName())) {
+						System.out.println(" color : " + element.getTextContent());
+						color = Color.web(element.getTextContent());
 					}
-					UC_Box uboxd = new UC_Box(x, y, w, h, color, Color.LIGHTGRAY);
-					boxs.add(uboxd);
-					getChildren().addAll(uboxd, uboxd.getLabel());
+
 				}
-				break;
+				UC_Actor actor = new UC_Actor(x, y, 20, color, Color.LIGHTGRAY);
+				actors.add(actor);
+				getChildren().addAll(actor, actor.getBody(), actor.getLeg(), actor.getLeg2(), actor.getLeg3(),
+						actor.getLeg4(), actor.getLabel());
+			}
 
-			case "Processes":
-				org.w3c.dom.Node uprocess = doc.getElementsByTagName("Processes").item(0);
-				NodeList uprocesses = uprocess.getChildNodes();
-				for (int i = 0; i < uprocesses.getLength(); i++) {
-					org.w3c.dom.Node data = uprocesses.item(i);
-					NodeList datas = data.getChildNodes();
-					double x = 0, y = 0, h = 0, w = 0;
-					Color color = null;
-					for (int k = 0; k < datas.getLength(); k++) {
-						org.w3c.dom.Node element = datas.item(k);
-						if ("x".equals(element.getNodeName())) {
-							x = Double.parseDouble(element.getTextContent());
-						}
-						if ("y".equals(element.getNodeName())) {
-							y = Double.parseDouble(element.getTextContent());
-						}
-						if ("color".equals(element.getNodeName())) {
-							color = Color.web(element.getTextContent());
-						}
-
+			org.w3c.dom.Node action = doc.getElementsByTagName("Actions").item(0);
+			NodeList actions = action.getChildNodes();
+			for (int i = 0; i < actions.getLength(); i++) {
+				org.w3c.dom.Node data = actions.item(i);
+				NodeList datas = data.getChildNodes();
+				double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+				Color color = null;
+				for (int k = 0; k < datas.getLength(); k++) {
+					org.w3c.dom.Node element = datas.item(k);
+					if ("x1".equals(element.getNodeName())) {
+						x1 = Double.parseDouble(element.getTextContent());
 					}
-					UC_Process up = new UC_Process(x, y, 60, 30, color, Color.LIGHTGRAY);
-					processCycles.add(up);
-					getChildren().addAll(up, up.getLabel());
-				}
-				break;
-
-			case "Extends":
-				org.w3c.dom.Node ext = doc.getElementsByTagName("Extends").item(0);
-				NodeList exts = ext.getChildNodes();
-				for (int i = 0; i < exts.getLength(); i++) {
-					org.w3c.dom.Node data = exts.item(i);
-					NodeList datas = data.getChildNodes();
-					double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-					Color color = null;
-					for (int k = 0; k < datas.getLength(); k++) {
-						org.w3c.dom.Node element = datas.item(k);
-						if ("x1".equals(element.getNodeName())) {
-							x1 = Double.parseDouble(element.getTextContent());
-						}
-						if ("y1".equals(element.getNodeName())) {
-							y1 = Double.parseDouble(element.getTextContent());
-						}
-						if ("x2".equals(element.getNodeName())) {
-							x2 = Double.parseDouble(element.getTextContent());
-						}
-						if ("y2".equals(element.getNodeName())) {
-							y2 = Double.parseDouble(element.getTextContent());
-						}
-						if ("color".equals(element.getNodeName())) {
-							color = Color.web(element.getTextContent());
-						}
-
+					if ("y1".equals(element.getNodeName())) {
+						y1 = Double.parseDouble(element.getTextContent());
 					}
-					UC_ExtendLine up = new UC_ExtendLine(x1, y1, x2, y2, color);
-					extendLines.add(up);
-					up.recalculatePoint();
-					getChildren().addAll(up, up.getLabel(true), up.getTop(), up.getBot());
-				}
-				break;
-
-			case "Includes":
-				org.w3c.dom.Node inc = doc.getElementsByTagName("Includes").item(0);
-				NodeList incs = inc.getChildNodes();
-				for (int i = 0; i < incs.getLength(); i++) {
-					org.w3c.dom.Node data = incs.item(i);
-					NodeList datas = data.getChildNodes();
-					double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-					Color color = null;
-					for (int k = 0; k < datas.getLength(); k++) {
-						org.w3c.dom.Node element = datas.item(k);
-						if ("x1".equals(element.getNodeName())) {
-							x1 = Double.parseDouble(element.getTextContent());
-						}
-						if ("y1".equals(element.getNodeName())) {
-							y1 = Double.parseDouble(element.getTextContent());
-						}
-						if ("x2".equals(element.getNodeName())) {
-							x2 = Double.parseDouble(element.getTextContent());
-						}
-						if ("y2".equals(element.getNodeName())) {
-							y2 = Double.parseDouble(element.getTextContent());
-						}
-						if ("color".equals(element.getNodeName())) {
-							color = Color.web(element.getTextContent());
-						}
-
+					if ("x2".equals(element.getNodeName())) {
+						x2 = Double.parseDouble(element.getTextContent());
 					}
-					UC_IncludeLine up = new UC_IncludeLine(x1, y1, x2, y2, color);
-					includeLines.add(up);
-					up.recalculatePoint();
-					getChildren().addAll(up, up.getLabel(true), up.getTop(), up.getBot());
-				}
-				break;
-
-			case "Types":
-				org.w3c.dom.Node typ = doc.getElementsByTagName("Types").item(0);
-				NodeList typs = typ.getChildNodes();
-				for (int i = 0; i < typs.getLength(); i++) {
-					org.w3c.dom.Node data = typs.item(i);
-					NodeList datas = data.getChildNodes();
-					double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-					Color color = null;
-					for (int k = 0; k < datas.getLength(); k++) {
-						org.w3c.dom.Node element = datas.item(k);
-						if ("x1".equals(element.getNodeName())) {
-							x1 = Double.parseDouble(element.getTextContent());
-						}
-						if ("y1".equals(element.getNodeName())) {
-							y1 = Double.parseDouble(element.getTextContent());
-						}
-						if ("x2".equals(element.getNodeName())) {
-							x2 = Double.parseDouble(element.getTextContent());
-						}
-						if ("y2".equals(element.getNodeName())) {
-							y2 = Double.parseDouble(element.getTextContent());
-						}
-						if ("color".equals(element.getNodeName())) {
-							color = Color.web(element.getTextContent());
-						}
-
+					if ("y2".equals(element.getNodeName())) {
+						y2 = Double.parseDouble(element.getTextContent());
 					}
-					UC_TypeOfLine up = new UC_TypeOfLine(x1, y1, x2, y2, color);
-					typeofLines.add(up);
-					up.calculateTri();
-					getChildren().addAll(up, up.getTri());
+					if ("color".equals(element.getNodeName())) {
+						color = Color.web(element.getTextContent());
+					}
 				}
-				break;
+				UC_ActionLine actionLine = new UC_ActionLine(x1, y1, x2, y2, color);
+				aLines.add(actionLine);
+				getChildren().addAll(actionLine);
+			}
 
+			org.w3c.dom.Node ubox = doc.getElementsByTagName("Boxs").item(0);
+			NodeList uboxs = ubox.getChildNodes();
+			for (int i = 0; i < uboxs.getLength(); i++) {
+				org.w3c.dom.Node data = uboxs.item(i);
+				NodeList datas = data.getChildNodes();
+				double x = 0, y = 0, h = 0, w = 0;
+				Color color = null;
+				for (int k = 0; k < datas.getLength(); k++) {
+					org.w3c.dom.Node element = datas.item(k);
+					if ("x".equals(element.getNodeName())) {
+						x = Double.parseDouble(element.getTextContent());
+					}
+					if ("y".equals(element.getNodeName())) {
+						y = Double.parseDouble(element.getTextContent());
+					}
+					if ("width".equals(element.getNodeName())) {
+						w = Double.parseDouble(element.getTextContent());
+					}
+					if ("height".equals(element.getNodeName())) {
+						h = Double.parseDouble(element.getTextContent());
+					}
+					if ("color".equals(element.getNodeName())) {
+						color = Color.web(element.getTextContent());
+					}
+
+				}
+				UC_Box uboxd = new UC_Box(x, y, w, h, color, Color.LIGHTGRAY);
+				boxs.add(uboxd);
+				getChildren().addAll(uboxd, uboxd.getLabel());
+			}
+
+			org.w3c.dom.Node uprocess = doc.getElementsByTagName("Processes").item(0);
+			NodeList uprocesses = uprocess.getChildNodes();
+			for (int i = 0; i < uprocesses.getLength(); i++) {
+				org.w3c.dom.Node data = uprocesses.item(i);
+				NodeList datas = data.getChildNodes();
+				double x = 0, y = 0, h = 0, w = 0;
+				Color color = null;
+				for (int k = 0; k < datas.getLength(); k++) {
+					org.w3c.dom.Node element = datas.item(k);
+					if ("x".equals(element.getNodeName())) {
+						x = Double.parseDouble(element.getTextContent());
+					}
+					if ("y".equals(element.getNodeName())) {
+						y = Double.parseDouble(element.getTextContent());
+					}
+					if ("color".equals(element.getNodeName())) {
+						color = Color.web(element.getTextContent());
+					}
+
+				}
+				UC_Process up = new UC_Process(x, y, 60, 30, color, Color.LIGHTGRAY);
+				processes.add(up);
+				getChildren().addAll(up, up.getLabel());
+			}
+
+			org.w3c.dom.Node ext = doc.getElementsByTagName("Extends").item(0);
+			NodeList exts = ext.getChildNodes();
+			for (int i = 0; i < exts.getLength(); i++) {
+				org.w3c.dom.Node data = exts.item(i);
+				NodeList datas = data.getChildNodes();
+				double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+				Color color = null;
+				for (int k = 0; k < datas.getLength(); k++) {
+					org.w3c.dom.Node element = datas.item(k);
+					if ("x1".equals(element.getNodeName())) {
+						x1 = Double.parseDouble(element.getTextContent());
+					}
+					if ("y1".equals(element.getNodeName())) {
+						y1 = Double.parseDouble(element.getTextContent());
+					}
+					if ("x2".equals(element.getNodeName())) {
+						x2 = Double.parseDouble(element.getTextContent());
+					}
+					if ("y2".equals(element.getNodeName())) {
+						y2 = Double.parseDouble(element.getTextContent());
+					}
+					if ("color".equals(element.getNodeName())) {
+						color = Color.web(element.getTextContent());
+					}
+
+				}
+				UC_ExtendLine up = new UC_ExtendLine(x1, y1, x2, y2, color);
+				eLines.add(up);
+				up.recalculatePoint();
+				getChildren().addAll(up, up.getLabel(true), up.getTop(), up.getBot());
+			}
+
+			org.w3c.dom.Node inc = doc.getElementsByTagName("Includes").item(0);
+			NodeList incs = inc.getChildNodes();
+			for (int i = 0; i < incs.getLength(); i++) {
+				org.w3c.dom.Node data = incs.item(i);
+				NodeList datas = data.getChildNodes();
+				double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+				Color color = null;
+				for (int k = 0; k < datas.getLength(); k++) {
+					org.w3c.dom.Node element = datas.item(k);
+					if ("x1".equals(element.getNodeName())) {
+						x1 = Double.parseDouble(element.getTextContent());
+					}
+					if ("y1".equals(element.getNodeName())) {
+						y1 = Double.parseDouble(element.getTextContent());
+					}
+					if ("x2".equals(element.getNodeName())) {
+						x2 = Double.parseDouble(element.getTextContent());
+					}
+					if ("y2".equals(element.getNodeName())) {
+						y2 = Double.parseDouble(element.getTextContent());
+					}
+					if ("color".equals(element.getNodeName())) {
+						color = Color.web(element.getTextContent());
+					}
+
+				}
+				UC_IncludeLine up = new UC_IncludeLine(x1, y1, x2, y2, color);
+				iLines.add(up);
+				up.recalculatePoint();
+				getChildren().addAll(up, up.getLabel(true), up.getTop(), up.getBot());
+			}
+
+			org.w3c.dom.Node typ = doc.getElementsByTagName("Types").item(0);
+			NodeList typs = typ.getChildNodes();
+			for (int i = 0; i < typs.getLength(); i++) {
+				org.w3c.dom.Node data = typs.item(i);
+				NodeList datas = data.getChildNodes();
+				double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+				Color color = null;
+				for (int k = 0; k < datas.getLength(); k++) {
+					org.w3c.dom.Node element = datas.item(k);
+					if ("x1".equals(element.getNodeName())) {
+						x1 = Double.parseDouble(element.getTextContent());
+					}
+					if ("y1".equals(element.getNodeName())) {
+						y1 = Double.parseDouble(element.getTextContent());
+					}
+					if ("x2".equals(element.getNodeName())) {
+						x2 = Double.parseDouble(element.getTextContent());
+					}
+					if ("y2".equals(element.getNodeName())) {
+						y2 = Double.parseDouble(element.getTextContent());
+					}
+					if ("color".equals(element.getNodeName())) {
+						color = Color.web(element.getTextContent());
+					}
+
+				}
+				UC_TypeOfLine up = new UC_TypeOfLine(x1, y1, x2, y2, color);
+				tLines.add(up);
+				up.calculateTri();
+				getChildren().addAll(up, up.getTri());
 			}
 
 		} catch (Exception e) {
@@ -692,10 +634,55 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 		}
 	}
 
-	
+	public void DeleteNode() {
+		if (actors.size() > 0) {
+			for (int i = 0; i < actors.size(); i++) {
+				int index = i;
+				if (actors.get(i).isPressed()) {
+					actors.get(i).onKeyPressedProperty().bindBidirectional(owner.onKeyPressedProperty());
+					actors.get(i).setOnKeyPressed(e -> {
+						if (e.getCode() == KeyCode.DELETE) {
+							getChildren().removeAll(actors.get(index), actors.get(index).getBody(),
+									actors.get(index).getLeg(), actors.get(index).getLeg2(),
+									actors.get(index).getLeg3(), actors.get(index).getLeg4(),
+									actors.get(index).getLabel(), actors.get(index).getText(false));
+							actors.remove(index);
+						}
+					});
+				}
+			}
+		}
 
-	public Scene getOwner() {
-		return owner;
+		if (boxs.size() > 0) {
+			for (int i = 0; i < boxs.size(); i++) {
+				int index = i;
+				if (boxs.get(i).isPressed()) {
+					boxs.get(i).onKeyPressedProperty().bindBidirectional(owner.onKeyPressedProperty());
+					boxs.get(i).setOnKeyPressed(e -> {
+						if (e.getCode() == KeyCode.DELETE) {
+							getChildren().removeAll(boxs.get(index), boxs.get(index).getLabel());
+							boxs.remove(index);
+						}
+					});
+				}
+			}
+		}
+
+		if (processes.size() > 0) {
+			for (int i = 0; i < processes.size(); i++) {
+				int index = i;
+				if (processes.get(i).isPressed()) {
+					processes.get(i).onKeyPressedProperty().bindBidirectional(owner.onKeyPressedProperty());
+					processes.get(i).setOnKeyPressed(e -> {
+						if (e.getCode() == KeyCode.DELETE) {
+							getChildren().removeAll(processes.get(index), processes.get(index).getLabel(),
+									processes.get(index).getText(false));
+							processes.remove(index);
+						}
+					});
+				}
+			}
+		}
+
 	}
-
 }
