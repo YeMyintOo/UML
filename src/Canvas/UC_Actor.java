@@ -31,9 +31,12 @@ public class UC_Actor extends Circle {
 	private Line leg4;
 	private DropShadow shape;
 
+	public UC_Actor(){
+		this(0,0,0,Color.LIGHTGREEN,Color.BLUE);
+	}
+	
 	public UC_Actor(double centerX, double centerY, double radius, Color bgcolor, Color scolor) {
 		super(centerX, centerY, radius);
-		
 		setFill(bgcolor);
 		setStroke(scolor);
 		data = new SimpleStringProperty("Actor");

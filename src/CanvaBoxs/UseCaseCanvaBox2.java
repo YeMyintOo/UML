@@ -25,7 +25,6 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 	
 	//All In One
 	
-	
 	// Actor
 	private ArrayList<UC_Actor> actors;
 	private UC_Actor actor;
