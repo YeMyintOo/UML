@@ -2,14 +2,8 @@ package CanvaBoxs;
 
 import java.io.File;
 import java.util.ArrayList;
-
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-
-import Calculate.ScreenDetail;
 import Canvas.UC_ActionLine;
 import Canvas.UC_Actor;
 import Canvas.UC_Box;
@@ -20,53 +14,24 @@ import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
 import Library.MyGridLine;
 import Library.SaveDiagramXML;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
-import javafx.print.JobSettings;
-import javafx.print.PageLayout;
 import javafx.print.PageOrientation;
 import javafx.print.Paper;
 import javafx.print.Printer;
-import javafx.print.PrinterJob;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Scale;
-import javafx.util.Duration;
 
-public class UseCaseCanvaBox2 extends Pane {
-
-	protected DocumentBuilderFactory dbFactory;
-	protected DocumentBuilder dBuilder;
-	protected Document doc;
-
-	private boolean isNew;
-	private boolean isLoad;
-	private File path;
-	protected ScreenDetail screen;
-	private ToolHandler toolHandler;
-	private SaveDiagramXML save;
-	private BorderPane gridLine;
-	private Printer defaultprinter;
-	private PageLayout pageLayout;
-	private Color color;
-	private DropShadow shape;
-	private Scene owner;
+public class UseCaseCanvaBox2 extends CanvasPane {
 
 	// Actor
 	private ArrayList<UC_Actor> actors;
@@ -104,31 +69,33 @@ public class UseCaseCanvaBox2 extends Pane {
 	private boolean isTypeofLine;
 
 	public UseCaseCanvaBox2(Scene owner, File path, boolean isLoad) {
-		this.owner = owner;
 		this.isLoad = isLoad;
-		this.path = path;
-		gridLine = new BorderPane();
-		toolHandler = new ToolHandler();
+		setOwner(owner);
+		setPath(path);
 		if (toolHandler.getGrid().equals("Show")) {
 			setGridLines();
 		}
-		init();
+		actors = new ArrayList<UC_Actor>();
+		actionLines = new ArrayList<UC_ActionLine>();
+		boxs = new ArrayList<UC_Box>();
+		processCycles = new ArrayList<UC_ProcessCycle>();
+		extendLines = new ArrayList<UC_ExtendLine>();
+		includeLines = new ArrayList<UC_IncludeLine>();
+		typeofLines = new ArrayList<UC_TypeOfLine>();
+
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent key) {
-				// Is New or Edit///////////////
 				isNewOrEdit(key);
 				if (isNew) {
-					/// Get Color and Tool//////////
 					toolHandler = new ToolHandler();
 					color = Color.web(toolHandler.getColor());
-					//////////////////////////////
 					switch (toolHandler.getTool()) {
 					case "UseCase_Actor":
 						actor = new UC_Actor(key.getX(), key.getY(), 20, color, Color.GRAY);
 						isActor = true;
 						getChildren().addAll(actor, actor.getBody(), actor.getLeg(), actor.getLeg2(), actor.getLeg3(),
-								actor.getLeg4(), actor.getLabel());
+								actor.getLeg4(), actor.getLabel(), actor.getText(false), actor.getDel(false));
 						break;
 					case "UseCase_Action":
 						actionLine = new UC_ActionLine(key.getX(), key.getY(), key.getX(), key.getY(), color);
@@ -165,7 +132,7 @@ public class UseCaseCanvaBox2 extends Pane {
 						break;
 					}
 					requestFocus();
-				} // End of New
+				}
 			}
 		});
 		setOnMouseDragged(new EventHandler<MouseEvent>() {
@@ -207,7 +174,6 @@ public class UseCaseCanvaBox2 extends Pane {
 				if (isActor) {
 					actors.add(actor);
 					isActor = false;
-
 				}
 				if (isActionLine) {
 					actionLines.add(actionLine);
@@ -243,29 +209,18 @@ public class UseCaseCanvaBox2 extends Pane {
 					isTypeofLine = false;
 				}
 				requestFocus();
+				toolHandler.setTool("");
 			}
 		});
 
 		this.onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
 		this.setOnKeyPressed(e -> {
-			// Print
 			if (e.getCode() == KeyCode.PRINTSCREEN) {
-				System.out.println("Print MEthod is called");
-				if (defaultprinter == null) {
-					defaultprinter = Printer.getDefaultPrinter();
-					pageLayout = defaultprinter.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,
-							Printer.MarginType.HARDWARE_MINIMUM);
-					System.out.println("Printer is created");
-				}
-				// Remove GriLines
 				getChildren().remove(gridLine);
-				PrintNode(this, pageLayout);
+				new Library.PrintNode(this);
 				getChildren().add(gridLine);
 				gridLine.toBack();
-			}
-
-			// Save
-			if (e.getCode() == KeyCode.F1) {
+			} else if (e.getCode() == KeyCode.F1) {
 				if (save == null) {
 					save = new SaveDiagramXML(path);
 				}
@@ -274,22 +229,10 @@ public class UseCaseCanvaBox2 extends Pane {
 				System.out.println("****Save*****");
 			}
 		});
+
 	}
 
 	public void init() {
-		shape = new DropShadow();
-		shape.setOffsetX(5);
-		shape.setOffsetY(5);
-		shape.setRadius(15);
-
-		actors = new ArrayList<UC_Actor>();
-		actionLines = new ArrayList<UC_ActionLine>();
-		boxs = new ArrayList<UC_Box>();
-		processCycles = new ArrayList<UC_ProcessCycle>();
-		extendLines = new ArrayList<UC_ExtendLine>();
-		includeLines = new ArrayList<UC_IncludeLine>();
-		typeofLines = new ArrayList<UC_TypeOfLine>();
-
 		if (isLoad) {
 			System.out.println(" Load Actor data From XML");
 			loadXMLData("Actors");
@@ -306,7 +249,7 @@ public class UseCaseCanvaBox2 extends Pane {
 	public void isNewOrEdit(MouseEvent e) {
 		isNew = true;
 		Point2D point = new Point2D(e.getX(), e.getY());
-		isNewOREditActor(e, point);
+		// isNewOREditActor(e, point);
 		isNewOREditAction(e, point);
 		isNewOREditBox(e, point);
 		isNewOREditProcess(e, point);
@@ -739,33 +682,6 @@ public class UseCaseCanvaBox2 extends Pane {
 		gridLine.toBack();
 	}
 
-	private void PrintNode(Node node, PageLayout pageLayout) {
-		System.out.println("call print job");
-		PrinterJob job = PrinterJob.createPrinterJob();
-		JobSettings jobSettings = job.getJobSettings();
-		jobSettings.setPageLayout(pageLayout);
-
-		boolean proceed = job.showPrintDialog(null);
-		if (proceed) {
-			double scaleX = pageLayout.getPrintableWidth() / node.getLayoutBounds().getWidth();
-			double scaleY = pageLayout.getPrintableHeight() / node.getLayoutBounds().getHeight();
-			double minimumScale = Math.min(scaleX, scaleY);
-			Scale scale = new Scale(minimumScale, minimumScale);
-			try {
-				node.getTransforms().add(scale);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			job.printPage(node);
-			job.endJob();
-			node.getTransforms().remove(scale);
-			System.out.println("***Print Success");
-
-		}
-
-	}
-
 	private void loadXMLData(String tagName) {
 		try {
 			dbFactory = DocumentBuilderFactory.newInstance();
@@ -865,7 +781,7 @@ public class UseCaseCanvaBox2 extends Pane {
 					}
 					UC_Box uboxd = new UC_Box(x, y, w, h, color, Color.LIGHTGRAY);
 					boxs.add(uboxd);
-					getChildren().addAll(uboxd,uboxd.getLabel());
+					getChildren().addAll(uboxd, uboxd.getLabel());
 				}
 				break;
 
@@ -926,10 +842,10 @@ public class UseCaseCanvaBox2 extends Pane {
 					UC_ExtendLine up = new UC_ExtendLine(x1, y1, x2, y2, color);
 					extendLines.add(up);
 					up.recalculatePoint();
-					getChildren().addAll(up,up.getLabel(true),up.getTop(),up.getBot());
+					getChildren().addAll(up, up.getLabel(true), up.getTop(), up.getBot());
 				}
 				break;
-				
+
 			case "Includes":
 				org.w3c.dom.Node inc = doc.getElementsByTagName("Includes").item(0);
 				NodeList incs = inc.getChildNodes();
@@ -960,10 +876,10 @@ public class UseCaseCanvaBox2 extends Pane {
 					UC_IncludeLine up = new UC_IncludeLine(x1, y1, x2, y2, color);
 					includeLines.add(up);
 					up.recalculatePoint();
-					getChildren().addAll(up,up.getLabel(true),up.getTop(),up.getBot());
+					getChildren().addAll(up, up.getLabel(true), up.getTop(), up.getBot());
 				}
 				break;
-				
+
 			case "Types":
 				org.w3c.dom.Node typ = doc.getElementsByTagName("Types").item(0);
 				NodeList typs = typ.getChildNodes();
@@ -994,7 +910,7 @@ public class UseCaseCanvaBox2 extends Pane {
 					UC_TypeOfLine up = new UC_TypeOfLine(x1, y1, x2, y2, color);
 					typeofLines.add(up);
 					up.calculateTri();
-					getChildren().addAll(up,up.getTri());
+					getChildren().addAll(up, up.getTri());
 				}
 				break;
 

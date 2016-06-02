@@ -7,11 +7,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 
-import com.sun.glass.ui.Window;
-
 import Database.ToolHandler;
 import Library.CodeGenerate;
 import Library.MyGridLine;
+import Library.PrintNode;
 import Library.SaveDiagramXML;
 import javafx.print.JobSettings;
 import javafx.print.PageLayout;
@@ -32,6 +31,9 @@ public class CanvasPane extends Pane {
 	protected DocumentBuilderFactory dbFactory;
 	protected DocumentBuilder dBuilder;
 	protected Document doc;
+	public PrintNode print;
+	public Printer defaultprinter;
+	public PageLayout pageLayout;
 	public ToolHandler toolHandler;
 	public Color color;
 	public Scene owner;
@@ -40,11 +42,10 @@ public class CanvasPane extends Pane {
 	public SaveDiagramXML save;
 	public BorderPane gridLine;
 	public DropShadow shape;
-	public Printer defaultprinter;
-	public PageLayout pageLayout;
 	public boolean isNew;
+	public boolean isLoad;
 	public CodeGenerate code;
-
+	
 	
 	public CanvasPane() {
 		toolHandler = new ToolHandler();

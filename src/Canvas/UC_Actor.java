@@ -1,7 +1,17 @@
 package Canvas;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -11,20 +21,21 @@ import javafx.scene.text.Text;
 
 public class UC_Actor extends Circle {
 
+	
 	private StringProperty data;
 	private Text label;
+	private TextField field;
 	private Line body;
 	private Line leg;
 	private Line leg2;
 	private Line leg3;
 	private Line leg4;
-
-	public UC_Actor(double centerX, double centerY, double radius) {
-		this(centerX, centerY, radius, Color.WHEAT, Color.GRAY);
-	}
+	private DropShadow shape;
+	private Button delB;
 
 	public UC_Actor(double centerX, double centerY, double radius, Color bgcolor, Color scolor) {
 		super(centerX, centerY, radius);
+		
 		setFill(bgcolor);
 		setStroke(scolor);
 		data = new SimpleStringProperty("Actor");
@@ -64,6 +75,83 @@ public class UC_Actor extends Circle {
 		leg4.startYProperty().bind(centerYProperty().add(40));
 		leg4.endXProperty().bind(centerXProperty().subtract(10));
 		leg4.endYProperty().bind(centerYProperty().add(50));
+
+		field = new TextField(labelProperty().get());
+		field.layoutXProperty().bind(centerXProperty().subtract(60));
+		field.layoutYProperty().bind(centerYProperty().add(60));
+		field.textProperty().bindBidirectional(labelProperty());
+
+		delB = new Button("x");
+		delB.layoutXProperty().bind(centerXProperty().add(20));
+		delB.layoutYProperty().bind(centerYProperty().subtract(10));
+
+		addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent key) {
+				setCenterX(key.getX());
+				setCenterY(key.getY());
+			}
+		});
+
+		addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent key) {
+				if (shape == null) {
+					shape = new DropShadow();
+				}
+				setEffect(shape);
+				delB.setVisible(true);
+			}
+		});
+
+		addEventFilter(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent key) {
+				setEffect(null);
+			}
+		});
+
+		delB.addEventFilter(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent key) {
+				delB.setVisible(false);
+			}
+		});
+
+		label.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				field.setVisible(true);
+			}
+		});
+
+		DoubleProperty w = new SimpleDoubleProperty();
+		field.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent e) {
+				w.set(label.layoutBoundsProperty().getValue().getWidth());
+				label.layoutXProperty().bind(centerXProperty().subtract(label.getLayoutBounds().getWidth() / 2));
+				if (e.getCode() == KeyCode.ENTER) {
+					field.setVisible(false);
+				}
+			}
+		});
+
+		
+	}
+
+	public TextField getText(boolean isShow) {
+		field.setText(labelProperty().get());
+		if (isShow) {
+			field.setVisible(isShow);
+		} else {
+			field.setVisible(false);
+		}
+		return field;
+	}
+
+	public void setTextInVisible() {
+		field.setVisible(false);
 	}
 
 	public final StringProperty labelProperty() {
@@ -92,5 +180,14 @@ public class UC_Actor extends Circle {
 
 	public Line getLeg4() {
 		return leg4;
+	}
+
+	public Button getDel(boolean isShow) {
+		if (isShow) {
+			delB.setVisible(isShow);
+		} else {
+			delB.setVisible(false);
+		}
+		return delB;
 	}
 }
