@@ -288,7 +288,7 @@ public class SequenceCanvaBox extends CanvasPane {
 						
 						roles.get(index).setEffect(null);
 						getChildren().remove(gridLine);
-						new Library.PrintNode(this);
+						new Library.PrintNodes(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}
@@ -371,7 +371,7 @@ public class SequenceCanvaBox extends CanvasPane {
 						
 						anormals.get(index).setEffect(null);
 						getChildren().remove(gridLine);
-						new Library.PrintNode(this);
+						new Library.PrintNodes(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}
@@ -501,7 +501,7 @@ public class SequenceCanvaBox extends CanvasPane {
 						
 						anews.get(index).setEffect(null);
 						getChildren().remove(gridLine);
-						new Library.PrintNode(this);
+						new Library.PrintNodes(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}
@@ -565,7 +565,7 @@ public class SequenceCanvaBox extends CanvasPane {
 						
 						dnews.get(index).setEffect(null);
 						getChildren().remove(gridLine);
-						new Library.PrintNode(this);
+						new Library.PrintNodes(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}
@@ -628,7 +628,7 @@ public class SequenceCanvaBox extends CanvasPane {
 						
 						snews.get(index).setEffect(null);
 						getChildren().remove(gridLine);
-						new Library.PrintNode(this);
+						new Library.PrintNodes(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}

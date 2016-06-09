@@ -41,7 +41,6 @@ public class SaveUseCase {
 			ArrayList<UC_Process> processCycles, ArrayList<UC_ExtendLine> extendLines,
 			ArrayList<UC_IncludeLine> includeLines, ArrayList<UC_TypeOfLine> typeofLines) {
 
-
 		// Actor
 		Node actorNode = doc.getElementsByTagName("Actors").item(0);
 		removeChilds(actorNode);
@@ -50,14 +49,17 @@ public class SaveUseCase {
 			Element x = doc.createElement("x");
 			Element y = doc.createElement("y");
 			Element color = doc.createElement("color");
+			Element label = doc.createElement("label");
 
 			x.appendChild(doc.createTextNode("" + actors.get(i).getCenterX()));
 			y.appendChild(doc.createTextNode("" + actors.get(i).getCenterY()));
 			color.appendChild(doc.createTextNode("" + actors.get(i).getFill()));
+			label.appendChild(doc.createTextNode(""+actors.get(i).labelProperty().get()));
 
 			data.appendChild(x);
 			data.appendChild(y);
 			data.appendChild(color);
+			data.appendChild(label);
 			actorNode.appendChild(data);
 		}
 
@@ -96,22 +98,25 @@ public class SaveUseCase {
 			Element width = doc.createElement("width");
 			Element height = doc.createElement("height");
 			Element color = doc.createElement("color");
+			Element label=doc.createElement("label");
 
 			x.appendChild(doc.createTextNode("" + boxs.get(i).getX()));
 			y.appendChild(doc.createTextNode("" + boxs.get(i).getY()));
 			width.appendChild(doc.createTextNode("" + boxs.get(i).getWidth()));
 			height.appendChild(doc.createTextNode("" + boxs.get(i).getHeight()));
 			color.appendChild(doc.createTextNode("" + boxs.get(i).getFill()));
+			label.appendChild(doc.createTextNode(""+boxs.get(i).labelProperty().get()));
 
 			data.appendChild(x);
 			data.appendChild(y);
 			data.appendChild(width);
 			data.appendChild(height);
 			data.appendChild(color);
+			data.appendChild(label);
 			boxNode.appendChild(data);
 		}
 
-		// ProcessCycle
+		// Process
 		Node processNode = doc.getElementsByTagName("Processes").item(0);
 		removeChilds(processNode);
 		for (int i = 0; i < processCycles.size(); i++) {
@@ -119,12 +124,17 @@ public class SaveUseCase {
 			Element x = doc.createElement("x");
 			Element y = doc.createElement("y");
 			Element color = doc.createElement("color");
+			Element label=doc.createElement("label");
+			
 			x.appendChild(doc.createTextNode("" + processCycles.get(i).getCenterX()));
 			y.appendChild(doc.createTextNode("" + processCycles.get(i).getCenterY()));
 			color.appendChild(doc.createTextNode("" + processCycles.get(i).getFill()));
+			label.appendChild(doc.createTextNode(""+processCycles.get(i).labelProperty().get()));
+			
 			data.appendChild(x);
 			data.appendChild(y);
 			data.appendChild(color);
+			data.appendChild(label);
 			processNode.appendChild(data);
 		}
 
@@ -200,7 +210,7 @@ public class SaveUseCase {
 			data.appendChild(x2);
 			data.appendChild(y2);
 			data.appendChild(color);
-			incNode.appendChild(data);
+			typNode.appendChild(data);
 		}
 	}
 

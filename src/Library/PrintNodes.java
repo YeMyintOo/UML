@@ -10,12 +10,12 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.transform.Scale;
 
-public class PrintNode {
+public class PrintNodes {
 	private Node node;
 	private PageLayout pageLayout;
 	public Printer printer;
 
-	public PrintNode(Node node) {
+	public PrintNodes(Node node) {
 
 		printer = Printer.getDefaultPrinter();
 		pageLayout = printer.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE, Printer.MarginType.HARDWARE_MINIMUM);

@@ -773,7 +773,7 @@ public class ClassCanvaBox extends CanvasPane {
 
 						cboxs.get(index).setEffect(null);
 						getChildren().remove(gridLine);
-						new Library.PrintNode(this);
+						new Library.PrintNodes(this);
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}

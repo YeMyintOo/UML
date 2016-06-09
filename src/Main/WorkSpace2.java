@@ -11,9 +11,10 @@ import CanvaBoxs.DeploymentCanvaBox;
 import CanvaBoxs.ObjectCanvaBox;
 import CanvaBoxs.SequenceCanvaBox;
 import CanvaBoxs.StatechartCanvaBox;
-import CanvaBoxs.UseCaseCanvaBox2;
+import CanvaBoxs.UseCaseCanvaBox;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -25,6 +26,7 @@ public class WorkSpace2 extends BorderPane {
 	protected Stage parent;
 	protected File path;
 	protected boolean isLoad;
+
 	public WorkSpace2(int type, File path,Scene owner,Stage parent,boolean isLoad) {
 		this.owner=owner;
 		this.parent=parent;
@@ -40,8 +42,8 @@ public class WorkSpace2 extends BorderPane {
 				+ "-fx-border-color: green;");
 
 		boderPane.setLeft(toolbar);
-		RenderTool(type);
 		setCenter(boderPane);
+		RenderTool(type);
 
 		addEventFilter(MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
 			@Override
@@ -66,19 +68,19 @@ public class WorkSpace2 extends BorderPane {
 
 		switch (type) {
 		case 1: // Use_Case
-			boderPane.setCenter(new UseCaseCanvaBox2(owner,path,isLoad));
+			boderPane.setCenter(new UseCaseCanvaBox(owner, path, isLoad));
 			break;
 		case 2:// Object
-			boderPane.setCenter(new ObjectCanvaBox(owner,path,isLoad));
+			boderPane.setCenter(new ObjectCanvaBox(owner, path, isLoad));
 			break;
 		case 3:// Sequence
-			boderPane.setCenter(new SequenceCanvaBox(owner,path,isLoad));
+			boderPane.setCenter(new SequenceCanvaBox(owner, path, isLoad));
 			break;
 		case 4:// Collaboration
 			boderPane.setCenter(new CollaborationCanvaBox());
 			break;
 		case 5:// Class
-			boderPane.setCenter(new ClassCanvaBox(owner,parent,path,isLoad));
+			boderPane.setCenter(new ClassCanvaBox(owner, parent, path, isLoad));
 			break;
 		case 6:// State Chart
 			boderPane.setCenter(new StatechartCanvaBox());

@@ -1,6 +1,7 @@
 package CanvaBoxs;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -11,22 +12,19 @@ import Calculate.ScreenDetail;
 import Database.ToolHandler;
 import Library.CodeGenerate;
 import Library.MyGridLine;
-import Library.PrintNode;
-import Library.SaveDiagramXML;
+import Library.Types;
 import javafx.geometry.Pos;
-import javafx.print.JobSettings;
-import javafx.print.PageLayout;
-import javafx.print.Printer;
-import javafx.print.PrinterJob;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Scale;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class CanvasPane extends Pane {
@@ -47,8 +45,9 @@ public class CanvasPane extends Pane {
 	public HBox menu;
 	public Button printB;
 	public Button saveB;
+	public Label nLabel;
 	protected ScreenDetail screen;
-	
+
 	public CanvasPane() {
 		toolHandler = new ToolHandler();
 
@@ -63,18 +62,74 @@ public class CanvasPane extends Pane {
 
 		// Menu
 		menu = new HBox();
-		screen=new ScreenDetail();
-		menu.setLayoutX(screen.getWidth()-130);
-		menu.setStyle("-fx-padding:5 5 5 5;" + "-fx-background-color:white;" + "-fx-border-style: solid inside;"
+		screen = new ScreenDetail();
+		menu.setStyle("-fx-padding:5 1 5 5;" + "-fx-background-color:white;" + "-fx-border-style: solid inside;"
 				+ "-fx-border-width: 2;" + "-fx-border-insets: 5;" + "-fx-border-radius: 5;"
-				+ "-fx-border-color: green;");
-		
+				+ "-fx-border-color: gray;");
+
 		menu.setSpacing(10);
-		saveB = new Button("Save");
-		printB = new Button("Print");
-		menu.getChildren().addAll(saveB,printB);
-		
+		nLabel = new Label("");
+		nLabel.setStyle(
+				"-fx-font-size: 16px;" + " -fx-font-family: 'Segoe UI Semibold';" + "-fx-text-fill:rgb(142,56,142);");
+
+		saveB = new Button("");
+		saveB.setStyle("-fx-background-color:#FFFFFF");
+		printB = new Button("");
+		printB.setStyle("-fx-background-color:#FFFFFF");
+		Image sIMG, pIMG;
+		try {
+			sIMG = new Image(new FileInputStream("Resources/Image/Save.png"));
+			pIMG = new Image(new FileInputStream("Resources/Image/Print.png"));
+			saveB.setGraphic(new ImageView(sIMG));
+			printB.setGraphic(new ImageView(pIMG));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		getChildren().add(menu);
+	}
+
+	public Label getLabel(Types nodes) {
+		switch (nodes) {
+		case Usecase:
+			menu.setLayoutX(screen.getWidth() - 210);
+			nLabel.setText("Use Case");
+			break;
+		case Object:
+			menu.setLayoutX(screen.getWidth() - 190);
+			nLabel.setText("Object");
+			break;
+		case Sequence:
+			menu.setLayoutX(screen.getWidth() - 150);
+			nLabel.setText("Sequence");
+			break;
+		case Collaboration:
+			menu.setLayoutX(screen.getWidth() - 150);
+			nLabel.setText("Colloaboration");
+			break;
+		case Class:
+			menu.setLayoutX(screen.getWidth() - 150);
+			nLabel.setText("Class");
+			break;
+		case Statechart:
+			menu.setLayoutX(screen.getWidth() - 150);
+			nLabel.setText("State Chart");
+			break;
+		case Activity:
+			menu.setLayoutX(screen.getWidth() - 150);
+			nLabel.setText("Activity");
+			break;
+		case Component:
+			menu.setLayoutX(screen.getWidth() - 150);
+			nLabel.setText("Component");
+			break;
+		case Deployment:
+			menu.setLayoutX(screen.getWidth() - 150);
+			nLabel.setText("Deployment");
+			break;
+		}
+
+		return nLabel;
 	}
 
 	public ToolHandler getToolHandler() {

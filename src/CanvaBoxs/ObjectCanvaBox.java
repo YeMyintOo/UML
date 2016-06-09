@@ -9,22 +9,15 @@ import org.w3c.dom.NodeList;
 
 import Canvas.O_Link;
 import Canvas.O_Object;
-import Canvas.UC_ActionLine;
-import Canvas.UC_Actor;
-import Canvas.UC_Box;
-import Canvas.UC_ExtendLine;
-import Canvas.UC_IncludeLine;
-import Canvas.UC_Process;
-import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
 import Library.SaveDiagramXML;
+import Library.Types;
+import SaveMe.SaveObject;
+import SaveMe.SaveUseCase;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
-import javafx.print.PageOrientation;
-import javafx.print.Paper;
-import javafx.print.Printer;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -37,13 +30,11 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class ObjectCanvaBox extends CanvasPane {
+	private SaveObject saveMe;
 
-	// Object
 	private ArrayList<O_Object> objects;
 	private O_Object object;
 	private boolean isObject;
-
-	// Link
 	private ArrayList<O_Link> links;
 	private O_Link link;
 	private boolean isLink;
@@ -53,11 +44,10 @@ public class ObjectCanvaBox extends CanvasPane {
 		setPath(path);
 		objects = new ArrayList<O_Object>();
 		links = new ArrayList<O_Link>();
+		menu.getChildren().addAll(getLabel(Types.Object), saveB, printB);
 
 		if (isLoad) {
-			System.out.println(" Load Object data From XML");
-			loadXMLData("Objects");
-			loadXMLData("Links");
+			loadXMLData();
 		}
 
 		if (toolHandler.getGrid().equals("Show")) {
@@ -119,122 +109,34 @@ public class ObjectCanvaBox extends CanvasPane {
 					isLink = false;
 				}
 				requestFocus();
+				toolHandler.setTool("");
 			}
+		});
+
+		saveB.setOnAction(e -> {
+			if (saveMe == null) {
+				saveMe = new SaveObject(path);
+			}
+			saveMe.setDatas(objects, links);
+			saveMe.save();
+		});
+		printB.setOnAction(e -> {
+			getChildren().removeAll(gridLine, menu);
+			new Library.PrintNodes(this);
+			getChildren().add(gridLine);
+			gridLine.toBack();
 		});
 
 	}
 
 	public void isEditOrNew(MouseEvent e) {
 		isNew = true;
-
 		Point2D point = new Point2D(e.getX(), e.getY());
-		isNewOREditObject(e, point);
 		isNewOREditLink(e, point);
 	}
 
-	public void isNewOREditObject(MouseEvent e, Point2D point) {
-		for (int i = 0; i < objects.size(); i++) {
-			if (objects.get(i).contains(point) || objects.get(i).getdataBox().contains(point)) {
-				int index = i;
+	public void isNewOREditLink(MouseEvent e,Point2D point){
 
-				isNew = false;
-				objects.get(i).addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent e) {
-						objects.get(index).setX(e.getX());
-						objects.get(index).setY(e.getY());
-					}
-				});
-
-				objects.get(i).getLabel().addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent e) {
-						if (e.getClickCount() == 2) {
-							objects.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED,
-									new EventHandler<KeyEvent>() {
-								@Override
-								public void handle(KeyEvent e) {
-									DoubleProperty width = new SimpleDoubleProperty();
-									width.set(
-											objects.get(index).getLabel().layoutBoundsProperty().getValue().getWidth());
-									objects.get(index).widthProperty().bind(width.add(40));
-									if (e.getCode() == KeyCode.ENTER) {
-										objects.get(index).setTextInVisible();
-									}
-								}
-							});
-						}
-					}
-				});
-
-				objects.get(i).getdataBox().addEventFilter(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent e) {
-
-						Button add = new Button("+");
-						getChildren().remove(add);
-						add.layoutXProperty().bind(objects.get(index).getdataBox().xProperty().subtract(30));
-						add.layoutYProperty().bind(objects.get(index).getdataBox().yProperty());
-						getChildren().add(add);
-						add.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-							@Override
-							public void handle(MouseEvent e) {
-								// Text
-								objects.get(index).addData("data");
-								addDataLabel(index);
-								//
-							}
-						});
-						add.addEventFilter(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
-							@Override
-							public void handle(MouseEvent e) {
-								getChildren().remove(add);
-							}
-						});
-
-					}
-				});
-
-				// Delete
-				objects.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
-				objects.get(i).setOnKeyPressed(key -> {
-					System.out.println(" Key Press On Object Box");
-					if (key.getCode() == KeyCode.DELETE) {
-						if (objects.size() > 0) {
-							getChildren().removeAll(objects.get(index), objects.get(index).getdataBox(),
-									objects.get(index).getLabel());
-							objects.remove(index);
-						} else {
-							System.out.println("No Object to delete");
-						}
-					}
-					// Print
-					if (key.getCode() == KeyCode.PRINTSCREEN) {
-						new Library.PrintNode(this);
-						getChildren().remove(gridLine);
-						new Library.PrintNode(this);
-						getChildren().add(gridLine);
-						gridLine.toBack();
-					}
-					// Save
-					if (key.getCode() == KeyCode.F1) {
-						if (save == null) {
-							save = new SaveDiagramXML(path);
-						}
-						save.saveObjectCanvaBox(objects, links);
-						System.out.println("****Save*****");
-					}
-				});
-
-				objects.get(i).setEffect(shape);
-			} else {
-				objects.get(i).setEffect(null);
-
-			}
-		}
-	}
-
-	public void isNewOREditLink(MouseEvent e, Point2D point) {
 		for (int i = 0; i < links.size(); i++) {
 			int index = i;
 			boolean isclick = links.get(i).contains(point.getX(), point.getY())
@@ -260,45 +162,29 @@ public class ObjectCanvaBox extends CanvasPane {
 					|| links.get(i).contains(point.getX(), point.getY() + 5);
 			if (isclick) {
 				isNew = false;
+
 				// Delete
 				links.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
 				links.get(i).setOnKeyPressed(key -> {
 					if (key.getCode() == KeyCode.DELETE) {
 						if (links.size() > 0) {
-							getChildren().removeAll(links.get(index), links.get(index).getTop(),
-									links.get(index).getBot());
+							getChildren().removeAll(links.get(index));
 							links.remove(index);
 						} else {
-							System.out.println("No Link to delete");
+							System.out.println("No ActionLine to delete");
 						}
-					}
-					// Print
-					if (key.getCode() == KeyCode.PRINTSCREEN) {
-						
-						links.get(index).setEffect(null);
-						getChildren().remove(gridLine);
-						new Library.PrintNode(this);
-						getChildren().add(gridLine);
-						gridLine.toBack();
-					}
-					// Save
-					if (key.getCode() == KeyCode.F1) {
-						if (save == null) {
-							save = new SaveDiagramXML(path);
-						}
-						save.saveObjectCanvaBox(objects, links);
-						System.out.println("****Save*****");
 					}
 				});
 				links.get(i).setEffect(shape);
 			} else {
 				links.get(i).setEffect(null);
 			}
+
 		}
+	
 	}
 
 	public void addDataLabel(int index) {
-
 		Text data = new Text("data");
 		int size = objects.get(index).getDatas().size();
 		data.textProperty().bindBidirectional(objects.get(index).getDatas().get(--size));
@@ -349,88 +235,80 @@ public class ObjectCanvaBox extends CanvasPane {
 						}
 					}
 				});
-				//
 			}
 		});
 	}
 
-	private void loadXMLData(String tagName) {
+	private void loadXMLData() {
 		try {
 			dbFactory = DocumentBuilderFactory.newInstance();
 			dBuilder = dbFactory.newDocumentBuilder();
 			doc = dBuilder.parse(path);
 
-			switch (tagName) {
-			case "Links":
-				org.w3c.dom.Node action = doc.getElementsByTagName("Links").item(0);
-				NodeList actions = action.getChildNodes();
-				for (int i = 0; i < actions.getLength(); i++) {
-					org.w3c.dom.Node data = actions.item(i);
-					NodeList datas = data.getChildNodes();
-					double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-					Color color = null;
-					for (int k = 0; k < datas.getLength(); k++) {
-						org.w3c.dom.Node element = datas.item(k);
-						if ("x1".equals(element.getNodeName())) {
-							x1 = Double.parseDouble(element.getTextContent());
-						}
-						if ("y1".equals(element.getNodeName())) {
-							y1 = Double.parseDouble(element.getTextContent());
-						}
-						if ("x2".equals(element.getNodeName())) {
-							x2 = Double.parseDouble(element.getTextContent());
-						}
-						if ("y2".equals(element.getNodeName())) {
-							y2 = Double.parseDouble(element.getTextContent());
-						}
-						if ("color".equals(element.getNodeName())) {
-							color = Color.web(element.getTextContent());
-						}
+			org.w3c.dom.Node action = doc.getElementsByTagName("Links").item(0);
+			NodeList actions = action.getChildNodes();
+			for (int i = 0; i < actions.getLength(); i++) {
+				org.w3c.dom.Node data = actions.item(i);
+				NodeList datas = data.getChildNodes();
+				double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+				Color color = null;
+				for (int k = 0; k < datas.getLength(); k++) {
+					org.w3c.dom.Node element = datas.item(k);
+					if ("x1".equals(element.getNodeName())) {
+						x1 = Double.parseDouble(element.getTextContent());
 					}
-					O_Link link = new O_Link(x1, y1, x2, y2, color);
-					links.add(link);
-					link.recalculatePoint();
-					getChildren().addAll(link, link.getTop(), link.getBot());
-				}
-				break;
-
-			case "Objects":
-				org.w3c.dom.Node ubox = doc.getElementsByTagName("Objects").item(0);
-				NodeList uboxs = ubox.getChildNodes();
-				for (int i = 0; i < uboxs.getLength(); i++) {
-					org.w3c.dom.Node data = uboxs.item(i);
-					NodeList datas = data.getChildNodes();
-					double x = 0, y = 0, h = 0, w = 0;
-					Color color = null;
-					for (int k = 0; k < datas.getLength(); k++) {
-						org.w3c.dom.Node element = datas.item(k);
-						if ("x".equals(element.getNodeName())) {
-							x = Double.parseDouble(element.getTextContent());
-						}
-						if ("y".equals(element.getNodeName())) {
-							y = Double.parseDouble(element.getTextContent());
-						}
-						if ("width".equals(element.getNodeName())) {
-							w = Double.parseDouble(element.getTextContent());
-						}
-						if ("height".equals(element.getNodeName())) {
-							h = Double.parseDouble(element.getTextContent());
-						}
-						if ("color".equals(element.getNodeName())) {
-							color = Color.web(element.getTextContent());
-						}
-
+					if ("y1".equals(element.getNodeName())) {
+						y1 = Double.parseDouble(element.getTextContent());
 					}
-					O_Object obj = new O_Object(x, y, w, h, color, Color.LIGHTGRAY);
-					objects.add(obj);
-					getChildren().addAll(obj, obj.getLabel(), obj.getdataBox());
+					if ("x2".equals(element.getNodeName())) {
+						x2 = Double.parseDouble(element.getTextContent());
+					}
+					if ("y2".equals(element.getNodeName())) {
+						y2 = Double.parseDouble(element.getTextContent());
+					}
+					if ("color".equals(element.getNodeName())) {
+						color = Color.web(element.getTextContent());
+					}
 				}
-				break;
+				O_Link link = new O_Link(x1, y1, x2, y2, color);
+				links.add(link);
+				link.recalculatePoint();
+				getChildren().addAll(link, link.getTop(), link.getBot());
+			}
 
+			org.w3c.dom.Node ubox = doc.getElementsByTagName("Objects").item(0);
+			NodeList uboxs = ubox.getChildNodes();
+			for (int i = 0; i < uboxs.getLength(); i++) {
+				org.w3c.dom.Node data = uboxs.item(i);
+				NodeList datas = data.getChildNodes();
+				double x = 0, y = 0, h = 0, w = 0;
+				Color color = null;
+				for (int k = 0; k < datas.getLength(); k++) {
+					org.w3c.dom.Node element = datas.item(k);
+					if ("x".equals(element.getNodeName())) {
+						x = Double.parseDouble(element.getTextContent());
+					}
+					if ("y".equals(element.getNodeName())) {
+						y = Double.parseDouble(element.getTextContent());
+					}
+					if ("width".equals(element.getNodeName())) {
+						w = Double.parseDouble(element.getTextContent());
+					}
+					if ("height".equals(element.getNodeName())) {
+						h = Double.parseDouble(element.getTextContent());
+					}
+					if ("color".equals(element.getNodeName())) {
+						color = Color.web(element.getTextContent());
+					}
+
+				}
+				O_Object obj = new O_Object(x, y, w, h, color, Color.LIGHTGRAY);
+				objects.add(obj);
+				getChildren().addAll(obj, obj.getLabel(), obj.getdataBox());
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-}
+	}// End Loop
+}// End Function

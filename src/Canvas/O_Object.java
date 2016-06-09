@@ -2,9 +2,16 @@ package Canvas;
 
 import java.util.ArrayList;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.event.EventHandler;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -14,8 +21,8 @@ public class O_Object extends Rectangle {
 	private Rectangle dataBox; // Data area box
 	private StringProperty oname; // Object name
 	private Text label;
-	private TextField text;
-
+	private TextField field;
+	private DropShadow shape;
 	private ArrayList<StringProperty> datas;
 
 	public O_Object(double x, double y, double width, double height, Color bgcolor, Color scolor) {
@@ -38,13 +45,59 @@ public class O_Object extends Rectangle {
 				.subtract(label.layoutBoundsProperty().getValue().getWidth() / 2));
 		label.yProperty().bind(yProperty().add(20));
 
-		text = new TextField(oname.get());
-		text.layoutXProperty().bind(xProperty().subtract(25));
-		text.layoutYProperty().bind(yProperty().add(10));
-		text.textProperty().bindBidirectional(labelProperty());
+		field = new TextField(oname.get());
+		field.layoutXProperty().bind(xProperty().subtract(25));
+		field.layoutYProperty().bind(yProperty().add(10));
+		field.textProperty().bindBidirectional(labelProperty());
 
 		widthProperty().bindBidirectional(dataBox.widthProperty());
 		labelProperty().bindBidirectional(getTextData().textProperty());
+
+		addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				setX(e.getX());
+				setY(e.getY());
+			}
+		});
+		
+		addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent key) {
+				if (shape == null) {
+					shape = new DropShadow();
+				}
+				setEffect(shape);
+			}
+		});
+		
+		addEventFilter(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent key) {
+				setEffect(null);
+			}
+		});
+		
+		label.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				field.setVisible(true);
+			}
+		});
+		
+		DoubleProperty w = new SimpleDoubleProperty();
+		field.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent e) {
+				w.set(label.layoutBoundsProperty().getValue().getWidth());
+				label.xProperty().bind(xProperty().add(widthProperty().getValue() / 2)
+						.subtract(label.layoutBoundsProperty().getValue().getWidth() / 2));
+				if (e.getCode() == KeyCode.ENTER) {
+					field.setVisible(false);
+				}
+			}
+		});
+		
 
 	}
 
@@ -53,21 +106,21 @@ public class O_Object extends Rectangle {
 	}
 
 	public TextField getTextData() {
-		return text;
+		return field;
 	}
 
 	public TextField getText(boolean isShow) {
-		text.setText(labelProperty().get());
+		field.setText(labelProperty().get());
 		if (isShow) {
-			text.setVisible(isShow);
+			field.setVisible(isShow);
 		} else {
-			text.setVisible(false);
+			field.setVisible(false);
 		}
-		return text;
+		return field;
 	}
 
 	public void setTextInVisible() {
-		text.setVisible(false);
+		field.setVisible(false);
 	}
 
 	public final StringProperty labelProperty() {

@@ -14,6 +14,7 @@ import Canvas.UC_TypeOfLine;
 import Database.ToolHandler;
 import Library.MyGridLine;
 import Library.SaveDiagramXML;
+import Library.Types;
 import SaveMe.SaveUseCase;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -22,7 +23,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
-public class UseCaseCanvaBox2 extends CanvasPane {
+public class UseCaseCanvaBox extends CanvasPane {
 	private SaveUseCase saveMe;
 
 	private ArrayList<UC_Actor> actors;
@@ -47,10 +48,12 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 	private UC_TypeOfLine tLine;
 	private boolean istLine;
 
-	public UseCaseCanvaBox2(Scene owner, File path, boolean isLoad) {
+	public UseCaseCanvaBox(Scene owner, File path, boolean isLoad) {
 		this.isLoad = isLoad;
 		setOwner(owner);
 		setPath(path);
+		menu.getChildren().addAll(getLabel(Types.Usecase), saveB, printB);
+
 		actors = new ArrayList<UC_Actor>();
 		aLines = new ArrayList<UC_ActionLine>();
 		boxs = new ArrayList<UC_Box>();
@@ -170,7 +173,7 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 					iLine.recalculatePoint();
 					getChildren().addAll(iLine.getLabel(true), iLine.getTop(), iLine.getBot());
 					iLines.add(iLine);
-					isiLine=false;
+					isiLine = false;
 				} else if (istLine) {
 					tLine.calculateTri();
 					getChildren().add(tLine.getTri());
@@ -189,7 +192,7 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 		});
 		printB.setOnAction(e -> {
 			getChildren().removeAll(gridLine, menu);
-			new Library.PrintNode(this);
+			new Library.PrintNodes(this);
 			getChildren().add(gridLine);
 			gridLine.toBack();
 		});
@@ -425,23 +428,25 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 				NodeList datas = data.getChildNodes();
 				double x = 0, y = 0;
 				Color color = null;
+				String label = null;
 				for (int k = 0; k < datas.getLength(); k++) {
 					org.w3c.dom.Node element = datas.item(k);
 					if ("x".equals(element.getNodeName())) {
-						System.out.println(" Center X Value : " + element.getTextContent());
 						x = Double.parseDouble(element.getTextContent());
 					}
 					if ("y".equals(element.getNodeName())) {
-						System.out.println(" Center Y Value : " + element.getTextContent());
 						y = Double.parseDouble(element.getTextContent());
 					}
 					if ("color".equals(element.getNodeName())) {
-						System.out.println(" color : " + element.getTextContent());
 						color = Color.web(element.getTextContent());
+					}
+					if ("label".equals(element.getNodeName())) {
+						label = element.getTextContent();
 					}
 
 				}
 				UC_Actor actor = new UC_Actor(x, y, 20, color, Color.LIGHTGRAY);
+				actor.labelProperty().set(label);
 				actors.add(actor);
 				getChildren().addAll(actor, actor.getBody(), actor.getLeg(), actor.getLeg2(), actor.getLeg3(),
 						actor.getLeg4(), actor.getLabel());
@@ -484,6 +489,7 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 				NodeList datas = data.getChildNodes();
 				double x = 0, y = 0, h = 0, w = 0;
 				Color color = null;
+				String label = null;
 				for (int k = 0; k < datas.getLength(); k++) {
 					org.w3c.dom.Node element = datas.item(k);
 					if ("x".equals(element.getNodeName())) {
@@ -501,9 +507,13 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 					if ("color".equals(element.getNodeName())) {
 						color = Color.web(element.getTextContent());
 					}
+					if ("label".equals(element.getNodeName())) {
+						label = element.getTextContent();
+					}
 
 				}
 				UC_Box uboxd = new UC_Box(x, y, w, h, color, Color.LIGHTGRAY);
+				uboxd.labelProperty().set(label);
 				boxs.add(uboxd);
 				getChildren().addAll(uboxd, uboxd.getLabel());
 			}
@@ -515,6 +525,7 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 				NodeList datas = data.getChildNodes();
 				double x = 0, y = 0, h = 0, w = 0;
 				Color color = null;
+				String label = null;
 				for (int k = 0; k < datas.getLength(); k++) {
 					org.w3c.dom.Node element = datas.item(k);
 					if ("x".equals(element.getNodeName())) {
@@ -526,9 +537,13 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 					if ("color".equals(element.getNodeName())) {
 						color = Color.web(element.getTextContent());
 					}
+					if ("label".equals(element.getNodeName())) {
+						label = element.getTextContent();
+					}
 
 				}
 				UC_Process up = new UC_Process(x, y, 60, 30, color, Color.LIGHTGRAY);
+				up.labelProperty().set(label);
 				processes.add(up);
 				getChildren().addAll(up, up.getLabel());
 			}
@@ -649,6 +664,7 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 							actors.remove(index);
 						}
 					});
+					break;
 				}
 			}
 		}
@@ -662,8 +678,10 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 						if (e.getCode() == KeyCode.DELETE) {
 							getChildren().removeAll(boxs.get(index), boxs.get(index).getLabel());
 							boxs.remove(index);
+
 						}
 					});
+					break;
 				}
 			}
 		}
@@ -680,6 +698,7 @@ public class UseCaseCanvaBox2 extends CanvasPane {
 							processes.remove(index);
 						}
 					});
+					break;
 				}
 			}
 		}

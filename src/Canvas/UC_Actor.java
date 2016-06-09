@@ -42,7 +42,7 @@ public class UC_Actor extends Circle {
 		data = new SimpleStringProperty("Actor");
 
 		label = new Text(data.get());
-		label.setFont(Font.font("Arial", FontWeight.BLACK, 14));
+		label.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
 		label.textProperty().bind(labelProperty());
 		label.layoutXProperty().bind(centerXProperty().subtract(label.getLayoutBounds().getWidth() / 2));
 		label.layoutYProperty().bind(centerYProperty().add(80));
