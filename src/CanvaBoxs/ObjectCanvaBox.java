@@ -209,6 +209,10 @@ public class ObjectCanvaBox extends CanvasPane {
 						if (objects.size() > 0) {
 							getChildren().removeAll(objects.get(index), objects.get(index).getLabel(),
 									objects.get(index).getdataBox(), objects.get(index).getText(false));
+							for(int k=0; k<objects.get(index).getDataGs().size(); k++){
+								getChildren().removeAll(objects.get(index).getDataGs().get(k));
+							}
+							
 							objects.remove(index);
 						} else {
 							System.out.println("No Self Activation to delete");
@@ -279,8 +283,9 @@ public class ObjectCanvaBox extends CanvasPane {
 	}
 
 	public void addDataLabel(int index) {
-		Text data = new Text("data");
+		int gsize =  objects.get(index).getDataGs().size();
 		int size = objects.get(index).getDatas().size();
+		Text data=objects.get(index).getDataGs().get(--gsize);
 		data.textProperty().bindBidirectional(objects.get(index).getDatas().get(--size));
 		data.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
 		data.setLayoutX(objects.get(index).getdataBox().getX() + 10);

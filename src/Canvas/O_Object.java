@@ -27,6 +27,7 @@ public class O_Object extends Rectangle {
 	private Rectangle dataBox; // Data area box
 	private StringProperty name; // Class name
 	private ArrayList<StringProperty> datas;
+	private ArrayList<Text> dataGs;
 	private Text label;
 	private TextField field;
 	private Rectangle bound;
@@ -59,6 +60,7 @@ public class O_Object extends Rectangle {
 			
 		dataBox.widthProperty().bindBidirectional(widthProperty());
 		datas = new ArrayList<StringProperty>();
+		dataGs= new ArrayList<Text>();
 		
 	}
 	
@@ -91,10 +93,16 @@ public class O_Object extends Rectangle {
 	}
 	public void addData(String data) {
 		StringProperty d = new SimpleStringProperty(data);
+		Text dg=new Text(data);
+		dataGs.add(dg);
 		datas.add(d);
 	}
 	public ArrayList<StringProperty> getDatas() {
 		return datas;
+	}
+	
+	public ArrayList<Text> getDataGs() {
+		return dataGs;
 	}
 
 	public final StringProperty labelProperty() {
