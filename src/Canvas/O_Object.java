@@ -31,14 +31,15 @@ public class O_Object extends Rectangle {
 	private Text label;
 	private TextField field;
 	private Rectangle bound;
+	private Button addB;
 
-	public O_Object(double x, double y,Color bgcolor, Color scolor) {
+	public O_Object(double x, double y, Color bgcolor, Color scolor) {
 		super(x, y, 120, 40);
 		setFill(bgcolor);
 		setStroke(scolor);
 		name = new SimpleStringProperty("Name:Class");
-		
-		bound=new Rectangle();
+
+		bound = new Rectangle();
 
 		dataBox = new Rectangle(x, y + getHeight(), 100, 20);
 		dataBox.setFill(Color.WHITE);
@@ -57,19 +58,22 @@ public class O_Object extends Rectangle {
 		field.layoutXProperty().bind(xProperty().subtract(25));
 		field.layoutYProperty().bind(yProperty().add(10));
 		field.textProperty().bindBidirectional(labelProperty());
-			
+
 		dataBox.widthProperty().bindBidirectional(widthProperty());
 		datas = new ArrayList<StringProperty>();
-		dataGs= new ArrayList<Text>();
+		dataGs = new ArrayList<Text>();
+
 		
+		
+
 	}
-	
-	public Rectangle getLinkBound(){
+
+	public Rectangle getLinkBound() {
 		Bounds d = getBoundsInParent();
-		bound.setX(d.getMinX()-10);
-		bound.setY(d.getMinY()-10);
-		bound.setHeight(d.getHeight()+10);
-		bound.setWidth(d.getWidth()+20);
+		bound.setX(d.getMinX() - 10);
+		bound.setY(d.getMinY() - 10);
+		bound.setHeight(d.getHeight() + 10);
+		bound.setWidth(d.getWidth() + 20);
 		return bound;
 	}
 
@@ -82,25 +86,30 @@ public class O_Object extends Rectangle {
 		}
 		return field;
 	}
+
 	public void setTextInVisible() {
 		field.setVisible(false);
-	}	
+	}
+
 	public Text getLabel() {
 		return label;
 	}
+
 	public Rectangle getdataBox() {
 		return dataBox;
 	}
+
 	public void addData(String data) {
 		StringProperty d = new SimpleStringProperty(data);
-		Text dg=new Text(data);
+		Text dg = new Text(data);
 		dataGs.add(dg);
 		datas.add(d);
 	}
+
 	public ArrayList<StringProperty> getDatas() {
 		return datas;
 	}
-	
+
 	public ArrayList<Text> getDataGs() {
 		return dataGs;
 	}
@@ -109,4 +118,17 @@ public class O_Object extends Rectangle {
 		return name;
 	}
 
+	public Button getAddB(){
+		addB = new Button("+");
+		addB.layoutXProperty().bind(dataBox.xProperty().subtract(30));
+		addB.layoutYProperty().bind(dataBox.yProperty());
+		return addB;
+	}
+
+	public void setAddBInVisible() {
+		if(addB!=null){
+			addB.setVisible(false);
+		}
+	}
+	
 }

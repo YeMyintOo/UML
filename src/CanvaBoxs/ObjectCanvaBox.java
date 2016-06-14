@@ -24,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
@@ -154,30 +155,24 @@ public class ObjectCanvaBox extends CanvasPane {
 				objects.get(i).getdataBox().addEventFilter(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent key) {
-						Button add = new Button("+");
-						getChildren().remove(add);
-						add.layoutXProperty().bind(objects.get(index).getdataBox().xProperty().subtract(30));
-						add.layoutYProperty().bind(objects.get(index).getdataBox().yProperty());
+						Button add = objects.get(index).getAddB();
 						getChildren().add(add);
 						add.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
 							@Override
 							public void handle(MouseEvent e) {
-								// Text
-								objects.get(index).addData("data");
-								addDataLabel(index);
-								//
-							}
-						});
-						add.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-							@Override
-							public void handle(MouseEvent e) {
-								if (e.getClickCount() == 2) {
+								if(e.getButton()==MouseButton.SECONDARY){
 									getChildren().remove(add);
+									add.setVisible(false);
+								}else{
+									objects.get(index).addData("data");
+									addDataLabel(index);
 								}
+								
 							}
 						});
 					}
 				});
+
 				objects.get(i).getLabel().addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent key) {
@@ -209,10 +204,10 @@ public class ObjectCanvaBox extends CanvasPane {
 						if (objects.size() > 0) {
 							getChildren().removeAll(objects.get(index), objects.get(index).getLabel(),
 									objects.get(index).getdataBox(), objects.get(index).getText(false));
-							for(int k=0; k<objects.get(index).getDataGs().size(); k++){
+							for (int k = 0; k < objects.get(index).getDataGs().size(); k++) {
 								getChildren().removeAll(objects.get(index).getDataGs().get(k));
 							}
-							
+
 							objects.remove(index);
 						} else {
 							System.out.println("No Self Activation to delete");
@@ -283,9 +278,9 @@ public class ObjectCanvaBox extends CanvasPane {
 	}
 
 	public void addDataLabel(int index) {
-		int gsize =  objects.get(index).getDataGs().size();
+		int gsize = objects.get(index).getDataGs().size();
 		int size = objects.get(index).getDatas().size();
-		Text data=objects.get(index).getDataGs().get(--gsize);
+		Text data = objects.get(index).getDataGs().get(--gsize);
 		data.textProperty().bindBidirectional(objects.get(index).getDatas().get(--size));
 		data.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
 		data.setLayoutX(objects.get(index).getdataBox().getX() + 10);
@@ -405,33 +400,33 @@ public class ObjectCanvaBox extends CanvasPane {
 					if ("label".equals(element.getNodeName())) {
 						label = element.getTextContent();
 					}
-					
+
 					if ("variables".equals(element.getNodeName())) {
 						String var = element.getTextContent();
-						vars=var.split("@@@");
+						vars = var.split("@@@");
 					}
 				}
 				O_Object obj = new O_Object(x, y, color, Color.LIGHTGRAY);
 				obj.setWidth(w);
 				obj.setHeight(h);
 				obj.labelProperty().set(label);
-				for(int k=0; k<vars.length; k++){
+				for (int k = 0; k < vars.length; k++) {
 					obj.addData(vars[k]);
-				}		
+				}
 				objects.add(obj);
 				getChildren().addAll(obj, obj.getLabel(), obj.getdataBox(), obj.getText(false));
-				loadDataLabel(vars,i);
+				loadDataLabel(vars, i);
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}// End Loop
-	
-	public void loadDataLabel(String[] vars,int index){
-		System.out.println("Index :"+ index);
-		for(int i=0; i<vars.length;i++){
-			Text data = new Text(vars[i]);
+
+	public void loadDataLabel(String[] vars, int index) {
+		System.out.println("Index :" + index);
+		for (int i = 0; i < vars.length; i++) {
+			Text data = objects.get(index).getDataGs().get(i);
 			data.textProperty().bindBidirectional(objects.get(index).getDatas().get(i));
 			data.setLayoutX(objects.get(index).getdataBox().getX() + 10);
 			data.setLayoutY(objects.get(index).getdataBox().getY() + objects.get(index).getdataBox().getHeight());
@@ -440,7 +435,7 @@ public class ObjectCanvaBox extends CanvasPane {
 					.bind(objects.get(index).getdataBox().yProperty().add(objects.get(index).getdataBox().getHeight()));
 			objects.get(index).getdataBox().setHeight(objects.get(index).getdataBox().getHeight() + 20);
 			getChildren().add(data);
-			
+
 			data.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent e) {
@@ -482,8 +477,8 @@ public class ObjectCanvaBox extends CanvasPane {
 					//
 				}
 			});
-			
+
 		}
 	}
-	
+
 }// End Function
