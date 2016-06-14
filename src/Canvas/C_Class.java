@@ -18,7 +18,6 @@ import javafx.scene.text.Text;
 public class C_Class extends Rectangle {
 
 	private Rectangle dataBox; // Data area box
-
 	private Rectangle funBox; // Function area box
 	private StringProperty name; // Class name
 	private ArrayList<StringProperty> datas;

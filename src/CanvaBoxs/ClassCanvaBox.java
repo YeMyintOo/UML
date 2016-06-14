@@ -777,21 +777,8 @@ public class ClassCanvaBox extends CanvasPane {
 						getChildren().add(gridLine);
 						gridLine.toBack();
 					}
-					// Save
-					if (key.getCode() == KeyCode.F1) {
-						if (save == null) {
-							save = new SaveDiagramXML(path);
-						}
-						save.saveClassCavaBox(cboxs);
-						System.out.println("****Save*****");
-					}
 
-					// Code Print
-					if (key.getCode() == KeyCode.F2) {
-						System.out.println("****Code Print*****");
-						code = new CodeGenerate(parent);
-						code.generateClass(cboxs.get(index));
-					}
+
 				});
 
 				cboxs.get(i).setEffect(shape);

@@ -2,6 +2,7 @@ package CanvaBoxs;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -25,13 +26,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class ObjectCanvaBox extends CanvasPane {
 	private SaveObject saveMe;
-
 	private ArrayList<O_Object> objects;
 	private O_Object object;
 	private boolean isObject;
@@ -65,9 +66,9 @@ public class ObjectCanvaBox extends CanvasPane {
 					color = Color.web(colorS);
 					switch (tool) {
 					case "ObjectD_Object":
-						object = new O_Object(e.getX(), e.getY(), 100, 40, color, Color.LIGHTGRAY);
+						object = new O_Object(e.getX(), e.getY(), color, Color.LIGHTGRAY);
 						isObject = true;
-						getChildren().addAll(object, object.getdataBox(), object.getLabel(), object.getText(false));
+						getChildren().addAll(object, object.getLabel(), object.getdataBox(), object.getText(false));
 						break;
 					case "ObjectD_link":
 						link = new O_Link(e.getX(), e.getY(), e.getX(), e.getY(), color);
@@ -132,10 +133,102 @@ public class ObjectCanvaBox extends CanvasPane {
 	public void isEditOrNew(MouseEvent e) {
 		isNew = true;
 		Point2D point = new Point2D(e.getX(), e.getY());
+		isNewOREditObject(e, point);
 		isNewOREditLink(e, point);
 	}
 
-	public void isNewOREditLink(MouseEvent e,Point2D point){
+	public void isNewOREditObject(MouseEvent e, Point2D point) {
+		for (int i = 0; i < objects.size(); i++) {
+			if (objects.get(i).contains(point) || objects.get(i).getdataBox().contains(point)) {
+				isNew = false;
+				int index = i;
+
+				objects.get(i).addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent key) {
+						objects.get(index).setX(key.getX());
+						objects.get(index).setY(key.getY());
+					}
+				});
+
+				objects.get(i).getdataBox().addEventFilter(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent key) {
+						Button add = new Button("+");
+						getChildren().remove(add);
+						add.layoutXProperty().bind(objects.get(index).getdataBox().xProperty().subtract(30));
+						add.layoutYProperty().bind(objects.get(index).getdataBox().yProperty());
+						getChildren().add(add);
+						add.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+							@Override
+							public void handle(MouseEvent e) {
+								// Text
+								objects.get(index).addData("data");
+								addDataLabel(index);
+								//
+							}
+						});
+						add.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+							@Override
+							public void handle(MouseEvent e) {
+								if (e.getClickCount() == 2) {
+									getChildren().remove(add);
+								}
+							}
+						});
+					}
+				});
+				objects.get(i).getLabel().addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent key) {
+						objects.get(index).getText(true).toFront();
+						objects.get(index).getText(true).addEventFilter(KeyEvent.KEY_PRESSED,
+								new EventHandler<KeyEvent>() {
+							@Override
+							public void handle(KeyEvent e) {
+								DoubleProperty width = new SimpleDoubleProperty();
+								width.set(objects.get(index).getLabel().layoutBoundsProperty().getValue().getWidth());
+								objects.get(index).getLabel().xProperty()
+										.bind(objects.get(index).xProperty()
+												.add(objects.get(index).widthProperty().getValue() / 2)
+												.subtract(objects.get(index).getLabel().layoutBoundsProperty()
+														.getValue().getWidth() / 2));
+								objects.get(index).widthProperty().bind(width.add(30));
+								if (e.getCode() == KeyCode.ENTER) {
+									objects.get(index).setTextInVisible();
+								}
+							}
+						});
+					}
+				});
+
+				objects.get(i).onKeyPressedProperty().bindBidirectional(getOwner().onKeyPressedProperty());
+				objects.get(i).setOnKeyPressed(key -> {
+					// Delete
+					if (key.getCode() == KeyCode.DELETE) {
+						if (objects.size() > 0) {
+							getChildren().removeAll(objects.get(index), objects.get(index).getLabel(),
+									objects.get(index).getdataBox(), objects.get(index).getText(false));
+							objects.remove(index);
+						} else {
+							System.out.println("No Self Activation to delete");
+						}
+					}
+				});
+
+				objects.get(i).setEffect(shape);
+				objects.get(i).getdataBox().setEffect(shape);
+
+			} else {
+				objects.get(i).setEffect(null);
+				objects.get(i).getdataBox().setEffect(null);
+
+			}
+
+		}
+	}
+
+	public void isNewOREditLink(MouseEvent e, Point2D point) {
 
 		for (int i = 0; i < links.size(); i++) {
 			int index = i;
@@ -168,7 +261,8 @@ public class ObjectCanvaBox extends CanvasPane {
 				links.get(i).setOnKeyPressed(key -> {
 					if (key.getCode() == KeyCode.DELETE) {
 						if (links.size() > 0) {
-							getChildren().removeAll(links.get(index));
+							getChildren().removeAll(links.get(index), links.get(index).getTop(),
+									links.get(index).getBot());
 							links.remove(index);
 						} else {
 							System.out.println("No ActionLine to delete");
@@ -181,14 +275,14 @@ public class ObjectCanvaBox extends CanvasPane {
 			}
 
 		}
-	
+
 	}
 
 	public void addDataLabel(int index) {
 		Text data = new Text("data");
 		int size = objects.get(index).getDatas().size();
 		data.textProperty().bindBidirectional(objects.get(index).getDatas().get(--size));
-		data.setFont(Font.font("Arial", FontWeight.BLACK, 12));
+		data.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
 		data.setLayoutX(objects.get(index).getdataBox().getX() + 10);
 		data.setLayoutY(objects.get(index).getdataBox().getY() + objects.get(index).getdataBox().getHeight());
 		data.layoutXProperty().bind(objects.get(index).getdataBox().xProperty().add(10));
@@ -197,7 +291,6 @@ public class ObjectCanvaBox extends CanvasPane {
 		objects.get(index).getdataBox().setHeight(objects.get(index).getdataBox().getHeight() + 20);
 		getChildren().add(data);
 
-		// Label Listener
 		data.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -227,6 +320,7 @@ public class ObjectCanvaBox extends CanvasPane {
 							data.setText(text.getText().trim());
 							if (objects.get(index).getdataBox().getWidth() < data.layoutBoundsProperty().getValue()
 									.getWidth()) {
+								System.out.println("Need to Repaint");
 								objects.get(index).widthProperty().bind(
 										new SimpleDoubleProperty(data.layoutBoundsProperty().getValue().getWidth())
 												.add(20));
@@ -235,6 +329,7 @@ public class ObjectCanvaBox extends CanvasPane {
 						}
 					}
 				});
+				//
 			}
 		});
 	}
@@ -283,6 +378,8 @@ public class ObjectCanvaBox extends CanvasPane {
 				NodeList datas = data.getChildNodes();
 				double x = 0, y = 0, h = 0, w = 0;
 				Color color = null;
+				String label = null;
+				String[] vars = null;
 				for (int k = 0; k < datas.getLength(); k++) {
 					org.w3c.dom.Node element = datas.item(k);
 					if ("x".equals(element.getNodeName())) {
@@ -300,15 +397,88 @@ public class ObjectCanvaBox extends CanvasPane {
 					if ("color".equals(element.getNodeName())) {
 						color = Color.web(element.getTextContent());
 					}
-
+					if ("label".equals(element.getNodeName())) {
+						label = element.getTextContent();
+					}
+					
+					if ("variables".equals(element.getNodeName())) {
+						String var = element.getTextContent();
+						vars=var.split("@@@");
+					}
 				}
-				O_Object obj = new O_Object(x, y, w, h, color, Color.LIGHTGRAY);
+				O_Object obj = new O_Object(x, y, color, Color.LIGHTGRAY);
+				obj.setWidth(w);
+				obj.setHeight(h);
+				obj.labelProperty().set(label);
+				for(int k=0; k<vars.length; k++){
+					obj.addData(vars[k]);
+				}		
 				objects.add(obj);
-				getChildren().addAll(obj, obj.getLabel(), obj.getdataBox());
+				getChildren().addAll(obj, obj.getLabel(), obj.getdataBox(), obj.getText(false));
+				loadDataLabel(vars,i);
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}// End Loop
+	
+	public void loadDataLabel(String[] vars,int index){
+		System.out.println("Index :"+ index);
+		for(int i=0; i<vars.length;i++){
+			Text data = new Text(vars[i]);
+			data.textProperty().bindBidirectional(objects.get(index).getDatas().get(i));
+			data.setLayoutX(objects.get(index).getdataBox().getX() + 10);
+			data.setLayoutY(objects.get(index).getdataBox().getY() + objects.get(index).getdataBox().getHeight());
+			data.layoutXProperty().bind(objects.get(index).getdataBox().xProperty().add(10));
+			data.layoutYProperty()
+					.bind(objects.get(index).getdataBox().yProperty().add(objects.get(index).getdataBox().getHeight()));
+			objects.get(index).getdataBox().setHeight(objects.get(index).getdataBox().getHeight() + 20);
+			getChildren().add(data);
+			
+			data.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent e) {
+					data.setFill(Color.BLUE);
+				}
+			});
+			data.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent e) {
+					data.setFill(Color.BLACK);
+				}
+			});
+
+			data.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent e) {
+					// Edit
+					TextField text = new TextField();
+					text.layoutXProperty().bind(data.layoutXProperty().subtract(15));
+					text.layoutYProperty().bind(data.layoutYProperty().subtract(15));
+					getChildren().add(text);
+
+					text.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+						@Override
+						public void handle(KeyEvent e) {
+							if (e.getCode() == KeyCode.ENTER) {
+								data.setText(text.getText().trim());
+								if (objects.get(index).getdataBox().getWidth() < data.layoutBoundsProperty().getValue()
+										.getWidth()) {
+									System.out.println("Need to Repaint");
+									objects.get(index).widthProperty().bind(
+											new SimpleDoubleProperty(data.layoutBoundsProperty().getValue().getWidth())
+													.add(20));
+								}
+								getChildren().remove(text);
+							}
+						}
+					});
+					//
+				}
+			});
+			
+		}
+	}
+	
 }// End Function

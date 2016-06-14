@@ -13,7 +13,7 @@ import Database.ToolHandler;
 import Library.CodeGenerate;
 import Library.MyGridLine;
 import Library.Types;
-import javafx.geometry.Pos;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -24,7 +24,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class CanvasPane extends Pane {
@@ -47,9 +46,11 @@ public class CanvasPane extends Pane {
 	public Button saveB;
 	public Label nLabel;
 	protected ScreenDetail screen;
+	
 
 	public CanvasPane() {
 		toolHandler = new ToolHandler();
+		
 
 		// GridLine
 		gridLine = new BorderPane();

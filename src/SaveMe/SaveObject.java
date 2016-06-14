@@ -46,18 +46,35 @@ public class SaveObject {
 			Element width = doc.createElement("width");
 			Element height = doc.createElement("height");
 			Element color = doc.createElement("color");
+			Element label=doc.createElement("label");
+			Element var=doc.createElement("variables");
 
 			x.appendChild(doc.createTextNode("" + objects.get(i).getX()));
 			y.appendChild(doc.createTextNode("" + objects.get(i).getY()));
 			width.appendChild(doc.createTextNode("" + objects.get(i).getWidth()));
 			height.appendChild(doc.createTextNode("" + objects.get(i).getHeight()));
 			color.appendChild(doc.createTextNode("" + objects.get(i).getFill()));
+			label.appendChild(doc.createTextNode(""+objects.get(i).labelProperty().get()));
+			
+			//Data
+			String varD = "";
+			for(int d=0;d<objects.get(i).getDatas().size(); d++){
+				if(varD.equals("")){
+					varD=objects.get(i).getDatas().get(d).get();
+				}else{
+					varD=varD+"@@@"+objects.get(i).getDatas().get(d).get();
+				}
+				
+			}
+			var.appendChild(doc.createTextNode(varD));
 
 			data.appendChild(x);
 			data.appendChild(y);
 			data.appendChild(width);
 			data.appendChild(height);
 			data.appendChild(color);
+			data.appendChild(label);
+			data.appendChild(var);
 			objNode.appendChild(data);
 		}
 
